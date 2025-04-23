@@ -49,7 +49,6 @@ protected:
 	UPROPERTY()
 	FVector Destination;
 	
-private:
 	bool bIsMovable = true;
 
 	class AMovableCharacterController* controller;

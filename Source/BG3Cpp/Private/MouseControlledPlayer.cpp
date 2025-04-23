@@ -41,6 +41,24 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (nullptr != selectedPlayableChar && *selectedPlayableChar->MovablePtr)
+	{
+		auto* pc = GetWorld()->GetFirstPlayerController();
+		if (pc)
+		{
+			FHitResult hit;
+			if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
+			{
+				
+				FVector dest = FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
+				if (FVector::Distance(dest, lastCursorPos) < 20.f) return;
+				lastCursorPos = dest;
+				selectedPlayableChar->ShowPath(dest);
+				//UE_LOG(LogTemp, Warning, TEXT("Destination : %f, %f, %f"), hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
+			}
+		}
+	}
+
 }
 
 // Called to bind functionality to input
@@ -83,6 +101,14 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				SelectedObject = actor;
 
 				UE_LOG(LogTemp, Warning, TEXT("selected"));
+				if (auto* playable = Cast<APlayableCharacterBase>(actor))
+				{
+					selectedPlayableChar = playable;
+				}
+				else
+				{
+					selectedPlayableChar = nullptr;
+				}
 			}
 			return;
 		};
@@ -91,17 +117,13 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 		{
-			if (nullptr == SelectedObject) return;
-			
-			if (APlayableCharacterBase* c = Cast<APlayableCharacterBase>(SelectedObject->_getUObject()))
+			if (nullptr == selectedPlayableChar) return;
+			if (*(selectedPlayableChar->MovablePtr))
 			{
-				if (*(c->MovablePtr))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Movable"))
-					c->SetDestination(FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, c->GetActorLocation().Z));
-					UE_LOG(LogTemp, Warning, TEXT("Destination : %f, %f, %f"), hit.ImpactPoint.X, hit.ImpactPoint.Y, c->GetActorLocation().Z);
-					c->Move();
-				}
+				UE_LOG(LogTemp, Warning, TEXT("Movable"))
+				selectedPlayableChar->SetDestination(lastCursorPos);
+				//UE_LOG(LogTemp, Warning, TEXT("Destination : %f, %f, %f"), hit.ImpactPoint.X, hit.ImpactPoint.Y, selectedPlayableChar->GetActorLocation().Z);
+				selectedPlayableChar->Move();
 			}
 		}
 	}

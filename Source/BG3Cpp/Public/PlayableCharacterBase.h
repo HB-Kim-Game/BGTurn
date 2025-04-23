@@ -15,6 +15,22 @@ class BG3CPP_API APlayableCharacterBase : public AMoveCharacterBase
 	GENERATED_BODY()
 
 public:
+	// Sets default values for this character's properties
+	APlayableCharacterBase();
+public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
+	virtual void Move() override;
+	
+	void ShowPath(FVector dest);
+
+
+private:
+	class USplineComponent* Spline;
+	class UStaticMesh* SplineMeshInstance;
+	class UMaterial* SplineMaterial;
+
+	TArray<class USplineMeshComponent*> SplineMeshes;
+
+	void AddSplineMesh();
 };

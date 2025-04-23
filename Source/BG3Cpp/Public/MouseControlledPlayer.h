@@ -65,6 +65,10 @@ public:
 	bool bIsback = false;
 	bool bIsLeft = false;
 	bool bIsRight = false;
+	
+	class APlayableCharacterBase* selectedPlayableChar;
 
 	FVector Direction;
+
+	FVector lastCursorPos;
 };
