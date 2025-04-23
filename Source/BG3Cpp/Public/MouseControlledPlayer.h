@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Pawn.h"
 #include "MouseControlledPlayer.generated.h"
 
@@ -27,21 +28,43 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	private:
-	UFUNCTION()
 	void OnLeftMouseButtonDown();
-
-	UPROPERTY()
-	float MouseX;
-	UPROPERTY()
-	float MouseY;
-	UPROPERTY()
-	FVector MouseWorldPos;
-	UPROPERTY()
-	FVector MouseWorldDir;
+	
+	void ForwardMove(const FInputActionValue& value);
+	void BackMove(const FInputActionValue& value);
+	void LeftMove(const FInputActionValue& value);
+	void RightMove(const FInputActionValue& value);
+	
+	UFUNCTION()
+	void InitializeInput();
 	
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputMappingContext* DefaultContext;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* ClickAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* ForwardAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* BackAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* LeftAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* RightAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* CursorMoveAction;
+
+	class ISelectableObject* SelectedObject;
+
+	bool bIsforward = false;
+	bool bIsback = false;
+	bool bIsLeft = false;
+	bool bIsRight = false;
+
+	FVector Direction;
 };

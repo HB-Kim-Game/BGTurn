@@ -13,5 +13,8 @@ UCLASS()
 class BG3CPP_API APlayableCharacterBase : public AMoveCharacterBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual void Selected() override;
+	virtual void Deselected() override;
 };

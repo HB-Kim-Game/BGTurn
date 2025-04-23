@@ -14,9 +14,16 @@
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BG3Cpp.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/BG3Cpp.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Input/BG3InputMappingContext.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Input/BG3InputMappingContext.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,9 +35,14 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3GameMode.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MovableCharacterController.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/SelectableObject.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3GameMode.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MovableCharacterController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/SelectableObject.h" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
@@ -165,12 +177,16 @@
       <workItem from="1745315600472" duration="1177000" />
       <workItem from="1745316807855" duration="88000" />
       <workItem from="1745316905531" duration="2245000" />
+      <workItem from="1745365590194" duration="1415000" />
+      <workItem from="1745370373277" duration="554000" />
+      <workItem from="1745384522592" duration="20808000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
