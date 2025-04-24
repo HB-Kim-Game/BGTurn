@@ -2,9 +2,13 @@
 
 
 #include "MouseControlledPlayer.h"
+
+#include "BG3Enums.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "MouseManager.h"
+#include "MoveCursor.h"
 #include "PlayableCharacterBase.h"
 #include "SelectableObject.h"
 
@@ -30,10 +34,17 @@ void AMouseControlledPlayer::BeginPlay()
 	pc->SetInputMode(inputMode);
 	pc->SetShowMouseCursor(true);
 
+	MouseState = EGameMouseState::Default;
+
 	if (UEnhancedInputLocalPlayerSubsystem* sub = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
 	{
 		sub->AddMappingContext(DefaultContext, 0);	
 	}
+	
+	MouseManager = NewObject<UMouseManager>(this, MouseManagerClass);
+	MouseManager->RegisterComponent();
+
+	MouseManager->Initialize();
 }
 
 // Called every frame
@@ -41,7 +52,7 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (nullptr != selectedPlayableChar && *selectedPlayableChar->MovablePtr)
+	if (nullptr != selectedPlayableChar && selectedPlayableChar->GetCurrentMOV() > 0.0f && !selectedPlayableChar->GetIsMoving())
 	{
 		auto* pc = GetWorld()->GetFirstPlayerController();
 		if (pc)
@@ -49,12 +60,13 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			FHitResult hit;
 			if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 			{
-				
 				FVector dest = FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
 				if (FVector::Distance(dest, lastCursorPos) < 20.f) return;
 				lastCursorPos = dest;
-				selectedPlayableChar->ShowPath(dest);
-				//UE_LOG(LogTemp, Warning, TEXT("Destination : %f, %f, %f"), hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
+				float Distance = selectedPlayableChar->ShowPath(dest);
+
+				auto* cursor = Cast<UMoveCursor>(MouseManager->GetCursor());
+				if (cursor) cursor->ShowDistance(Distance, Distance / 100.f < selectedPlayableChar->GetCurrentMOV());
 			}
 		}
 	}
@@ -104,10 +116,12 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				if (auto* playable = Cast<APlayableCharacterBase>(actor))
 				{
 					selectedPlayableChar = playable;
+					MouseManager->SetMouseMode(EGameMouseState::Move);
 				}
 				else
 				{
 					selectedPlayableChar = nullptr;
+					MouseManager->SetMouseMode(EGameMouseState::Default);
 				}
 			}
 			return;
@@ -118,9 +132,8 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 		{
 			if (nullptr == selectedPlayableChar) return;
-			if (*(selectedPlayableChar->MovablePtr))
+			if (*(selectedPlayableChar->MovablePtr) && selectedPlayableChar->GetCurrentMOV() > 0.0f)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Movable"))
 				selectedPlayableChar->SetDestination(lastCursorPos);
 				//UE_LOG(LogTemp, Warning, TEXT("Destination : %f, %f, %f"), hit.ImpactPoint.X, hit.ImpactPoint.Y, selectedPlayableChar->GetActorLocation().Z);
 				selectedPlayableChar->Move();

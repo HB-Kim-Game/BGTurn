@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SelectableObject.h"
+#include "BG3Struct.h"
 #include "GameFramework/Character.h"
 #include "MoveCharacterBase.generated.h"
 
@@ -20,6 +21,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	class UNavigationPath* ThinkPath(FVector dest);
 
 public:	
 	// Called every frame
@@ -33,13 +35,21 @@ public:
 	virtual void Move();
 
 	UFUNCTION()
-	void OnMoveCompleted();
+	virtual void OnMoveCompleted();
 	
 public:
 	const bool* MovablePtr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FObjectStatus Status;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TableName;
 	
 protected:
+
+	class UDataTable* DataTable;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* SelectedMaterial;
 
@@ -48,6 +58,9 @@ protected:
 
 	UPROPERTY()
 	FVector Destination;
+
+	float LastMoveDistance;
+	float CurrentMOV;
 	
 	bool bIsMovable = true;
 

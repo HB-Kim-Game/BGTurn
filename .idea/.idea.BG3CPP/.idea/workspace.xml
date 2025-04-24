@@ -14,13 +14,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Input/BG3InputMappingContext.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Input/BG3InputMappingContext.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BG3Cpp.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/BG3Cpp.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_MouseControlledPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_MouseControlledPlayer.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/BG3Cpp.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/BG3Cpp.Build.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" afterDir="false" />
@@ -39,10 +40,19 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3GameMode.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3Struct.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/CursorBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MouseManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MovableCharacterController.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCursor.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/SelectableObject.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Enums.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3GameMode.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/CursorBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MouseManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MovableCharacterController.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCursor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/SelectableObject.h" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -56,21 +66,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ 프로젝트.BG3Cpp.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ 프로젝트.BG3Cpp.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ 프로젝트.BG3Cpp">
     <configuration name="BG3Cpp" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -106,13 +116,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/AutomationTool/AutomationTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -129,13 +134,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/UnrealBuildTool/UnrealBuildTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -161,13 +161,6 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile">
-        <settings />
-      </deployment>
-      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
-      <method v="2" />
-    </configuration>
     <configuration name="EpicGames.Perforce.Fixture/Dockerfile (1)" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
@@ -190,6 +183,13 @@
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -207,6 +207,8 @@
       <workItem from="1745370373277" duration="554000" />
       <workItem from="1745384522592" duration="20808000" />
       <workItem from="1745408918069" duration="15555000" />
+      <workItem from="1745452259361" duration="1733000" />
+      <workItem from="1745469402587" duration="17858000" />
     </task>
     <servers />
   </component>
@@ -217,23 +219,5 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
-          <option name="timeStamp" value="1" />
-        </breakpoint>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
-          <option name="timeStamp" value="2" />
-        </breakpoint>
-        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
-          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
-          <option name="timeStamp" value="3" />
-        </breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

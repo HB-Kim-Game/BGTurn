@@ -4,9 +4,9 @@
 #include "MoveCharacterBase.h"
 
 #include "MovableCharacterController.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "Components/CapsuleComponent.h"
-#include "Navigation/PathFollowingComponent.h"
-#include "Runtime/AIModule/Classes/AIController.h"
 
 // Sets default values
 AMoveCharacterBase::AMoveCharacterBase()
@@ -15,6 +15,12 @@ AMoveCharacterBase::AMoveCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MovablePtr = &bIsMovable;
+
+	ConstructorHelpers::FObjectFinder<UDataTable> dataTable(TEXT("/Game/BG3/DataTable/GameCharacterDataTable.GameCharacterDataTable"));
+	if (dataTable.Succeeded())
+	{
+		DataTable = dataTable.Object;
+	}
 
 	GetCapsuleComponent()->SetCanEverAffectNavigation(true);
 	GetCapsuleComponent()->bDynamicObstacle = true;
@@ -30,10 +36,38 @@ void AMoveCharacterBase::BeginPlay()
 
 	controller = Cast<AMovableCharacterController>(GetController());
 	controller->OnAIMoveCompleted.AddDynamic(this, &AMoveCharacterBase::OnMoveCompleted);
+
+	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
+	CurrentMOV = Status.MOV;
+}
+
+UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
+{
+	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (NavSys && GetController()->GetPawn())
+	{
+		UNavigationPath* path = NavSys->FindPathToLocationSynchronously(
+			GetWorld(),
+			GetController()->GetPawn()->GetActorLocation(),
+			dest,
+			GetController()->GetPawn());
+		
+		if (path && path->IsValid() && !path->IsPartial())
+		{
+			if (path->GetPathLength() / 100.f > CurrentMOV) bIsMovable = false;
+			else bIsMovable = true;
+			return path;
+		}
+	}
+
+	bIsMovable = false;
+	return nullptr;
 }
 
 void AMoveCharacterBase::Move()
 {
+	LastMoveDistance = ThinkPath(Destination)->GetPathLength() / 100.f;
 	controller->Move(Destination);
 	bIsMovable = false;
 }
@@ -41,6 +75,7 @@ void AMoveCharacterBase::Move()
 void AMoveCharacterBase::OnMoveCompleted()
 {
 	bIsMovable = true;
+	CurrentMOV -= LastMoveDistance;
 }
 
 // Called every frame

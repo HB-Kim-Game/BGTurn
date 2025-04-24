@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "BG3Enums.h"
 #include "GameFramework/Pawn.h"
 #include "MouseControlledPlayer.generated.h"
 
@@ -71,4 +72,12 @@ public:
 	FVector Direction;
 
 	FVector lastCursorPos;
+
+	UPROPERTY(EditAnywhere, Category = Cursor)
+	TSubclassOf<class UMouseManager> MouseManagerClass;
+
+	UPROPERTY()
+	class UMouseManager* MouseManager;
+	
+	EGameMouseState MouseState;
 };

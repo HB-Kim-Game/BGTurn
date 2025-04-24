@@ -22,15 +22,23 @@ public:
 	virtual void Deselected() override;
 	virtual void Move() override;
 	
-	void ShowPath(FVector dest);
+	float ShowPath(FVector dest);
 
+	virtual void OnMoveCompleted() override;
+
+	float GetCurrentMOV();
+
+	bool GetIsMoving();
 
 private:
 	class USplineComponent* Spline;
 	class UStaticMesh* SplineMeshInstance;
 	class UMaterial* SplineMaterial;
 
+	bool bIsMoving = false;
+
 	TArray<class USplineMeshComponent*> SplineMeshes;
 
 	void AddSplineMesh();
+	void RemoveSplineMesh();
 };

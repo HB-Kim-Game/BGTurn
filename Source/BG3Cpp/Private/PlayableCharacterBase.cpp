@@ -2,6 +2,8 @@
 
 
 #include "PlayableCharacterBase.h"
+
+#include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "Components/SplineComponent.h"
@@ -42,57 +44,58 @@ void APlayableCharacterBase::Deselected()
 
 	GetMesh()->SetOverlayMaterial(nullptr);
 	Spline->ClearSplinePoints();
-	for (USplineMeshComponent* mesh : SplineMeshes)
-	{
-		mesh->DestroyComponent();
-	}
-	SplineMeshes.Empty(15);
+	RemoveSplineMesh();
 }
 
 void APlayableCharacterBase::Move()
 {
 	Super::Move();
+	bIsMoving = true;
 }
 
-void APlayableCharacterBase::ShowPath(FVector dest)
+void APlayableCharacterBase::OnMoveCompleted()
 {
-	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	Super::OnMoveCompleted();
+	RemoveSplineMesh();
+	bIsMoving = false;
+}
 
-	if (NavSys && GetController()->GetPawn())
-	{
-		UNavigationPath* path = NavSys->FindPathToLocationSynchronously(
-			GetWorld(),
-			GetController()->GetPawn()->GetActorLocation(),
-			dest,
-			GetController()->GetPawn());
-		
-		if (path && path->IsValid() && !path->IsPartial())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%f"), path->GetPathLength());
-			const TArray<FVector>& pathPoints = path->PathPoints;
+float APlayableCharacterBase::GetCurrentMOV()
+{
+	return CurrentMOV;
+}
 
-			Spline->ClearSplinePoints();
-			// 시작점
-			Spline->AddSplinePoint(FVector(GetActorLocation().X, GetActorLocation().Y, pathPoints[0].Z + 5.f), ESplineCoordinateSpace::World);
+bool APlayableCharacterBase::GetIsMoving()
+{
+	return bIsMoving;
+}
+
+float APlayableCharacterBase::ShowPath(FVector dest)
+{
+	UNavigationPath* path = ThinkPath(dest);
+
+	if (nullptr == path) return 0.0f;
+	
+	const TArray<FVector>& pathPoints = path->PathPoints;
+
+	Spline->ClearSplinePoints();
+	// 시작점
+	Spline->AddSplinePoint(FVector(GetActorLocation().X, GetActorLocation().Y, pathPoints[0].Z + 5.f), ESplineCoordinateSpace::World);
 			
-			for (FVector point : pathPoints)
-			{
-				Spline->AddSplinePoint(FVector(point.X, point.Y, point.Z + 5.f), ESplineCoordinateSpace::World);
-			}
-
-			AddSplineMesh();
-		}
+	for (FVector point : pathPoints)
+	{
+		Spline->AddSplinePoint(FVector(point.X, point.Y, point.Z + 5.f), ESplineCoordinateSpace::World);
 	}
+
+	AddSplineMesh();
+
+	return path->GetPathLength();
 }
 
 void APlayableCharacterBase::AddSplineMesh()
 {
-	for (USplineMeshComponent* mesh : SplineMeshes)
-	{
-		mesh->DestroyComponent();
-	}
-	SplineMeshes.Empty(15);
-
+	RemoveSplineMesh();
+	
 	for (int i = 0; i < Spline->GetNumberOfSplinePoints() - 1; i++)
 	{
 		USplineMeshComponent* temp = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
@@ -119,4 +122,13 @@ void APlayableCharacterBase::AddSplineMesh()
 
 		temp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	}
+}
+
+void APlayableCharacterBase::RemoveSplineMesh()
+{
+	for (USplineMeshComponent* mesh : SplineMeshes)
+	{
+		mesh->DestroyComponent();
+	}
+	SplineMeshes.Empty(15);
 }
