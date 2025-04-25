@@ -30,14 +30,42 @@ public:
 
 	private:
 	void OnLeftMouseButtonDown();
+#pragma region Camera Movement
+	void StartForwardMove(const FInputActionValue& value);
+	void StartBackMove(const FInputActionValue& value);
+	void StartLeftMove(const FInputActionValue& value);
+	void StartRightMove(const FInputActionValue& value);
+
+	void StartUpMove(const FInputActionValue& value);
+	void StartDownMove(const FInputActionValue& value);
 	
 	void ForwardMove(const FInputActionValue& value);
 	void BackMove(const FInputActionValue& value);
 	void LeftMove(const FInputActionValue& value);
 	void RightMove(const FInputActionValue& value);
+
+	void UpMove(const FInputActionValue& value);
+	void DownMove(const FInputActionValue& value);
+	
+	void StopForwardMove(const FInputActionValue& value);
+	void StopBackMove(const FInputActionValue& value);
+	void StopLeftMove(const FInputActionValue& value);
+	void StopRightMove(const FInputActionValue& value);
+
+	void StopUpMove(const FInputActionValue& value);
+	void StopDownMove(const FInputActionValue& value);
 	
 	UFUNCTION()
 	void InitializeInput();
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	float MoveSpeed = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	float MinZ = 300.f;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	float MaxZ = 1200.f;
 	
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputMappingContext* DefaultContext;
@@ -58,7 +86,12 @@ public:
 	class UInputAction* RightAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
-	class UInputAction* CursorMoveAction;
+	class UInputAction* UpAction;
+	
+	UPROPERTY(VisibleAnywhere, Category = Input)
+    	class UInputAction* DownAction;
+	
+#pragma  endregion 
 
 	class ISelectableObject* SelectedObject;
 
@@ -66,6 +99,8 @@ public:
 	bool bIsback = false;
 	bool bIsLeft = false;
 	bool bIsRight = false;
+	bool bIsUp = false;
+	bool bIsDown = false;
 	
 	class APlayableCharacterBase* selectedPlayableChar;
 
@@ -80,4 +115,10 @@ public:
 	class UMouseManager* MouseManager;
 	
 	EGameMouseState MouseState;
+	
+	UPROPERTY(EditAnywhere, Category = UI)
+	TSubclassOf<class UPlayerUI> PlayerUIClass;
+
+	UPROPERTY()
+	class UPlayerUI* PlayerUI;
 };

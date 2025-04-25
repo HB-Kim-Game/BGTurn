@@ -4,12 +4,14 @@
 #include "MouseControlledPlayer.h"
 
 #include "BG3Enums.h"
+#include "CharacterStatus.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "MouseManager.h"
 #include "MoveCursor.h"
 #include "PlayableCharacterBase.h"
+#include "PlayerUI.h"
 #include "SelectableObject.h"
 
 // Sets default values
@@ -45,6 +47,9 @@ void AMouseControlledPlayer::BeginPlay()
 	MouseManager->RegisterComponent();
 
 	MouseManager->Initialize();
+	
+	PlayerUI = Cast<UPlayerUI>(CreateWidget(GetWorld(), PlayerUIClass));
+	PlayerUI->AddToViewport();
 }
 
 // Called every frame
@@ -52,6 +57,11 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector location = GetActorLocation() + Direction.GetSafeNormal() * DeltaTime * MoveSpeed;
+	location.Z = FMath::Clamp(location.Z, MinZ, MaxZ);
+	
+	SetActorLocation(location);
+	
 	if (nullptr != selectedPlayableChar && selectedPlayableChar->GetCurrentMOV() > 0.0f && !selectedPlayableChar->GetIsMoving())
 	{
 		auto* pc = GetWorld()->GetFirstPlayerController();
@@ -70,9 +80,9 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			}
 		}
 	}
-
 }
 
+#pragma region Input
 // Called to bind functionality to input
 void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -81,10 +91,30 @@ void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::OnLeftMouseButtonDown);
+		
+		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartForwardMove);
 		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::ForwardMove);
+		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopForwardMove);
+		
+		EnhancedInputComponent->BindAction(BackAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartBackMove);
 		EnhancedInputComponent->BindAction(BackAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::BackMove);
+		EnhancedInputComponent->BindAction(BackAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopBackMove);
+		
+		EnhancedInputComponent->BindAction(LeftAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartLeftMove);
 		EnhancedInputComponent->BindAction(LeftAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::LeftMove);
+		EnhancedInputComponent->BindAction(LeftAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopLeftMove);
+		
+		EnhancedInputComponent->BindAction(RightAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartRightMove);
 		EnhancedInputComponent->BindAction(RightAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::RightMove);
+		EnhancedInputComponent->BindAction(RightAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopRightMove);
+
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartUpMove);
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::UpMove);
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopUpMove);
+		
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartDownMove);
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::DownMove);
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopDownMove);
 	}
 }
 
@@ -116,7 +146,10 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				if (auto* playable = Cast<APlayableCharacterBase>(actor))
 				{
 					selectedPlayableChar = playable;
-					MouseManager->SetMouseMode(EGameMouseState::Move);
+					// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터의 체력을 PlayerUI에 표기해줌
+					PlayerUI->ShowSelectedCharHP( *selectedPlayableChar->CurHPPtr ,selectedPlayableChar->GetStatus()->GetHp());
+					
+					if (selectedPlayableChar->MovablePtr) MouseManager->SetMouseMode(EGameMouseState::Move);
 				}
 				else
 				{
@@ -142,44 +175,130 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 	}
 }
 
+void AMouseControlledPlayer::StartForwardMove(const FInputActionValue& value)
+{
+	bIsforward = true;
+	bIsback = false;
+}
+
+void AMouseControlledPlayer::StartBackMove(const FInputActionValue& value)
+{
+	bIsback = true;
+	bIsforward = false;
+}
+
+void AMouseControlledPlayer::StartLeftMove(const FInputActionValue& value)
+{
+	bIsLeft = true;
+	bIsRight = false;
+}
+
+void AMouseControlledPlayer::StartRightMove(const FInputActionValue& value)
+{
+	bIsRight = true;
+	bIsLeft = false;
+}
+
+void AMouseControlledPlayer::StartUpMove(const FInputActionValue& value)
+{
+	bIsUp = true;
+	bIsDown = false;
+}
+
+void AMouseControlledPlayer::StartDownMove(const FInputActionValue& value)
+{
+	bIsDown = true;
+	bIsUp = false;
+}
+
 void AMouseControlledPlayer::ForwardMove(const FInputActionValue& value)
 {
-	if (bIsforward) return;
-
-	FVector2D v = value.Get<FVector2D>();
+	if (bIsback) return;
 	
-	bIsforward = true;
+	FVector2D v = value.Get<FVector2D>();
+	Direction.X = v.X;
+}
+
+void AMouseControlledPlayer::StopForwardMove(const FInputActionValue& value)
+{
+	bIsforward = false;
+	FVector2D v = value.Get<FVector2D>();
 	Direction.X = v.X;
 }
 
 void AMouseControlledPlayer::BackMove(const FInputActionValue& value)
 {
-	if (bIsback) return;
-
-	FVector2D v = value.Get<FVector2D>();
+	if (bIsforward) return;
 	
-	bIsback = true;
+	FVector2D v = value.Get<FVector2D>();
+	Direction.X = v.X;
+}
+
+void AMouseControlledPlayer::StopBackMove(const FInputActionValue& value)
+{
+	bIsback = false;
+	FVector2D v = value.Get<FVector2D>();
 	Direction.X = v.X;
 }
 
 void AMouseControlledPlayer::LeftMove(const FInputActionValue& value)
 {
-	if (bIsLeft) return;
-
-	FVector2D v = value.Get<FVector2D>();
+	if (bIsRight) return;
 	
-	bIsLeft = true;
+	FVector2D v = value.Get<FVector2D>();
+	Direction.Y = v.Y;
+}
+
+void AMouseControlledPlayer::StopLeftMove(const FInputActionValue& value)
+{
+	bIsLeft = false;
+	FVector2D v = value.Get<FVector2D>();
 	Direction.Y = v.Y;
 }
 
 void AMouseControlledPlayer::RightMove(const FInputActionValue& value)
 {
-	if (bIsRight) return;
-
-	FVector2D v = value.Get<FVector2D>();
+	if (bIsLeft) return;
 	
-	bIsRight = true;
+	FVector2D v = value.Get<FVector2D>();
 	Direction.Y = v.Y;
+}
+
+void AMouseControlledPlayer::UpMove(const FInputActionValue& value)
+{
+	if (bIsDown) return;
+	
+	FVector v = value.Get<FVector>();
+	Direction.Z = v.Z;
+}
+
+void AMouseControlledPlayer::DownMove(const FInputActionValue& value)
+{
+	if (bIsUp) return;
+	
+	FVector v = value.Get<FVector>();
+	Direction.Z = v.Z;
+}
+
+void AMouseControlledPlayer::StopRightMove(const FInputActionValue& value)
+{
+	bIsRight = false;
+	FVector2D v = value.Get<FVector2D>();
+	Direction.Y = v.Y;
+}
+
+void AMouseControlledPlayer::StopUpMove(const FInputActionValue& value)
+{
+	bIsUp = false;
+	FVector v = value.Get<FVector>();
+	Direction.Z = v.Z;
+}
+
+void AMouseControlledPlayer::StopDownMove(const FInputActionValue& value)
+{
+	bIsDown = false;
+	FVector v = value.Get<FVector>();
+	Direction.Z = v.Z;
 }
 
 void AMouseControlledPlayer::InitializeInput()
@@ -225,11 +344,20 @@ void AMouseControlledPlayer::InitializeInput()
 		RightAction = rightAction.Object;
 	}
 
-	ConstructorHelpers::FObjectFinder<UInputAction> cursorMoveAction(TEXT("/Game/BG3/Input/Action/IA_MouseMove.IA_MouseMove"));
+	ConstructorHelpers::FObjectFinder<UInputAction> upAction(TEXT("/Game/BG3/Input/Action/IA_UP.IA_UP"));
 
-	if (cursorMoveAction.Succeeded())
+	if (upAction.Succeeded())
 	{
-		CursorMoveAction = cursorMoveAction.Object;
+		UpAction = upAction.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction> downAction(TEXT("/Game/BG3/Input/Action/IA_Down.IA_Down"));
+
+	if (downAction.Succeeded())
+	{
+		DownAction = downAction.Object;
 	}
 }
+
+#pragma endregion
 

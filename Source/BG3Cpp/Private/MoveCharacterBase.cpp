@@ -3,6 +3,7 @@
 
 #include "MoveCharacterBase.h"
 
+#include "CharacterStatus.h"
 #include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
@@ -15,6 +16,7 @@ AMoveCharacterBase::AMoveCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MovablePtr = &bIsMovable;
+	CurHPPtr = &CurHP;
 
 	ConstructorHelpers::FObjectFinder<UDataTable> dataTable(TEXT("/Game/BG3/DataTable/GameCharacterDataTable.GameCharacterDataTable"));
 	if (dataTable.Succeeded())
@@ -24,6 +26,8 @@ AMoveCharacterBase::AMoveCharacterBase()
 
 	GetCapsuleComponent()->SetCanEverAffectNavigation(true);
 	GetCapsuleComponent()->bDynamicObstacle = true;
+
+	DisplayStatus = CreateDefaultSubobject<UCharacterStatus>(TEXT("DisplayStatus"));
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +43,10 @@ void AMoveCharacterBase::BeginPlay()
 
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
+
+	DisplayStatus->Initialize(Status);
+
+	CurHP = DisplayStatus->GetHp();
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
@@ -76,6 +84,11 @@ void AMoveCharacterBase::OnMoveCompleted()
 {
 	bIsMovable = true;
 	CurrentMOV -= LastMoveDistance;
+}
+
+UCharacterStatus* AMoveCharacterBase::GetStatus()
+{
+	return DisplayStatus;
 }
 
 // Called every frame

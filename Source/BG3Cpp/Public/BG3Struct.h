@@ -42,4 +42,6 @@ public:
 	// 이동력
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MOV;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Level;
 };

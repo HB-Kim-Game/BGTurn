@@ -36,9 +36,13 @@ public:
 
 	UFUNCTION()
 	virtual void OnMoveCompleted();
+
+	class UCharacterStatus* GetStatus();
 	
 public:
 	const bool* MovablePtr;
+
+	const int32* CurHPPtr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FObjectStatus Status;
@@ -63,6 +67,10 @@ protected:
 	float CurrentMOV;
 	
 	bool bIsMovable = true;
-
+	int32 CurHP;
+	
 	class AMovableCharacterController* controller;
+	
+	UPROPERTY(EditAnywhere)
+	class UCharacterStatus* DisplayStatus;
 };

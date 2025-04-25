@@ -41,3 +41,11 @@ enum class EGameCharacterRace : uint8
 	Dragonborn UMETA(DisplayName = "Dragonborn"),
 	Tiefling UMETA(DisplayName = "Tiefling"),
 };
+
+UENUM(BlueprintType)
+enum class EDiceResult : uint8
+{
+	Fail UMETA(DisplayName = "Fail"),
+	Success UMETA(DisplayName = "Success"),
+	Critical UMETA(DisplayName = "Critical"),
+};
