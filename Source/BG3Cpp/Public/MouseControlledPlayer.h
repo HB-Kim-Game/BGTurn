@@ -24,7 +24,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -36,24 +36,26 @@ public:
 	void StartLeftMove(const FInputActionValue& value);
 	void StartRightMove(const FInputActionValue& value);
 
-	void StartUpMove(const FInputActionValue& value);
-	void StartDownMove(const FInputActionValue& value);
+	void StartRotateRight(const FInputActionValue& value);
+	void StartRotateLeft(const FInputActionValue& value);
 	
 	void ForwardMove(const FInputActionValue& value);
 	void BackMove(const FInputActionValue& value);
 	void LeftMove(const FInputActionValue& value);
 	void RightMove(const FInputActionValue& value);
 
-	void UpMove(const FInputActionValue& value);
-	void DownMove(const FInputActionValue& value);
+	void RotateRight(const FInputActionValue& value);
+	void RotateLeft(const FInputActionValue& value);
 	
 	void StopForwardMove(const FInputActionValue& value);
 	void StopBackMove(const FInputActionValue& value);
 	void StopLeftMove(const FInputActionValue& value);
 	void StopRightMove(const FInputActionValue& value);
 
-	void StopUpMove(const FInputActionValue& value);
-	void StopDownMove(const FInputActionValue& value);
+	void StopRotateRight(const FInputActionValue& value);
+	void StopRotateLeft(const FInputActionValue& value);
+
+	void Wheel(const FInputActionValue& value);
 	
 	UFUNCTION()
 	void InitializeInput();
@@ -62,10 +64,16 @@ public:
 	float MoveSpeed = 500.f;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	float MinZ = 300.f;
+	float WheelSpeed = 300.f;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	float MaxZ = 1200.f;
+	float MinLength = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	float MaxLength = 1200.f;
+
+	UPROPERTY()
+	float TargetLength = MaxLength;
 	
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputMappingContext* DefaultContext;
@@ -90,6 +98,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, Category = Input)
     	class UInputAction* DownAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* WheelAction;
 	
 #pragma  endregion 
 
@@ -101,12 +112,19 @@ public:
 	bool bIsRight = false;
 	bool bIsUp = false;
 	bool bIsDown = false;
+
+	bool bIsFocus = false;
 	
 	class APlayableCharacterBase* selectedPlayableChar;
 
+	FVector ForwardDirection;
+	FVector RightDirection;
+	
 	FVector Direction;
 
 	FVector lastCursorPos;
+
+	FVector FocusPoint;
 
 	UPROPERTY(EditAnywhere, Category = Cursor)
 	TSubclassOf<class UMouseManager> MouseManagerClass;
@@ -121,4 +139,14 @@ public:
 
 	UPROPERTY()
 	class UPlayerUI* PlayerUI;
+
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* Root;
+
+	UPROPERTY(EditAnywhere)
+	class USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(EditAnywhere)
+	class UCameraComponent* CameraComp;
+
 };

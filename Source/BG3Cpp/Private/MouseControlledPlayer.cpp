@@ -13,6 +13,8 @@
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "SelectableObject.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
 AMouseControlledPlayer::AMouseControlledPlayer()
@@ -21,6 +23,17 @@ AMouseControlledPlayer::AMouseControlledPlayer()
 	PrimaryActorTick.bCanEverTick = true;
 
 	InitializeInput();
+
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
+
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->SetRelativeRotation(FRotator(-42.f, 0, 0));
+	SpringArmComp->TargetArmLength = 400.f;
+	
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);
 }
 
 
@@ -57,10 +70,21 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector location = GetActorLocation() + Direction.GetSafeNormal() * DeltaTime * MoveSpeed;
-	location.Z = FMath::Clamp(location.Z, MinZ, MaxZ);
+	if (!bIsFocus)
+	{
+		Direction = ForwardDirection + RightDirection;
+		FVector location = GetActorLocation() + Direction.GetSafeNormal() * DeltaTime * MoveSpeed;
+		SetActorLocation(location);	
+	}
+	else
+	{
+		if (FVector::Distance(GetActorLocation(), FocusPoint) <= 5.f) bIsFocus = false;
+		SetActorLocation(FMath::Lerp(GetActorLocation(), FocusPoint, DeltaTime * 5.f));
+	}
 	
-	SetActorLocation(location);
+
+	SpringArmComp->TargetArmLength = FMath::Lerp(SpringArmComp->TargetArmLength, TargetLength, DeltaTime * 5.f);
+	SpringArmComp->SetRelativeRotation(FRotator(FMath::Lerp(0, -47.f, SpringArmComp->TargetArmLength / MaxLength), 0, 0));
 	
 	if (nullptr != selectedPlayableChar && selectedPlayableChar->GetCurrentMOV() > 0.0f && !selectedPlayableChar->GetIsMoving())
 	{
@@ -108,13 +132,15 @@ void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(RightAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::RightMove);
 		EnhancedInputComponent->BindAction(RightAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopRightMove);
 
-		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartUpMove);
-		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::UpMove);
-		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopUpMove);
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartRotateRight);
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::RotateRight);
+		EnhancedInputComponent->BindAction(UpAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopRotateRight);
 		
-		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartDownMove);
-		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::DownMove);
-		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopDownMove);
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartRotateLeft);
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::RotateLeft);
+		EnhancedInputComponent->BindAction(DownAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::StopRotateLeft);
+
+		EnhancedInputComponent->BindAction(WheelAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::Wheel);
 	}
 }
 
@@ -150,6 +176,10 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					PlayerUI->ShowSelectedCharHP( *selectedPlayableChar->CurHPPtr ,selectedPlayableChar->GetStatus()->GetHp());
 					
 					if (selectedPlayableChar->MovablePtr) MouseManager->SetMouseMode(EGameMouseState::Move);
+
+					bIsFocus = true;
+					FocusPoint = FVector(selectedPlayableChar->GetActorLocation().X, selectedPlayableChar->GetActorLocation().Y, GetActorLocation().Z);
+					
 				}
 				else
 				{
@@ -199,13 +229,13 @@ void AMouseControlledPlayer::StartRightMove(const FInputActionValue& value)
 	bIsLeft = false;
 }
 
-void AMouseControlledPlayer::StartUpMove(const FInputActionValue& value)
+void AMouseControlledPlayer::StartRotateRight(const FInputActionValue& value)
 {
 	bIsUp = true;
 	bIsDown = false;
 }
 
-void AMouseControlledPlayer::StartDownMove(const FInputActionValue& value)
+void AMouseControlledPlayer::StartRotateLeft(const FInputActionValue& value)
 {
 	bIsDown = true;
 	bIsUp = false;
@@ -216,14 +246,18 @@ void AMouseControlledPlayer::ForwardMove(const FInputActionValue& value)
 	if (bIsback) return;
 	
 	FVector2D v = value.Get<FVector2D>();
-	Direction.X = v.X;
+
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * v.X;
 }
 
 void AMouseControlledPlayer::StopForwardMove(const FInputActionValue& value)
 {
 	bIsforward = false;
 	FVector2D v = value.Get<FVector2D>();
-	Direction.X = v.X;
+	
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * v.X;
 }
 
 void AMouseControlledPlayer::BackMove(const FInputActionValue& value)
@@ -231,14 +265,18 @@ void AMouseControlledPlayer::BackMove(const FInputActionValue& value)
 	if (bIsforward) return;
 	
 	FVector2D v = value.Get<FVector2D>();
-	Direction.X = v.X;
+	
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * v.X;
 }
 
 void AMouseControlledPlayer::StopBackMove(const FInputActionValue& value)
 {
 	bIsback = false;
 	FVector2D v = value.Get<FVector2D>();
-	Direction.X = v.X;
+	
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * v.X;
 }
 
 void AMouseControlledPlayer::LeftMove(const FInputActionValue& value)
@@ -246,14 +284,17 @@ void AMouseControlledPlayer::LeftMove(const FInputActionValue& value)
 	if (bIsRight) return;
 	
 	FVector2D v = value.Get<FVector2D>();
-	Direction.Y = v.Y;
+	
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * v.Y;
 }
 
 void AMouseControlledPlayer::StopLeftMove(const FInputActionValue& value)
 {
 	bIsLeft = false;
 	FVector2D v = value.Get<FVector2D>();
-	Direction.Y = v.Y;
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * v.Y;
 }
 
 void AMouseControlledPlayer::RightMove(const FInputActionValue& value)
@@ -261,44 +302,55 @@ void AMouseControlledPlayer::RightMove(const FInputActionValue& value)
 	if (bIsLeft) return;
 	
 	FVector2D v = value.Get<FVector2D>();
-	Direction.Y = v.Y;
-}
-
-void AMouseControlledPlayer::UpMove(const FInputActionValue& value)
-{
-	if (bIsDown) return;
-	
-	FVector v = value.Get<FVector>();
-	Direction.Z = v.Z;
-}
-
-void AMouseControlledPlayer::DownMove(const FInputActionValue& value)
-{
-	if (bIsUp) return;
-	
-	FVector v = value.Get<FVector>();
-	Direction.Z = v.Z;
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * v.Y;
 }
 
 void AMouseControlledPlayer::StopRightMove(const FInputActionValue& value)
 {
 	bIsRight = false;
 	FVector2D v = value.Get<FVector2D>();
-	Direction.Y = v.Y;
+	FRotator YawRotation(0.f, GetActorRotation().Yaw, 0.f);
+	RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * v.Y;
 }
 
-void AMouseControlledPlayer::StopUpMove(const FInputActionValue& value)
+
+void AMouseControlledPlayer::RotateRight(const FInputActionValue& value)
+{
+	if (bIsDown) return;
+	
+	FVector v = value.Get<FVector>();
+	
+	AddActorWorldRotation(FRotator(0, v.Z, 0));
+}
+
+void AMouseControlledPlayer::RotateLeft(const FInputActionValue& value)
+{
+	if (bIsUp) return;
+	
+	FVector v = value.Get<FVector>();
+	AddActorWorldRotation(FRotator(0, v.Z, 0));
+}
+
+void AMouseControlledPlayer::StopRotateRight(const FInputActionValue& value)
 {
 	bIsUp = false;
 	FVector v = value.Get<FVector>();
 	Direction.Z = v.Z;
 }
 
-void AMouseControlledPlayer::StopDownMove(const FInputActionValue& value)
+void AMouseControlledPlayer::StopRotateLeft(const FInputActionValue& value)
 {
 	bIsDown = false;
 	FVector v = value.Get<FVector>();
 	Direction.Z = v.Z;
+}
+
+void AMouseControlledPlayer::Wheel(const FInputActionValue& value)
+{
+	float v = value.Get<float>();
+
+	TargetLength = FMath::Clamp(SpringArmComp->TargetArmLength + v * WheelSpeed, MinLength, MaxLength);
 }
 
 void AMouseControlledPlayer::InitializeInput()
@@ -356,6 +408,13 @@ void AMouseControlledPlayer::InitializeInput()
 	if (downAction.Succeeded())
 	{
 		DownAction = downAction.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction> wheelAction(TEXT("/Game/BG3/Input/Action/IA_MouseWheel.IA_MouseWheel"));
+
+	if (wheelAction.Succeeded())
+	{
+		WheelAction = wheelAction.Object;
 	}
 }
 
