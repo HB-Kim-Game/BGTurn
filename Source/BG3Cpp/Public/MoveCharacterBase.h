@@ -8,6 +8,9 @@
 #include "GameFramework/Character.h"
 #include "MoveCharacterBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnCharacterAction);
+DECLARE_MULTICAST_DELEGATE(FOnCharacterBonusAction);
+
 UCLASS()
 class BG3CPP_API AMoveCharacterBase : public ACharacter, public ISelectableObject
 {
@@ -29,7 +32,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	void SetDestination(FVector location);
 
 	virtual void Move();
@@ -40,6 +43,11 @@ public:
 	class UCharacterStatus* GetStatus();
 	
 public:
+	
+	FOnCharacterAction OnCharacterAction;
+	
+	FOnCharacterBonusAction OnCharacterBonusAction;
+	
 	const bool* MovablePtr;
 
 	const int32* CurHPPtr;
@@ -72,5 +80,10 @@ protected:
 	class AMovableCharacterController* controller;
 	
 	UPROPERTY(EditAnywhere)
-	class UCharacterStatus* DisplayStatus;
+	class UCharacterStatus* DetailStatus;
+
+	TArray<FGameAction> Actions;
+	
+	int TurnActionCount = 1;
+	int TurnBonusActionCount = 1;
 };

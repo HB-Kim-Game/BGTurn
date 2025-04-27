@@ -13,5 +13,10 @@ UCLASS()
 class BG3CPP_API ABG3GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	protected:
 	
+	class UActionManager* ActionManager;
+	
+	virtual void BeginPlay() override;
 };

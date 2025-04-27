@@ -27,7 +27,7 @@ AMoveCharacterBase::AMoveCharacterBase()
 	GetCapsuleComponent()->SetCanEverAffectNavigation(true);
 	GetCapsuleComponent()->bDynamicObstacle = true;
 
-	DisplayStatus = CreateDefaultSubobject<UCharacterStatus>(TEXT("DisplayStatus"));
+	DetailStatus = CreateDefaultSubobject<UCharacterStatus>(TEXT("DisplayStatus"));
 }
 
 // Called when the game starts or when spawned
@@ -41,12 +41,15 @@ void AMoveCharacterBase::BeginPlay()
 	controller = Cast<AMovableCharacterController>(GetController());
 	controller->OnAIMoveCompleted.AddDynamic(this, &AMoveCharacterBase::OnMoveCompleted);
 
+	OnCharacterAction.AddLambda([this](){this->TurnActionCount -= 1;});
+	OnCharacterBonusAction.AddLambda([this](){this->TurnBonusActionCount -= 1;});
+
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
 
-	DisplayStatus->Initialize(Status);
+	DetailStatus->Initialize(Status);
 
-	CurHP = DisplayStatus->GetHp();
+	CurHP = DetailStatus->GetHp();
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
@@ -88,7 +91,7 @@ void AMoveCharacterBase::OnMoveCompleted()
 
 UCharacterStatus* AMoveCharacterBase::GetStatus()
 {
-	return DisplayStatus;
+	return DetailStatus;
 }
 
 // Called every frame

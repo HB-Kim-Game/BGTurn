@@ -37,11 +37,15 @@ private:
 	FString FileName;
 	
 	FObjectStatus Status;
+
+	TArray<FGameAction*> Actions;
 	
 	int32 HP;
 	int32 CharLevel;
 
 	int32 CreateHPwithDice();
+
+	void CreateActions();
 	
 	void Save();
 	bool Load();

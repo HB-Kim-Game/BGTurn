@@ -31,6 +31,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3GameMode.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3Struct.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/CharacterStatus.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -39,6 +41,8 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MovableCharacterController.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCursor.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/SelectableObject.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Enums.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3GameMode.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" root0="FORCE_HIGHLIGHTING" />
@@ -218,6 +222,7 @@
       <workItem from="1745538395269" duration="685000" />
       <workItem from="1745556248000" duration="15771000" />
       <workItem from="1745637263904" duration="10544000" />
+      <workItem from="1745745369534" duration="17431000" />
     </task>
     <servers />
   </component>

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BG3Struct.h"
 #include "GameFramework/SaveGame.h"
 #include "SaveCharacterData.generated.h"
 
@@ -26,4 +27,8 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
 	int32 SaveCharacterLevel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SaveData")
+	TArray<FGameAction> SaveActions;
+	
 };

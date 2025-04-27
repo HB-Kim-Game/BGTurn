@@ -45,3 +45,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Level;
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FGameAction : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ActionID;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EActionCase ActionCase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString DisplayName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Description;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Texture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString TexturePath;
+};

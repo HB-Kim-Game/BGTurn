@@ -49,3 +49,10 @@ enum class EDiceResult : uint8
 	Success UMETA(DisplayName = "Success"),
 	Critical UMETA(DisplayName = "Critical"),
 };
+
+UENUM(BlueprintType)
+enum class EActionCase : uint8
+{
+	DefaultAction UMETA(DisplayName = "DefaultAction"),
+	BonusAction UMETA(DisplayName = "BonusAction"),
+};
