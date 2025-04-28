@@ -112,12 +112,12 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 	}
 }
 
-UMouseManager* AMouseControlledPlayer::GetMouseManager()
+UMouseManager* AMouseControlledPlayer::GetMouseManager() const
 {
 	return MouseManager;	
 }
 
-APlayableCharacterBase* AMouseControlledPlayer::GetPlayableCharacter()
+APlayableCharacterBase* AMouseControlledPlayer::GetPlayableCharacter() const
 {
 	return selectedPlayableChar;
 }

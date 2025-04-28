@@ -20,5 +20,8 @@ public:
 	static int32 CalculateBonus(uint8 charStat);
 #pragma endregion
 
-	
+#pragma region 리스트 Clamp 함수, Max는 exclude
+	UFUNCTION(BlueprintCallable, Category = "Math")
+	static int32 ClampCursor(int32 value, int32 max, int min = 0);
+#pragma endregion 
 };

@@ -28,9 +28,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	class UMouseManager* GetMouseManager();
+	class UMouseManager* GetMouseManager() const;
 
-	class APlayableCharacterBase* GetPlayableCharacter();
+	class APlayableCharacterBase* GetPlayableCharacter() const;
 	
 	private:
 	void OnLeftMouseButtonDown();
