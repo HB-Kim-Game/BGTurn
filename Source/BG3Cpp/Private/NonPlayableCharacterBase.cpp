@@ -7,12 +7,12 @@ void ANonPlayableCharacterBase::Selected()
 {
 	Super::Selected();
 
-	GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
+	//GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
 }
 
 void ANonPlayableCharacterBase::Deselected()
 {
 	Super::Deselected();
 
-	GetMesh()->SetOverlayMaterial(nullptr);
+	//GetMesh()->SetOverlayMaterial(nullptr);
 }

@@ -21,6 +21,7 @@ public:
 	
 	void InitializeAction();
 
+	void PrepareAction(FGameAction action, class AMoveCharacterBase* character);
 	void ExecuteAction(FGameAction action, class AMoveCharacterBase* character);
 	
 };

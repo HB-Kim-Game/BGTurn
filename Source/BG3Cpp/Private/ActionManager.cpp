@@ -12,6 +12,19 @@ void UActionManager::InitializeAction()
 	ActionMap.Add("Sprint", NewObject<USprintAction>(this));
 }
 
+void UActionManager::PrepareAction(FGameAction action, class AMoveCharacterBase* character)
+{
+	if (auto* actionBase = ActionMap.Find(action.ActionID))
+	{
+		if (*actionBase)
+		{
+			(*actionBase)->PrepareAction(character);
+
+			character->OnCharacterPrepareAction.Broadcast();
+		}
+	}
+}
+
 void UActionManager::ExecuteAction(FGameAction action, AMoveCharacterBase* character)
 {
 	if (auto* actionBase = ActionMap.Find(action.ActionID))

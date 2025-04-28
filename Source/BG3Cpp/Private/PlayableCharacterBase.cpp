@@ -35,14 +35,14 @@ void APlayableCharacterBase::Selected()
 {
 	Super::Selected();
 
-	GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
+	//GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
 }
 
 void APlayableCharacterBase::Deselected()
 {
 	Super::Deselected();
 
-	GetMesh()->SetOverlayMaterial(nullptr);
+	//GetMesh()->SetOverlayMaterial(nullptr);
 	Spline->ClearSplinePoints();
 	RemoveSplineMesh();
 }

@@ -9,6 +9,7 @@
 #include "MoveCharacterBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnCharacterAction);
+DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareAction);
 DECLARE_MULTICAST_DELEGATE(FOnCharacterBonusAction);
 
 UCLASS()
@@ -40,13 +41,23 @@ public:
 	UFUNCTION()
 	virtual void OnMoveCompleted();
 
+	virtual void Selected() override;
+	virtual void Deselected() override;
+
 	class UCharacterStatus* GetStatus();
+
+	int GetCurrentTurnActionCount();
+	int GetCurrentBonusActionCount();
+
+	void SetOutline(bool condition);
 	
 public:
 	
 	FOnCharacterAction OnCharacterAction;
 	
 	FOnCharacterBonusAction OnCharacterBonusAction;
+	
+	FOnCharacterPrepareAction OnCharacterPrepareAction;
 	
 	const bool* MovablePtr;
 

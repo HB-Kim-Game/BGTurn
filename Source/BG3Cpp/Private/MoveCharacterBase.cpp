@@ -50,6 +50,8 @@ void AMoveCharacterBase::BeginPlay()
 	DetailStatus->Initialize(Status);
 
 	CurHP = DetailStatus->GetHp();
+
+	CurHP -= 10;
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
@@ -89,9 +91,45 @@ void AMoveCharacterBase::OnMoveCompleted()
 	CurrentMOV -= LastMoveDistance;
 }
 
+void AMoveCharacterBase::Selected()
+{
+	ISelectableObject::Selected();
+
+	SetOutline(true);
+}
+
+void AMoveCharacterBase::Deselected()
+{
+	ISelectableObject::Deselected();
+
+	SetOutline(false);
+}
+
 UCharacterStatus* AMoveCharacterBase::GetStatus()
 {
 	return DetailStatus;
+}
+
+int AMoveCharacterBase::GetCurrentTurnActionCount()
+{
+	return TurnActionCount;
+}
+
+int AMoveCharacterBase::GetCurrentBonusActionCount()
+{
+	return TurnBonusActionCount;  
+}
+
+void AMoveCharacterBase::SetOutline(bool condition)
+{
+	if (condition)
+	{
+		GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
+	}
+	else
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
+	}
 }
 
 // Called every frame

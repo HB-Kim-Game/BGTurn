@@ -28,8 +28,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	class UMouseManager* GetMouseManager();
+
+	class APlayableCharacterBase* GetPlayableCharacter();
+	
 	private:
 	void OnLeftMouseButtonDown();
+	void OnAltTriggered();
+	void OnAltComplete();
+	
 #pragma region Camera Movement
 	void StartForwardMove(const FInputActionValue& value);
 	void StartBackMove(const FInputActionValue& value);
@@ -82,6 +89,9 @@ public:
 	class UInputAction* ClickAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* OutlineAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* ForwardAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
@@ -97,7 +107,7 @@ public:
 	class UInputAction* UpAction;
 	
 	UPROPERTY(VisibleAnywhere, Category = Input)
-    	class UInputAction* DownAction;
+	class UInputAction* DownAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* WheelAction;
@@ -114,6 +124,7 @@ public:
 	bool bIsDown = false;
 
 	bool bIsFocus = false;
+	bool bIsOutline = false;
 	
 	class APlayableCharacterBase* selectedPlayableChar;
 
@@ -128,7 +139,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Cursor)
 	TSubclassOf<class UMouseManager> MouseManagerClass;
-
+	
 	UPROPERTY()
 	class UMouseManager* MouseManager;
 	

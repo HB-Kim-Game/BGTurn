@@ -22,6 +22,8 @@ public:
 
 	class UCursorBase* GetCursor();
 
+	const EGameMouseState* MouseStatePtr;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -37,8 +39,7 @@ protected:
 	TArray<class UCursorBase*> Cursors;
 
 	class UCursorBase* CurrentCursor;
+	EGameMouseState MouseState;
 	
 	void CreateCursors();
-
-	EGameMouseState MouseState;
 };

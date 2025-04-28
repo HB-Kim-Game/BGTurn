@@ -20,6 +20,8 @@ void UMouseManager::Initialize(EGameMouseState mouseState)
 {
 	CreateCursors();
 	SetMouseMode(mouseState);
+
+	MouseStatePtr = &mouseState;
 }
 
 void UMouseManager::SetMouseMode(EGameMouseState mouseState)

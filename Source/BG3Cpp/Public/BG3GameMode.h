@@ -14,9 +14,16 @@ class BG3CPP_API ABG3GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	protected:
-	
+public:
 	class UActionManager* ActionManager;
+	
+	class UBattleTurnManager* BattleManager;
+
+	void SetAllCharacterOutline(bool condition);
+	
+	void Initialize();
+	
+	protected:
 	
 	virtual void BeginPlay() override;
 };

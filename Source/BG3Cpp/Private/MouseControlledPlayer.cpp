@@ -4,6 +4,7 @@
 #include "MouseControlledPlayer.h"
 
 #include "BG3Enums.h"
+#include "BG3GameMode.h"
 #include "CharacterStatus.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -48,6 +49,11 @@ void AMouseControlledPlayer::BeginPlay()
 	inputMode.SetHideCursorDuringCapture(false);
 	pc->SetInputMode(inputMode);
 	pc->SetShowMouseCursor(true);
+
+	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		gm->Initialize();
+	}
 
 	MouseState = EGameMouseState::Default;
 
@@ -106,6 +112,16 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 	}
 }
 
+UMouseManager* AMouseControlledPlayer::GetMouseManager()
+{
+	return MouseManager;	
+}
+
+APlayableCharacterBase* AMouseControlledPlayer::GetPlayableCharacter()
+{
+	return selectedPlayableChar;
+}
+
 #pragma region Input
 // Called to bind functionality to input
 void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -115,6 +131,8 @@ void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::OnLeftMouseButtonDown);
+		EnhancedInputComponent->BindAction(OutlineAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::OnAltTriggered);
+		EnhancedInputComponent->BindAction(OutlineAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::OnAltComplete);
 		
 		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::StartForwardMove);
 		EnhancedInputComponent->BindAction(ForwardAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::ForwardMove);
@@ -172,8 +190,8 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				if (auto* playable = Cast<APlayableCharacterBase>(actor))
 				{
 					selectedPlayableChar = playable;
-					// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터의 체력을 PlayerUI에 표기해줌
-					PlayerUI->ShowSelectedCharHP( *selectedPlayableChar->CurHPPtr ,selectedPlayableChar->GetStatus()->GetHp());
+					// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터를 PlayerUI에 넣어줌.
+					PlayerUI->SetSelectedCharacter(selectedPlayableChar);
 					
 					if (selectedPlayableChar->MovablePtr) MouseManager->SetMouseMode(EGameMouseState::Move);
 
@@ -202,6 +220,31 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				selectedPlayableChar->Move();
 			}
 		}
+	}
+}
+
+void AMouseControlledPlayer::OnAltTriggered()
+{
+	if (bIsOutline) return;
+
+	bIsOutline = true;
+	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		gm->SetAllCharacterOutline(true);
+	}
+}
+
+void AMouseControlledPlayer::OnAltComplete()
+{
+	bIsOutline = false;
+	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		gm->SetAllCharacterOutline(false);
+	}
+
+	if (SelectedObject)
+	{
+		SelectedObject->Selected();	
 	}
 }
 
@@ -415,6 +458,13 @@ void AMouseControlledPlayer::InitializeInput()
 	if (wheelAction.Succeeded())
 	{
 		WheelAction = wheelAction.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction> outlineAction(TEXT("/Game/BG3/Input/Action/IA_ShowOutline.IA_ShowOutline"));
+
+	if (outlineAction.Succeeded())
+	{
+		OutlineAction = outlineAction.Object;
 	}
 }
 

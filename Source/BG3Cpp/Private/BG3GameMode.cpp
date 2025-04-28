@@ -3,6 +3,25 @@
 
 #include "BG3GameMode.h"
 
+#include "ActionManager.h"
+#include "BattleTurnManager.h"
+
+void ABG3GameMode::SetAllCharacterOutline(bool condition)
+{
+	BattleManager->SetOutlineAllBattleCharacters(condition);
+}
+
+void ABG3GameMode::Initialize()
+{
+	ActionManager = NewObject<UActionManager>();
+	ActionManager->InitializeAction();
+	
+	BattleManager = NewObject<UBattleTurnManager>(this, UBattleTurnManager::StaticClass());
+	BattleManager->RegisterComponent();
+
+	BattleManager->StartBattle();
+}
+
 void ABG3GameMode::BeginPlay()
 {
 	Super::BeginPlay();
