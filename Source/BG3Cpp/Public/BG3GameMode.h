@@ -17,6 +17,10 @@ class BG3CPP_API ABG3GameMode : public AGameModeBase
 public:
 	class UActionManager* ActionManager;
 	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UBattleTurnManager> BattleMangerClass;
+
+	UPROPERTY()
 	class UBattleTurnManager* BattleManager;
 
 	void SetAllCharacterOutline(bool condition);

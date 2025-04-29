@@ -105,6 +105,11 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 				lastCursorPos = dest;
 				float Distance = selectedPlayableChar->ShowPath(dest);
 
+				float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+				float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+
+				PlayerUI->ShowMoveProgress(curProgress, resultProgress);
+
 				auto* cursor = Cast<UMoveCursor>(MouseManager->GetCursor());
 				if (cursor) cursor->ShowDistance(Distance, Distance / 100.f < selectedPlayableChar->GetCurrentMOV());
 			}

@@ -16,21 +16,33 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 	ActionListViewer->FetchDatas(character->GetActions());
 	
 	ShowSelectedCharHP(*SelectedCharacter->CurHPPtr, SelectedCharacter->GetStatus()->GetHp());
+	float progress = SelectedCharacter->GetCurrentMOV() / SelectedCharacter->Status.MOV;
+	ShowMoveProgress(progress, progress);
+}
+
+void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
+{
+	MoveMatDynamic->SetScalarParameterValue("LastPercent", lastProgress);
+	MoveMatDynamic->SetScalarParameterValue("Percent", resultProgress);
 }
 
 void UPlayerUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	HpMat = UMaterialInstanceDynamic::Create(HpMaterial, this);
+	HpMatDynamic = UMaterialInstanceDynamic::Create(HpMaterial, this);
 
-	SelectedCharImage->SetBrushFromMaterial(HpMat);
+	SelectedCharImage->SetBrushFromMaterial(HpMatDynamic);
+
+	MoveMatDynamic = UMaterialInstanceDynamic::Create(MoveMaterial, this);
+
+	MoveProgress->SetBrushFromMaterial(MoveMatDynamic);
 }
 
 void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
 {
-	HpMat->SetTextureParameterValue("CharacterImage", SelectedCharacter->Status.Portrait);
-	HpMat->SetScalarParameterValue("Percentage", static_cast<float>(maxHp - curHp) / maxHp);
+	HpMatDynamic->SetTextureParameterValue("CharacterImage", SelectedCharacter->Status.Portrait);
+	HpMatDynamic->SetScalarParameterValue("Percentage", static_cast<float>(maxHp - curHp) / maxHp);
 	
 	FString str = FString::FromInt(curHp) + " / " + FString::FromInt(maxHp);
 	

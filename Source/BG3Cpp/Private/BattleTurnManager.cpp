@@ -4,6 +4,7 @@
 #include "BattleTurnManager.h"
 
 #include "MoveCharacterBase.h"
+#include "TurnListViewer.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -19,6 +20,10 @@ UBattleTurnManager::UBattleTurnManager()
 void UBattleTurnManager::StartBattle()
 {
 	Characters.Empty();
+
+	TurnList = Cast<UTurnListViewer>(CreateWidget(GetWorld(), TurnListClass));
+	TurnList->AddToViewport(10);
+	
 	// 임시 - 월드내의 MovableCharacterBase 타입의 객체들을 전부 가져와서 저장.
 	TArray<AActor*> actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoveCharacterBase::StaticClass(), actors);
@@ -31,6 +36,8 @@ void UBattleTurnManager::StartBattle()
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *cast->TableName.ToString());
 		}
 	}
+
+	TurnList->FetchDatas(Characters);
 }
 
 void UBattleTurnManager::SetOutlineAllBattleCharacters(bool condition)

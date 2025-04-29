@@ -23,17 +23,28 @@ public :
 	
 	UPROPERTY(meta = (BindWidget))
 	class UActionListViewer* ActionListViewer;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* MoveProgress;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* HpMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* MoveMaterial;
 
 	UPROPERTY(editAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UActionButton> actionButtonClass;
 	
 	UPROPERTY()
-	UMaterialInstanceDynamic* HpMat;
+	UMaterialInstanceDynamic* HpMatDynamic;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* MoveMatDynamic;
 
 	void SetSelectedCharacter(class APlayableCharacterBase* character);
+
+	void ShowMoveProgress(float lastProgress, float resultProgress);
 	
 	virtual void NativeConstruct() override;
 

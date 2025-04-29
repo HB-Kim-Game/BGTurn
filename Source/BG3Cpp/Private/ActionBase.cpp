@@ -17,8 +17,6 @@ void UActionBase::ExecuteAction(class AMoveCharacterBase* character)
 void UMeleeAction::PrepareAction(class AMoveCharacterBase* character)
 {
 	Super::PrepareAction(character);
-
-	UE_LOG(LogTemp, Warning, TEXT("UMeleeAction::PrepareAction"));
 }
 
 void UMeleeAction::ExecuteAction(class AMoveCharacterBase* character)
@@ -27,8 +25,23 @@ void UMeleeAction::ExecuteAction(class AMoveCharacterBase* character)
 
 }
 
+void USprintAction::PrepareAction(class AMoveCharacterBase* character)
+{
+	Super::PrepareAction(character);
+}
+
 void USprintAction::ExecuteAction(class AMoveCharacterBase* character)
 {
 	Super::ExecuteAction(character);
 	
+}
+
+void UFireBallAction::PrepareAction(class AMoveCharacterBase* character)
+{
+	Super::PrepareAction(character);
+}
+
+void UFireBallAction::ExecuteAction(class AMoveCharacterBase* character)
+{
+	Super::ExecuteAction(character);
 }

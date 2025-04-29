@@ -5,6 +5,7 @@
 
 #include "ActionManager.h"
 #include "BattleTurnManager.h"
+#include "TurnListViewer.h"
 
 void ABG3GameMode::SetAllCharacterOutline(bool condition)
 {
@@ -16,9 +17,9 @@ void ABG3GameMode::Initialize()
 	ActionManager = NewObject<UActionManager>();
 	ActionManager->InitializeAction();
 	
-	BattleManager = NewObject<UBattleTurnManager>(this, UBattleTurnManager::StaticClass());
+	BattleManager = NewObject<UBattleTurnManager>(this, BattleMangerClass);
 	BattleManager->RegisterComponent();
-
+	
 	BattleManager->StartBattle();
 }
 

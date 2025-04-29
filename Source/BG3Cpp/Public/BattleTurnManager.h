@@ -20,6 +20,12 @@ public:
 
 	void SetOutlineAllBattleCharacters(bool condition);
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UTurnListViewer> TurnListClass;
+
+	UPROPERTY()
+	class UTurnListViewer* TurnList;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

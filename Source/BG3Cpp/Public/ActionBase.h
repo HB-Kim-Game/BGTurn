@@ -26,7 +26,7 @@ class BG3CPP_API UMeleeAction : public UActionBase
 	GENERATED_BODY()
 
 public:
-	virtual void PrepareAction(class AMoveCharacterBase* character);
+	virtual void PrepareAction(class AMoveCharacterBase* character) override;
 	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
 };
 
@@ -36,5 +36,16 @@ class BG3CPP_API USprintAction : public UActionBase
 	GENERATED_BODY()
 
 public:
+	virtual void PrepareAction(class AMoveCharacterBase* character) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
+};
+
+UCLASS()
+class BG3CPP_API UFireBallAction : public UActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void PrepareAction(class AMoveCharacterBase* character) override;
 	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
 };

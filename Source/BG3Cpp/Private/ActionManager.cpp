@@ -10,6 +10,7 @@ void UActionManager::InitializeAction()
 {
 	ActionMap.Add("Melee", NewObject<UMeleeAction>(this));
 	ActionMap.Add("Sprint", NewObject<USprintAction>(this));
+	ActionMap.Add("FireBall", NewObject<UFireBallAction>(this));
 }
 
 void UActionManager::PrepareAction(UCharacterActionData* action, class AMoveCharacterBase* character)

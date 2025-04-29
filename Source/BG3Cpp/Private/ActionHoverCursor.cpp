@@ -20,7 +20,7 @@ void UActionHoverCursor::ShowActionDetail(UCharacterActionData* action)
 	if (action->Texture)
 	{
 		temp.SetResourceObject(action->Texture);
-		temp.SetImageSize(FVector2D(128.f, 128.f));
+		temp.SetImageSize(FVector2D(100.f, 100.f));
 		IconImage->SetBrush(temp);	
 	}
 }
