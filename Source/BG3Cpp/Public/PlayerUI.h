@@ -17,13 +17,13 @@ class BG3CPP_API UPlayerUI : public UUserWidget
 public :
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* SelectedCharHP;
-
-	UPROPERTY(meta = (BindWidget))
-	class UGridPanel* ActionButtonPanel;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	class UImage* SelectedCharImage;
-
+	
+	UPROPERTY(meta = (BindWidget))
+	class UActionListViewer* ActionListViewer;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* HpMaterial;
 

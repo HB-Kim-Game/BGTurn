@@ -50,8 +50,6 @@ void AMoveCharacterBase::BeginPlay()
 	DetailStatus->Initialize(Status);
 
 	CurHP = DetailStatus->GetHp();
-
-	CurHP -= 10;
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)

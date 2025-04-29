@@ -18,6 +18,8 @@ public:
 	// 직업
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EGameCharacterClass CharClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Portrait;
 	// 힘
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Str;
@@ -56,6 +58,12 @@ struct FGameAction : public FTableRowBase
 	FString ActionID;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EActionCase ActionCase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MinDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int AmountTurn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;

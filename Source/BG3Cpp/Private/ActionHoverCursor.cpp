@@ -3,20 +3,24 @@
 
 #include "ActionHoverCursor.h"
 
+#include "CharacterActionData.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/RichTextBlock.h"
 
-void UActionHoverCursor::ShowActionDetail(FGameAction* action)
+void UActionHoverCursor::ShowActionDetail(UCharacterActionData* action)
 {
-	
 	DisplayName->SetText(FText::FromString(action->DisplayName));
-	DescriptionText->SetText(FText::FromString(action->DisplayName));
+	FString lineBreakText = "<br>";
+	FString lineBreak = "\r\n";
+	FString result = action->Description.Replace(*lineBreakText, *lineBreak);
+	DescriptionText->SetText(FText::FromString(result));
 
 	FSlateBrush temp;
 	if (action->Texture)
 	{
 		temp.SetResourceObject(action->Texture);
-		temp.SetImageSize(FVector2D(32.f, 32.f));
+		temp.SetImageSize(FVector2D(128.f, 128.f));
 		IconImage->SetBrush(temp);	
 	}
 }

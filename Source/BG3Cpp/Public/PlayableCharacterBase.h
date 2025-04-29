@@ -21,6 +21,8 @@ public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
 	virtual void Move() override;
+
+	TArray<class UCharacterActionData*> GetActions() const;
 	
 	float ShowPath(FVector dest);
 
@@ -30,11 +32,16 @@ public:
 
 	bool GetIsMoving();
 
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	class USplineComponent* Spline;
 	class UStaticMesh* SplineMeshInstance;
 	class UMaterial* SplineMaterial;
 
+	TArray<class UCharacterActionData*> Actions;
+	
 	bool bIsMoving = false;
 
 	TArray<class USplineMeshComponent*> SplineMeshes;

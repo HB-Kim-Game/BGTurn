@@ -16,7 +16,6 @@ class BG3CPP_API UViewerItemBase : public UUserWidget
 
 public:
 	virtual void FetchData(UObject* Data) {}
-	virtual void FetchStructData(const void* Data) {}
 	virtual void Selected() {}
 	virtual void Deselected() {}
 };

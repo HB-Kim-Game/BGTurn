@@ -24,21 +24,20 @@ public:
 		if (SpawnItems.Num() > 0)
 		{
 			// 새로 패치된 리스트 정보만 다시 뿌려줌.
+			return;
 		}
 
-		if (FetchedDatas.Num() > 0)
-		{
-			InitializeItem(FetchedDatas);
-		}
-		else if (FetchedStructDatas.Num() > 0)
-		{
-			InitializeItem(FetchedStructsDatasRef);
-		}
+		InitializeItem();
 	}
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ListViewer)
+	UPROPERTY(meta = (BindWidget))
 	class UPanelWidget* Panel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ListViewer)
+	int ItemPoolCount = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ListViewer)
+	int CursorOffset = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ListViewer)
 	TSubclassOf<UViewerItemBase> ItemClass;
@@ -54,22 +53,5 @@ protected:
 
 	TArray<UViewerItemBase*> SpawnItems;
 
-	void InitializeItem(TArray<UObject*> datas);
-	
-	template<typename T>
-	void InitializeItem(const TArray<T>& datas)
-	{
-		for (int32 i = 0; i < datas.Num(); i++)
-		{
-			UViewerItemBase* item = Cast<UViewerItemBase>(CreateWidget(GetWorld(), ItemClass));
-			if (item)
-			{
-				Panel->AddChild(item);
-				item->FetchStructData(datas[i]);
-				//오프셋 적용 해야함.
-				SpawnItems.Add(item);
-			}
-		}
-	}
-	
+	virtual void InitializeItem();
 };

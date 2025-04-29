@@ -3,28 +3,30 @@
 
 #include "UIListViewer.h"
 
+#include "BGUtil.h"
+
 void UUIListViewer::MoveCursor(int32 Gap)
 {
 	Super::MoveCursor(Gap);
-	for (UViewerItemBase* item : SpawnItems)
+	
+	for (int i = 0; i< SpawnItems.Num(); i++)
 	{
-		item->Deselected();
+		SpawnItems[i]->FetchData(FetchedDatas[UBGUtil::ClampCursor(GetCursor() - CursorOffset + i, FetchedDatas.Num())]);
+		SpawnItems[i]->Deselected();
 	}
 
 	SpawnItems[GetCursor()]->Selected();
 }
 
-void UUIListViewer::InitializeItem(TArray<UObject*> datas)
+void UUIListViewer::InitializeItem()
 {
-	for (int32 i = 0; i < datas.Num(); i++)
+	for (int32 i = 0; i < ItemPoolCount; i++)
 	{
 		UViewerItemBase* item = Cast<UViewerItemBase>(CreateWidget(GetWorld(), ItemClass));
 		if (item)
 		{
-			Panel->AddChild(item);
-			item->FetchData(datas[i]);
-			//오프셋 적용 해야함.
 			SpawnItems.Add(item);
+			item->SetPositionInViewport(FVector2D(HorizontalOffset + HorizontalInterval * i, VerticalOffset + VerticalOffset * i));
 		}
 	}
 }

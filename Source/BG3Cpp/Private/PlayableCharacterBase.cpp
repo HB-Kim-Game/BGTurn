@@ -3,6 +3,8 @@
 
 #include "PlayableCharacterBase.h"
 
+#include "CharacterActionData.h"
+#include "CharacterStatus.h"
 #include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
@@ -53,6 +55,11 @@ void APlayableCharacterBase::Move()
 	bIsMoving = true;
 }
 
+TArray<UCharacterActionData*> APlayableCharacterBase::GetActions() const
+{
+	return Actions;
+}
+
 void APlayableCharacterBase::OnMoveCompleted()
 {
 	Super::OnMoveCompleted();
@@ -68,6 +75,27 @@ float APlayableCharacterBase::GetCurrentMOV()
 bool APlayableCharacterBase::GetIsMoving()
 {
 	return bIsMoving;
+}
+
+void APlayableCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (auto action : DetailStatus->GetActions())
+	{
+		UCharacterActionData* data = NewObject<UCharacterActionData>();
+		data->ActionID = action->ActionID;
+		data->ActionCase = action->ActionCase;
+		data->MaxDistance = action->MaxDistance;
+		data->MinDistance = action->MinDistance;
+		data->AmountTurn = action->AmountTurn;
+		data->DisplayName = action->DisplayName;
+		data->Description = action->Description;
+		data->Texture = action->Texture;
+		data->TexturePath = action->TexturePath;
+
+		Actions.Add(data);
+	}
 }
 
 float APlayableCharacterBase::ShowPath(FVector dest)

@@ -6,16 +6,13 @@
 #include "ActionHoverCursor.h"
 #include "ActionManager.h"
 #include "BG3GameMode.h"
+#include "CharacterActionData.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
 #include "PlayableCharacterBase.h"
 #include "Components/Button.h"
-
-void UActionButton::SetAction(FGameAction* action)
-{
-	Action = action;
-}
+#include "Components/Image.h"
 
 void UActionButton::NativeConstruct()
 {
@@ -54,6 +51,8 @@ void UActionButton::OnButtonUnhovered()
 
 void UActionButton::OnButtonClicked()
 {
+	if (!Action) return;
+	
 	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		if(gm->ActionManager)
@@ -75,9 +74,39 @@ void UActionButton::OnButtonClicked()
 				if (condition)
 				{
 					auto* cast = Cast<AMoveCharacterBase>(c);
-					gm->ActionManager->PrepareAction(*Action, cast);
+					gm->ActionManager->PrepareAction(Action, cast);
 				}
 			}
 		}
+	};
+}
+
+void UActionButton::Selected()
+{
+	Super::Selected();
+	IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+void UActionButton::Deselected()
+{
+	Super::Deselected();
+	IconImage->SetColorAndOpacity(FLinearColor(0.25f, 0.25f, 0.25f, 1.0f));
+}
+
+void UActionButton::FetchData(UObject* Data)
+{
+	Super::FetchData(Data);
+
+	if (nullptr == Data)
+	{
+		Action = nullptr;
+		IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
+	}
+
+	if (auto* ad = Cast<UCharacterActionData>(Data))
+	{
+		Action = ad;
+		IconImage->SetBrushFromTexture(Action->Texture);
+		IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	};
 }

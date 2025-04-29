@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "BG3Struct.h"
 #include "ActionManager.generated.h"
 
 /**
@@ -21,7 +19,7 @@ public:
 	
 	void InitializeAction();
 
-	void PrepareAction(FGameAction action, class AMoveCharacterBase* character);
-	void ExecuteAction(FGameAction action, class AMoveCharacterBase* character);
+	void PrepareAction(class UCharacterActionData* action, class AMoveCharacterBase* character);
+	void ExecuteAction(class UCharacterActionData* action, class AMoveCharacterBase* character);
 	
 };

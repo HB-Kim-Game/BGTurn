@@ -39,7 +39,7 @@ protected:
 	TArray<class UCursorBase*> Cursors;
 
 	class UCursorBase* CurrentCursor;
-	EGameMouseState MouseState;
+	EGameMouseState MouseState = EGameMouseState::Default;
 	
 	void CreateCursors();
 };

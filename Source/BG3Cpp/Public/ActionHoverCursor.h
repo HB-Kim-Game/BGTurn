@@ -19,7 +19,7 @@ class BG3CPP_API UActionHoverCursor : public UCursorBase
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* DisplayName;
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* DescriptionText;
+	class URichTextBlock* DescriptionText;
 
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* ActionTypeDetailBox;
@@ -27,5 +27,5 @@ class BG3CPP_API UActionHoverCursor : public UCursorBase
 	UPROPERTY(meta = (BindWidget))
 	class UImage* IconImage;
 	
-	void ShowActionDetail(FGameAction* action);
+	void ShowActionDetail(class UCharacterActionData* action);
 };

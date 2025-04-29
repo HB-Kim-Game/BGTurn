@@ -18,9 +18,11 @@ public:
 	// Sets default values for this component's properties
 	UCharacterStatus();
 
-	int32 GetHp();
+	int32 GetHp() const;
 
-	FString GetName();
+	FString GetName() const;
+
+	TArray<FGameAction*> GetActions() const;
 
 	void Initialize(FObjectStatus status);
 	

@@ -21,13 +21,13 @@ void UMouseManager::Initialize(EGameMouseState mouseState)
 	CreateCursors();
 	SetMouseMode(mouseState);
 
-	MouseStatePtr = &mouseState;
+	MouseStatePtr = &MouseState;
 }
 
 void UMouseManager::SetMouseMode(EGameMouseState mouseState)
 {
 	MouseState = mouseState;
-	CurrentCursor = Cursors[static_cast<uint8>(mouseState)];
+	CurrentCursor = Cursors[static_cast<uint8>(MouseState)];
 	GetWorld()->GetFirstPlayerController()->SetMouseCursorWidget(EMouseCursor::Type::Default, CurrentCursor);
 }
 

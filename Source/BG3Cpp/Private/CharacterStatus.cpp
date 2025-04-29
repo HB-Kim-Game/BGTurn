@@ -17,14 +17,19 @@ UCharacterStatus::UCharacterStatus()
 	// ...
 }
 
-int32 UCharacterStatus::GetHp()
+int32 UCharacterStatus::GetHp() const
 {
 	return HP;
 }
 
-FString UCharacterStatus::GetName()
+FString UCharacterStatus::GetName() const
 {
 	return FileName;
+}
+
+TArray<FGameAction*> UCharacterStatus::GetActions() const
+{
+	return Actions;
 }
 
 
@@ -50,11 +55,6 @@ void UCharacterStatus::Initialize(FObjectStatus status)
 	}
 
 	if (Actions.Num() <= 0) CreateActions();
-
-	for (auto* action : Actions)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *action->ActionID);
-	}
 }
 
 

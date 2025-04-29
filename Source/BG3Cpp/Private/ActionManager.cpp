@@ -3,7 +3,7 @@
 
 #include "ActionManager.h"
 #include "ActionBase.h"
-#include "BG3Struct.h"
+#include "CharacterActionData.h"
 #include "MoveCharacterBase.h"
 
 void UActionManager::InitializeAction()
@@ -12,9 +12,9 @@ void UActionManager::InitializeAction()
 	ActionMap.Add("Sprint", NewObject<USprintAction>(this));
 }
 
-void UActionManager::PrepareAction(FGameAction action, class AMoveCharacterBase* character)
+void UActionManager::PrepareAction(UCharacterActionData* action, class AMoveCharacterBase* character)
 {
-	if (auto* actionBase = ActionMap.Find(action.ActionID))
+	if (auto* actionBase = ActionMap.Find(action->ActionID))
 	{
 		if (*actionBase)
 		{
@@ -25,15 +25,15 @@ void UActionManager::PrepareAction(FGameAction action, class AMoveCharacterBase*
 	}
 }
 
-void UActionManager::ExecuteAction(FGameAction action, AMoveCharacterBase* character)
+void UActionManager::ExecuteAction(UCharacterActionData* action, AMoveCharacterBase* character)
 {
-	if (auto* actionBase = ActionMap.Find(action.ActionID))
+	if (auto* actionBase = ActionMap.Find(action->ActionID))
 	{
 		if (*actionBase)
 		{
 			(*actionBase)->ExecuteAction(character);
 
-			switch (action.ActionCase)
+			switch (action->ActionCase)
 			{
 			case EActionCase::DefaultAction:
 				character->OnCharacterAction.Broadcast();

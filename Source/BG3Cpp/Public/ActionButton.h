@@ -3,16 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BG3Struct.h"
 #include "BG3Enums.h"
-#include "Blueprint/UserWidget.h"
+#include "ViewerItemBase.h"
 #include "ActionButton.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BG3CPP_API UActionButton : public UUserWidget
+class BG3CPP_API UActionButton : public UViewerItemBase
 {
 	GENERATED_BODY()
 
@@ -22,8 +21,6 @@ class BG3CPP_API UActionButton : public UUserWidget
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button;
-	
-	void SetAction(FGameAction* action);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -35,9 +32,13 @@ protected:
 	UFUNCTION()
 	virtual void OnButtonClicked();
 
+	virtual void Selected() override;
+	virtual void Deselected() override;
+	virtual void FetchData(UObject* Data) override;
+
 private:
 	EGameMouseState lastState;
-	FGameAction* Action;
+	class UCharacterActionData* Action;
 
 	class AMouseControlledPlayer* Player;
 };
