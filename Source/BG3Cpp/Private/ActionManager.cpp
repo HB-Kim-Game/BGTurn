@@ -13,8 +13,9 @@ void UActionManager::InitializeAction()
 	ActionMap.Add("FireBall", NewObject<UFireBallAction>(this));
 }
 
-void UActionManager::PrepareAction(UCharacterActionData* action, class AMoveCharacterBase* character)
+void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterBase* character)
 {
+	if (!action->IsValidLowLevel()) return;
 	if (auto* actionBase = ActionMap.Find(action->ActionID))
 	{
 		if (*actionBase)

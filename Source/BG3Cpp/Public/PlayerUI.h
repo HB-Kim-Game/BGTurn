@@ -35,6 +35,9 @@ public :
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* DefaultButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UActionCountUI* ActionCountUI;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* HpMaterial;

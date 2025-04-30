@@ -50,6 +50,8 @@ void AMoveCharacterBase::BeginPlay()
 	DetailStatus->Initialize(Status);
 
 	CurHP = DetailStatus->GetHp();
+
+	TurnActionCount = 0;
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
@@ -78,9 +80,13 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
 
 void AMoveCharacterBase::Move()
 {
-	LastMoveDistance = ThinkPath(Destination)->GetPathLength() / 100.f;
-	controller->Move(Destination);
-	bIsMovable = false;
+	auto* path = ThinkPath(Destination);
+	if (path->IsValid())
+	{
+		LastMoveDistance = path->GetPathLength() / 100.f;
+		controller->Move(Destination);
+		bIsMovable = false;
+	}
 }
 
 void AMoveCharacterBase::OnMoveCompleted()

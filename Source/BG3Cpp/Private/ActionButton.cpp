@@ -85,12 +85,14 @@ void UActionButton::Selected()
 {
 	Super::Selected();
 	IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+	bIsSelected = true;
 }
 
 void UActionButton::Deselected()
 {
 	Super::Deselected();
-	IconImage->SetColorAndOpacity(FLinearColor(0.25f, 0.25f, 0.25f, 1.0f));
+	IconImage->SetColorAndOpacity(FLinearColor(0.1f, 0.1f, 0.1f, 1.0f));
+	bIsSelected = false;
 }
 
 void UActionButton::FetchData(UObject* Data)
@@ -110,6 +112,5 @@ void UActionButton::FetchData(UObject* Data)
 	{
 		Action = ad;
 		IconImage->SetBrushFromTexture(Action->Texture);
-		IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	};
 }

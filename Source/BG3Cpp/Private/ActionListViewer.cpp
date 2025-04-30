@@ -4,6 +4,9 @@
 #include "ActionListViewer.h"
 
 #include "BGUtil.h"
+#include "MouseControlledPlayer.h"
+#include "PlayableCharacterBase.h"
+#include "BG3Enums.h"
 #include "Components/GridPanel.h"
 #include "Components/GridSlot.h"
 
@@ -54,20 +57,61 @@ void UActionListViewer::InitializeItem()
 
 }
 
+void UActionListViewer::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	Player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
+}
+
 void UActionListViewer::MoveCursor(int32 Gap)
 {
+	auto* p = Player->GetPlayableCharacter();
+	
 	if (SpawnItems.Num() > FetchedDatas.Num())
 	{
 		for (int i = 0; i< FetchedDatas.Num(); i++)
 		{
-			SpawnItems[i]->FetchData(FetchedDatas[UBGUtil::ClampCursor(GetCursor() - CursorOffset + i, FetchedDatas.Num())]);
+			auto* data = FetchedDatas[UBGUtil::ClampCursor(GetCursor() - CursorOffset + i, FetchedDatas.Num())];
+			SpawnItems[i]->FetchData(data);
+
+			if (auto* cast = Cast<UCharacterActionData>(data))
+			{
+				switch (cast->ActionCase)
+				{
+					case EActionCase::DefaultAction:
+						if (p->GetCurrentTurnActionCount() <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+						else SpawnItems[i]->Selected();
+						break;
+					case EActionCase::BonusAction:
+						if (p->GetCurrentBonusActionCount() <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+						else SpawnItems[i]->Selected();
+						break;
+				}
+			}
 		}
 	}
 	else
 	{
 		for (int i = 0; i< SpawnItems.Num(); i++)
 		{
-			SpawnItems[i]->FetchData(FetchedDatas[UBGUtil::ClampCursor(GetCursor() - CursorOffset + i, FetchedDatas.Num())]);
+			auto* data = FetchedDatas[UBGUtil::ClampCursor(GetCursor() - CursorOffset + i, FetchedDatas.Num())];
+			SpawnItems[i]->FetchData(data);
+
+			if (auto* cast = Cast<UCharacterActionData>(data))
+			{
+				switch (cast->ActionCase)
+				{
+				case EActionCase::DefaultAction:
+					if (p->GetCurrentTurnActionCount() <= 0) SpawnItems[i]->Deselected();
+					else SpawnItems[i]->Selected();
+					break;
+				case EActionCase::BonusAction:
+					if (p->GetCurrentBonusActionCount() <= 0) SpawnItems[i]->Deselected();
+					else SpawnItems[i]->Selected();
+					break;
+				}
+			}
 		}
 	}
 }

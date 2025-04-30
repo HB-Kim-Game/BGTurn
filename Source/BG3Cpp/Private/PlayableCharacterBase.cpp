@@ -43,7 +43,6 @@ void APlayableCharacterBase::Deselected()
 {
 	Super::Deselected();
 
-	//GetMesh()->SetOverlayMaterial(nullptr);
 	Spline->ClearSplinePoints();
 	RemoveSplineMesh();
 }

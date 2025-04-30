@@ -15,9 +15,17 @@ class BG3CPP_API UActionListViewer : public UUIListViewer
 {
 	GENERATED_BODY()
 
+protected:
+
 	virtual void OnDataFetched() override;
 	
 	virtual void InitializeItem() override;
 
+	virtual void NativeConstruct() override;
+	
+public:
 	virtual void MoveCursor(int32 Gap) override;
+
+private:
+	class AMouseControlledPlayer* Player;
 };

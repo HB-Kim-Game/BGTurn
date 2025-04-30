@@ -155,9 +155,8 @@ void AMouseControlledPlayer::Select(ISelectableObject* selectedObject)
 	{
 		SelectedObject->Deselected();
 	}
-				
-	selectedObject->Selected();
 	SelectedObject = selectedObject;
+	SelectedObject->Selected();
 
 	// 임시로 움직이는 캐릭터일 경우에만 정보 받아올 수 있도록 적용, 나중에 선택할 수 있는 오브젝트면 다 표시해주어야함.
 	if (auto* cast = Cast<AMoveCharacterBase>(SelectedObject))
@@ -170,7 +169,6 @@ void AMouseControlledPlayer::Select(ISelectableObject* selectedObject)
 		selectedPlayableChar = playable;
 		// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터를 PlayerUI에 넣어줌.
 		PlayerUI->SetSelectedCharacter(selectedPlayableChar);
-		UE_LOG(LogTemp,Warning,TEXT("%d"),selectedPlayableChar->GetIsTurn());
 					
 		if (selectedPlayableChar->MovablePtr && selectedPlayableChar->GetIsTurn()) MouseManager->SetMouseMode(EGameMouseState::Move);
 		else MouseManager->SetMouseMode(EGameMouseState::Default);
@@ -241,6 +239,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 			if (auto* actor = Cast<ISelectableObject>(hit.GetActor()))
 			{
 				Select(actor);
+				
 				return;
 			}
 		};

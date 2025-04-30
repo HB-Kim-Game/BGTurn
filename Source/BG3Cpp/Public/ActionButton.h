@@ -41,4 +41,6 @@ private:
 	class UCharacterActionData* Action;
 
 	class AMouseControlledPlayer* Player;
+
+	bool bIsSelected = false;
 };

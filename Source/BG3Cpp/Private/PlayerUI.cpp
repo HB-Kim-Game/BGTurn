@@ -3,10 +3,12 @@
 
 #include "PlayerUI.h"
 
+#include "ActionCountUI.h"
 #include "CharacterStatus.h"
 #include "PlayableCharacterBase.h"
 #include "ActionListViewer.h"
 #include "SelectObjectInfoUI.h"
+#include "BG3Enums.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -33,6 +35,8 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 		TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
 		DefaultButton->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	ActionCountUI->ShowSpellPanel(SelectedCharacter->Status.CharClass == EGameCharacterClass::Wizard);
 }
 
 void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
