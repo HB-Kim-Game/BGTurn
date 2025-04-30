@@ -16,6 +16,7 @@
 #include "SelectableObject.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMouseControlledPlayer::AMouseControlledPlayer()
@@ -47,14 +48,9 @@ void AMouseControlledPlayer::BeginPlay()
 	FInputModeGameAndUI inputMode = FInputModeGameAndUI();
 	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	inputMode.SetHideCursorDuringCapture(false);
-	pc->SetInputMode(inputMode);
 	pc->SetShowMouseCursor(true);
-
-	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		gm->Initialize();
-	}
-
+	pc->SetInputMode(inputMode);
+	
 	MouseState = EGameMouseState::Default;
 
 	if (UEnhancedInputLocalPlayerSubsystem* sub = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
@@ -69,6 +65,21 @@ void AMouseControlledPlayer::BeginPlay()
 	
 	PlayerUI = Cast<UPlayerUI>(CreateWidget(GetWorld(), PlayerUIClass));
 	PlayerUI->AddToViewport();
+
+	// 임시 - 월드내의 아무 APlayableCharacterBase 타입의 객체를 가져와서 선택.
+	AActor* actor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayableCharacterBase::StaticClass());
+
+	if (auto* temp = Cast<ISelectableObject>(actor))
+	{
+		Select(temp);
+		Focus(FVector(actor->GetActorLocation().X, actor->GetActorLocation().Y, GetActorLocation().Z));
+	}
+
+	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		gm->Initialize();
+	}
+
 }
 
 // Called every frame
@@ -88,11 +99,10 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 		SetActorLocation(FMath::Lerp(GetActorLocation(), FocusPoint, DeltaTime * 5.f));
 	}
 	
-
 	SpringArmComp->TargetArmLength = FMath::Lerp(SpringArmComp->TargetArmLength, TargetLength, DeltaTime * 5.f);
 	SpringArmComp->SetRelativeRotation(FRotator(FMath::Lerp(0, -47.f, SpringArmComp->TargetArmLength / MaxLength), 0, 0));
 	
-	if (nullptr != selectedPlayableChar && selectedPlayableChar->GetCurrentMOV() > 0.0f && !selectedPlayableChar->GetIsMoving())
+	if (nullptr != selectedPlayableChar && selectedPlayableChar->GetCurrentMOV() > 0.0f && !selectedPlayableChar->GetIsMoving() && selectedPlayableChar->GetIsTurn())
 	{
 		auto* pc = GetWorld()->GetFirstPlayerController();
 		if (pc)
@@ -115,6 +125,7 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			}
 		}
 	}
+
 }
 
 UMouseManager* AMouseControlledPlayer::GetMouseManager() const
@@ -125,6 +136,53 @@ UMouseManager* AMouseControlledPlayer::GetMouseManager() const
 APlayableCharacterBase* AMouseControlledPlayer::GetPlayableCharacter() const
 {
 	return selectedPlayableChar;
+}
+
+class UPlayerUI* AMouseControlledPlayer::GetPlayerUI() const
+{
+	return PlayerUI;
+}
+
+void AMouseControlledPlayer::Focus(FVector focusLocation)
+{
+	bIsFocus = true;
+	FocusPoint = focusLocation;
+}
+
+void AMouseControlledPlayer::Select(ISelectableObject* selectedObject)
+{
+	if (nullptr != SelectedObject)
+	{
+		SelectedObject->Deselected();
+	}
+				
+	selectedObject->Selected();
+	SelectedObject = selectedObject;
+
+	// 임시로 움직이는 캐릭터일 경우에만 정보 받아올 수 있도록 적용, 나중에 선택할 수 있는 오브젝트면 다 표시해주어야함.
+	if (auto* cast = Cast<AMoveCharacterBase>(SelectedObject))
+	{
+		PlayerUI->ShowSelectedObjectInfo(cast);
+	}
+
+	if (auto* playable = Cast<APlayableCharacterBase>(SelectedObject))
+	{
+		selectedPlayableChar = playable;
+		// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터를 PlayerUI에 넣어줌.
+		PlayerUI->SetSelectedCharacter(selectedPlayableChar);
+		UE_LOG(LogTemp,Warning,TEXT("%d"),selectedPlayableChar->GetIsTurn());
+					
+		if (selectedPlayableChar->MovablePtr && selectedPlayableChar->GetIsTurn()) MouseManager->SetMouseMode(EGameMouseState::Move);
+		else MouseManager->SetMouseMode(EGameMouseState::Default);
+
+		Focus(FVector(selectedPlayableChar->GetActorLocation().X, selectedPlayableChar->GetActorLocation().Y, GetActorLocation().Z));
+	}
+	else
+	{
+		selectedPlayableChar = nullptr;
+		MouseManager->SetMouseMode(EGameMouseState::Default);
+		PlayerUI->ShowMoveProgress(0,0);
+	}
 }
 
 #pragma region Input
@@ -177,40 +235,14 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 		// TraceChannel - Pawn으로 커서로 누른 지점에 hit 체크
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), false, hit))
 		{
-						
 			// HitActor가 선택할 수 있는 물체일경우
 			// Selected 함수 실행
 			// 이후 현재 선택된 오브젝트 변수에 담아둠
 			if (auto* actor = Cast<ISelectableObject>(hit.GetActor()))
 			{
-				if (nullptr != SelectedObject)
-				{
-					SelectedObject->Deselected();
-				}
-				
-				actor->Selected();
-				SelectedObject = actor;
-
-				UE_LOG(LogTemp, Warning, TEXT("selected"));
-				if (auto* playable = Cast<APlayableCharacterBase>(actor))
-				{
-					selectedPlayableChar = playable;
-					// 선택한 오브젝트가 플레이어 캐릭터일 경우, 캐릭터를 PlayerUI에 넣어줌.
-					PlayerUI->SetSelectedCharacter(selectedPlayableChar);
-					
-					if (selectedPlayableChar->MovablePtr) MouseManager->SetMouseMode(EGameMouseState::Move);
-
-					bIsFocus = true;
-					FocusPoint = FVector(selectedPlayableChar->GetActorLocation().X, selectedPlayableChar->GetActorLocation().Y, GetActorLocation().Z);
-					
-				}
-				else
-				{
-					selectedPlayableChar = nullptr;
-					MouseManager->SetMouseMode(EGameMouseState::Default);
-				}
+				Select(actor);
+				return;
 			}
-			return;
 		};
 
 		// 클릭한 곳이 바닥일 경우, 현재 선택한 오브젝트가 존재하고, 그 캐릭터가 move가 가능하다면 클릭한 지점으로 이동

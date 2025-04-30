@@ -11,6 +11,9 @@
 DECLARE_MULTICAST_DELEGATE(FOnCharacterAction);
 DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareAction);
 DECLARE_MULTICAST_DELEGATE(FOnCharacterBonusAction);
+DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareBonusAction);
+DECLARE_MULTICAST_DELEGATE(FOnTurnReceive);
+DECLARE_MULTICAST_DELEGATE(FOnTurnEnd);
 
 UCLASS()
 class BG3CPP_API AMoveCharacterBase : public ACharacter, public ISelectableObject
@@ -44,20 +47,29 @@ public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
 
-	class UCharacterStatus* GetStatus();
+	class UCharacterStatus* GetStatus() const;
 
-	int GetCurrentTurnActionCount();
-	int GetCurrentBonusActionCount();
+	int GetCurrentTurnActionCount() const;
+	int GetCurrentBonusActionCount() const;
+
+	bool GetIsTurn() const;
+
+	void TurnReceive();
+	void TurnEnd();
 
 	void SetOutline(bool condition);
-	
-public:
 	
 	FOnCharacterAction OnCharacterAction;
 	
 	FOnCharacterBonusAction OnCharacterBonusAction;
 	
 	FOnCharacterPrepareAction OnCharacterPrepareAction;
+
+	FOnCharacterPrepareBonusAction OnCharacterPrepareBonusAction;
+
+	FOnTurnReceive OnCharacterTurnReceive;
+
+	FOnTurnEnd OnCharacterTurnEnd;
 	
 	const bool* MovablePtr;
 
@@ -86,6 +98,7 @@ protected:
 	float CurrentMOV;
 	
 	bool bIsMovable = true;
+	bool bIsTurn = false;
 	int32 CurHP;
 	
 	class AMovableCharacterController* controller;

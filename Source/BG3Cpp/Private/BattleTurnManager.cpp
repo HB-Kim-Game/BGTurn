@@ -3,8 +3,12 @@
 
 #include "BattleTurnManager.h"
 
+#include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
+#include "NonPlayableCharacterBase.h"
+#include "PlayerUI.h"
 #include "TurnListViewer.h"
+#include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -23,17 +27,47 @@ void UBattleTurnManager::StartBattle()
 
 	TurnList = Cast<UTurnListViewer>(CreateWidget(GetWorld(), TurnListClass));
 	TurnList->AddToViewport(10);
+
+	if (!Player)
+	{
+		Player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	}
 	
 	// 임시 - 월드내의 MovableCharacterBase 타입의 객체들을 전부 가져와서 저장.
 	TArray<AActor*> actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoveCharacterBase::StaticClass(), actors);
 	for (AActor* actor : actors)
 	{
-		auto* cast = Cast<AMoveCharacterBase>(actor);
-		if (cast)
+		if (auto* cast = Cast<AMoveCharacterBase>(actor))
 		{
+			cast->OnCharacterTurnEnd.AddLambda([this]()
+			{
+				this->TurnList->MoveCursor(1);
+			});
+
+			cast->OnCharacterTurnReceive.AddLambda([this]()
+			{
+				auto* item = Cast<ISelectableObject>(this->TurnList->GetSelectedItem());
+				Player->Select(item);
+				auto* moveC = Cast<AMoveCharacterBase>(this->TurnList->GetSelectedItem());
+				Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));
+			});
+			
+			if (auto* np = Cast<ANonPlayableCharacterBase>(cast))
+			{
+				np->OnCharacterTurnReceive.AddLambda([np, this]()
+				{
+					// 턴 받을 시, AI가 행동 시작하도록 구현해야함.
+					Player->GetPlayerUI()->TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
+					Player->GetPlayerUI()->DefaultButton->SetVisibility(ESlateVisibility::Visible);
+					np->TurnEnd();
+				});
+
+				Characters.Add(np);
+				continue;
+			};
+			
 			Characters.Add(cast);
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *cast->TableName.ToString());
 		}
 	}
 
@@ -55,7 +89,6 @@ void UBattleTurnManager::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
 

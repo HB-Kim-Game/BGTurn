@@ -2,6 +2,7 @@
 #include "TurnListViewer.h"
 
 #include "BGUtil.h"
+#include "MoveCharacterBase.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/HorizontalBox.h"
 
@@ -55,6 +56,11 @@ void UTurnListViewer::MoveCursor(int32 Gap)
 		}
 
 		SpawnItems[GetCursor()]->Selected();
+	}
+
+	if (auto* cast = Cast<AMoveCharacterBase>(GetSelectedItem()))
+	{
+		cast->TurnReceive();
 	}
 	
 	//Super::MoveCursor(Gap);

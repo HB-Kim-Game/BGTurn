@@ -3,7 +3,10 @@
 
 #include "TurnPortraitItem.h"
 
+#include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
+#include "PlayableCharacterBase.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
 
@@ -17,11 +20,22 @@ void UTurnPortraitItem::OnButtonUnhovered()
 
 void UTurnPortraitItem::OnButtonClicked()
 {
+	if (FetchedCharacter)
+	{
+		Player->Focus(FVector(FetchedCharacter->GetActorLocation().X, FetchedCharacter->GetActorLocation().Y, Player->GetActorLocation().Z));
+		Player->Select(Cast<ISelectableObject>(FetchedCharacter));
+	}
 }
 
 void UTurnPortraitItem::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	Player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	SelectButton->OnClicked.AddDynamic(this, &UTurnPortraitItem::OnButtonClicked);
+	SelectButton->OnHovered.AddDynamic(this, &UTurnPortraitItem::OnButtonHovered);
+	SelectButton->OnUnhovered.AddDynamic(this, &UTurnPortraitItem::OnButtonUnhovered);
 }
 
 void UTurnPortraitItem::Selected()
@@ -35,8 +49,8 @@ void UTurnPortraitItem::Selected()
 void UTurnPortraitItem::Deselected()
 {
 	Super::Deselected();
-	SizeBox->SetWidthOverride(100.f);
-	SizeBox->SetHeightOverride(140.f);
+	SizeBox->SetWidthOverride(110.f);
+	SizeBox->SetHeightOverride(150.f);
 }
 
 void UTurnPortraitItem::FetchData(UObject* Data)
@@ -45,6 +59,17 @@ void UTurnPortraitItem::FetchData(UObject* Data)
 
 	if (auto* c = Cast<AMoveCharacterBase>(Data))
 	{
+		FetchedCharacter = c;
+		
+		FButtonStyle style = SelectButton->GetStyle();
+		
+		if (auto* p = Cast<APlayableCharacterBase>(c))
+		{
+			style.Normal.TintColor = FLinearColor::Blue;
+		}
+		else style.Normal.TintColor = FLinearColor::Red;
+		
+		SelectButton->SetStyle(style);
 		Portrait->SetBrushFromTexture(c->Status.Portrait);
 		Portrait->SetDesiredSizeOverride(FVector2D(64.f, 64.f));
 	}

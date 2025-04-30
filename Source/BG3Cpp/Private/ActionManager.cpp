@@ -21,7 +21,16 @@ void UActionManager::PrepareAction(UCharacterActionData* action, class AMoveChar
 		{
 			(*actionBase)->PrepareAction(character);
 
-			character->OnCharacterPrepareAction.Broadcast();
+			switch (action->ActionCase)
+			{
+			case EActionCase::DefaultAction:
+				character->OnCharacterPrepareAction.Broadcast();
+				break;
+			case EActionCase::BonusAction:
+				character->OnCharacterPrepareBonusAction.Broadcast();
+				break;
+			}
+
 		}
 	}
 }

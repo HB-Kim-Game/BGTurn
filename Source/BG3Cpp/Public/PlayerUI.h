@@ -26,6 +26,15 @@ public :
 
 	UPROPERTY(meta = (BindWidget))
 	class UImage* MoveProgress;
+
+	UPROPERTY(meta = (BindWidget))
+	class USelectObjectInfoUI* SelectObjectInfo;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* TurnEndButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* DefaultButton;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* HpMaterial;
@@ -45,6 +54,8 @@ public :
 	void SetSelectedCharacter(class APlayableCharacterBase* character);
 
 	void ShowMoveProgress(float lastProgress, float resultProgress);
+
+	void ShowSelectedObjectInfo(class AMoveCharacterBase* character);
 	
 	virtual void NativeConstruct() override;
 
@@ -52,4 +63,7 @@ private:
 	class APlayableCharacterBase* SelectedCharacter;
 	
 	void ShowSelectedCharHP(int32 curHp, int32 maxHp);
+
+	UFUNCTION()
+	void ClickTurnEnd();
 };

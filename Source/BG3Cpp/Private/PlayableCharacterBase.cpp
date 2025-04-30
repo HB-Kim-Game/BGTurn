@@ -36,8 +36,7 @@ APlayableCharacterBase::APlayableCharacterBase()
 void APlayableCharacterBase::Selected()
 {
 	Super::Selected();
-
-	//GetMesh()->SetOverlayMaterial(SelectedMatDynamic);
+	
 }
 
 void APlayableCharacterBase::Deselected()

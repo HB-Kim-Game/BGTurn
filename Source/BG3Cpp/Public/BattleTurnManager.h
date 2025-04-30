@@ -25,6 +25,8 @@ public:
 
 	UPROPERTY()
 	class UTurnListViewer* TurnList;
+	
+	class AMouseControlledPlayer* Player;
 
 protected:
 	// Called when the game starts

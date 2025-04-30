@@ -19,7 +19,7 @@ void ABG3GameMode::Initialize()
 	
 	BattleManager = NewObject<UBattleTurnManager>(this, BattleMangerClass);
 	BattleManager->RegisterComponent();
-	
+
 	BattleManager->StartBattle();
 }
 

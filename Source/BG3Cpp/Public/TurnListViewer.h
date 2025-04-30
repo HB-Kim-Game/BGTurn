@@ -14,6 +14,8 @@ class BG3CPP_API UTurnListViewer : public UUIListViewer
 {
 	GENERATED_BODY()
 
+public:
+	
 	virtual void OnDataFetched() override;
 	
 	virtual void InitializeItem() override;

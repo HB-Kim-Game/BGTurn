@@ -31,6 +31,12 @@ public:
 	class UMouseManager* GetMouseManager() const;
 
 	class APlayableCharacterBase* GetPlayableCharacter() const;
+
+	class UPlayerUI* GetPlayerUI() const;
+
+	void Focus(FVector focusLocation);
+
+	void Select(class ISelectableObject* selectedObject);
 	
 	private:
 	void OnLeftMouseButtonDown();

@@ -101,7 +101,10 @@ void UActionButton::FetchData(UObject* Data)
 	{
 		Action = nullptr;
 		IconImage->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
+		return;
 	}
+
+	if (!Data->IsValidLowLevel()) return;
 
 	if (auto* ad = Cast<UCharacterActionData>(Data))
 	{

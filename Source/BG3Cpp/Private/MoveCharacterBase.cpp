@@ -103,19 +103,42 @@ void AMoveCharacterBase::Deselected()
 	SetOutline(false);
 }
 
-UCharacterStatus* AMoveCharacterBase::GetStatus()
+UCharacterStatus* AMoveCharacterBase::GetStatus() const
 {
 	return DetailStatus;
 }
 
-int AMoveCharacterBase::GetCurrentTurnActionCount()
+int AMoveCharacterBase::GetCurrentTurnActionCount() const
 {
 	return TurnActionCount;
 }
 
-int AMoveCharacterBase::GetCurrentBonusActionCount()
+int AMoveCharacterBase::GetCurrentBonusActionCount() const
 {
 	return TurnBonusActionCount;  
+}
+
+bool AMoveCharacterBase::GetIsTurn() const
+{
+	return bIsTurn;
+}
+
+void AMoveCharacterBase::TurnReceive()
+{
+	bIsTurn = true;
+	CurrentMOV = Status.MOV;
+	TurnActionCount = 1;
+	TurnBonusActionCount = 1;
+	bIsMovable = true;
+	
+	OnCharacterTurnReceive.Broadcast();
+}
+
+void AMoveCharacterBase::TurnEnd()
+{
+	bIsTurn = false;
+	bIsMovable = false;
+	OnCharacterTurnEnd.Broadcast();
 }
 
 void AMoveCharacterBase::SetOutline(bool condition)

@@ -6,6 +6,8 @@
 #include "CharacterStatus.h"
 #include "PlayableCharacterBase.h"
 #include "ActionListViewer.h"
+#include "SelectObjectInfoUI.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
@@ -18,12 +20,31 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 	ShowSelectedCharHP(*SelectedCharacter->CurHPPtr, SelectedCharacter->GetStatus()->GetHp());
 	float progress = SelectedCharacter->GetCurrentMOV() / SelectedCharacter->Status.MOV;
 	ShowMoveProgress(progress, progress);
+
+	ShowSelectedObjectInfo(SelectedCharacter);
+
+	if (character->GetIsTurn())
+	{
+		TurnEndButton->SetVisibility(ESlateVisibility::Visible);
+		DefaultButton->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
+		DefaultButton->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
 {
 	MoveMatDynamic->SetScalarParameterValue("LastPercent", lastProgress);
 	MoveMatDynamic->SetScalarParameterValue("Percent", resultProgress);
+}
+
+void UPlayerUI::ShowSelectedObjectInfo(AMoveCharacterBase* character)
+{
+	SelectObjectInfo->SetVisibility(ESlateVisibility::Visible);
+	SelectObjectInfo->ShowSelectObjectInfo(character);
 }
 
 void UPlayerUI::NativeConstruct()
@@ -37,6 +58,10 @@ void UPlayerUI::NativeConstruct()
 	MoveMatDynamic = UMaterialInstanceDynamic::Create(MoveMaterial, this);
 
 	MoveProgress->SetBrushFromMaterial(MoveMatDynamic);
+
+	TurnEndButton->OnClicked.AddDynamic(this, &UPlayerUI::ClickTurnEnd);
+	
+	SelectObjectInfo->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
@@ -47,4 +72,12 @@ void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
 	FString str = FString::FromInt(curHp) + " / " + FString::FromInt(maxHp);
 	
 	SelectedCharHP->SetText(FText::FromString(str));
+}
+
+void UPlayerUI::ClickTurnEnd()
+{
+	if (SelectedCharacter)
+	{
+		SelectedCharacter->TurnEnd();
+	}
 }
