@@ -8,7 +8,6 @@
 #include "PlayableCharacterBase.h"
 #include "ActionListViewer.h"
 #include "SelectObjectInfoUI.h"
-#include "BG3Enums.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -36,7 +35,7 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 		DefaultButton->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	ActionCountUI->ShowSpellPanel(SelectedCharacter->Status.CharClass == EGameCharacterClass::Wizard);
+	ActionCountUI->ShowCharacterActionCount(character);
 }
 
 void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
@@ -49,6 +48,24 @@ void UPlayerUI::ShowSelectedObjectInfo(AMoveCharacterBase* character)
 {
 	SelectObjectInfo->SetVisibility(ESlateVisibility::Visible);
 	SelectObjectInfo->ShowSelectObjectInfo(character);
+}
+
+void UPlayerUI::ShowCost(APlayableCharacterBase* character, EActionCase actionCase)
+{
+	switch (actionCase)
+	{
+	case EActionCase::DefaultAction:
+		ActionCountUI->CostAction(character->GetCurrentTurnActionCount());	
+		break;
+		case EActionCase::BonusAction:
+		ActionCountUI->CostAction(character->GetCurrentBonusActionCount());	
+		break;
+	}
+}
+
+void UPlayerUI::ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase)
+{
+	
 }
 
 void UPlayerUI::NativeConstruct()

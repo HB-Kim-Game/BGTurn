@@ -2,46 +2,62 @@
 
 
 #include "ActionBase.h"
-
+#include "AttackRange.h"
 #include "MoveCharacterBase.h"
 
-void UActionBase::PrepareAction(class AMoveCharacterBase* character)
+void UActionBase::PrepareAction(AMoveCharacterBase* character, float distance)
 {
 }
 
-void UActionBase::ExecuteAction(class AMoveCharacterBase* character)
+void UActionBase::ExecuteAction(AMoveCharacterBase* character)
 {
 	
 }
 
-void UMeleeAction::PrepareAction(class AMoveCharacterBase* character)
+void UMeleeAction::PrepareAction(AMoveCharacterBase* character, float distance)
 {
-	Super::PrepareAction(character);
+	Super::PrepareAction(character, distance);
+	
+	// 캐릭터 주변으로 범위 표시
+	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+		AAttackRange::StaticClass(),
+		character->GetActorLocation(),
+		FRotator(0, 0, 0));
+
+	decal->SetDecalRange(distance);
+	// 마우스 커서 교체
 }
 
-void UMeleeAction::ExecuteAction(class AMoveCharacterBase* character)
+void UMeleeAction::ExecuteAction(AMoveCharacterBase* character)
 {
 	Super::ExecuteAction(character);
 
 }
 
-void USprintAction::PrepareAction(class AMoveCharacterBase* character)
+void USprintAction::PrepareAction(AMoveCharacterBase* character, float distance)
 {
-	Super::PrepareAction(character);
+	Super::PrepareAction(character, distance);
 }
 
-void USprintAction::ExecuteAction(class AMoveCharacterBase* character)
+void USprintAction::ExecuteAction(AMoveCharacterBase* character)
 {
 	Super::ExecuteAction(character);
 	
 }
 
-void UFireBallAction::PrepareAction(class AMoveCharacterBase* character)
+void UFireBallAction::PrepareAction(AMoveCharacterBase* character, float distance)
 {
-	Super::PrepareAction(character);
+	Super::PrepareAction(character, distance);
+	// 캐릭터 주변으로 범위 표시
+	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+		AAttackRange::StaticClass(),
+		character->GetActorLocation(),
+		FRotator(0, 0, 0));
+
+	decal->SetDecalRange(distance);
 }
 
-void UFireBallAction::ExecuteAction(class AMoveCharacterBase* character)
+void UFireBallAction::ExecuteAction(AMoveCharacterBase* character)
 {
 	Super::ExecuteAction(character);
 }

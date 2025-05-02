@@ -75,6 +75,21 @@ void AMouseControlledPlayer::BeginPlay()
 		Focus(FVector(actor->GetActorLocation().X, actor->GetActorLocation().Y, GetActorLocation().Z));
 	}
 
+	TArray<AActor*> actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayableCharacterBase::StaticClass(),actors);
+
+	for (auto* a : actors)
+	{
+		if (auto* cast = Cast<APlayableCharacterBase>(a))
+		{
+			cast->OnCharacterPrepareAction.AddLambda([this, cast]()
+			{
+				this->PlayerUI->ShowCost(cast, EActionCase::DefaultAction);
+			});
+		}
+	}
+	
+
 	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		gm->Initialize();
@@ -115,13 +130,29 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 				lastCursorPos = dest;
 				float Distance = selectedPlayableChar->ShowPath(dest);
 
-				float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
-				float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+				if (auto* cursor = MouseManager->GetCursor())
+				{
+					bool condition = false;
+					
+					if (auto* castCursor = Cast<UMoveCursor>(cursor))
+					{
+						if (Distance > 0.01f)
+						{
+							condition = Distance / 100.f < selectedPlayableChar->GetCurrentMOV();
+						}
+						
+						castCursor->ShowDistance(Distance, condition);
 
-				PlayerUI->ShowMoveProgress(curProgress, resultProgress);
+						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
 
-				auto* cursor = Cast<UMoveCursor>(MouseManager->GetCursor());
-				if (cursor) cursor->ShowDistance(Distance, Distance / 100.f < selectedPlayableChar->GetCurrentMOV());
+						PlayerUI->ShowMoveProgress(curProgress, resultProgress);
+					}
+					else
+					{
+						PlayerUI->ShowMoveProgress(0, 0);
+					}
+				}
 			}
 		}
 	}

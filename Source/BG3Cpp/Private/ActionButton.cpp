@@ -39,6 +39,12 @@ void UActionButton::OnButtonHovered()
 			if (cursor) cursor->ShowActionDetail(Action);
 		}
 	}
+	else
+	{
+		lastState = *(Player->GetMouseManager()->MouseStatePtr);
+			
+		Player->GetMouseManager()->SetMouseMode(EGameMouseState::Default);
+	}
 }
 
 void UActionButton::OnButtonUnhovered()

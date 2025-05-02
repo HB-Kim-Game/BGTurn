@@ -52,6 +52,9 @@ public:
 	int GetCurrentTurnActionCount() const;
 	int GetCurrentBonusActionCount() const;
 
+	int GetMaxTurnActionCount() const;
+	int GetMaxBonusActionCount() const;
+
 	bool GetIsTurn() const;
 
 	void TurnReceive();
@@ -108,6 +111,9 @@ protected:
 
 	TArray<FGameAction> Actions;
 	
-	int TurnActionCount = 1;
-	int TurnBonusActionCount = 1;
+	int CurTurnActionCount = 1;
+	int CurTurnBonusActionCount = 1;
+
+	int MaxTurnActionCount = 1;
+	int MaxTurnBonusActionCount = 1;
 };

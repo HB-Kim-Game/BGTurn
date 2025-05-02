@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BG3Enums.h"
 #include "PlayerUI.generated.h"
 
 /**
@@ -59,6 +60,9 @@ public :
 	void ShowMoveProgress(float lastProgress, float resultProgress);
 
 	void ShowSelectedObjectInfo(class AMoveCharacterBase* character);
+
+	void ShowCost(class APlayableCharacterBase* character, EActionCase actionCase);
+	void ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase);
 	
 	virtual void NativeConstruct() override;
 

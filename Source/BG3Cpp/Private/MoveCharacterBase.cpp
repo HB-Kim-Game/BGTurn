@@ -41,8 +41,8 @@ void AMoveCharacterBase::BeginPlay()
 	controller = Cast<AMovableCharacterController>(GetController());
 	controller->OnAIMoveCompleted.AddDynamic(this, &AMoveCharacterBase::OnMoveCompleted);
 
-	OnCharacterAction.AddLambda([this](){this->TurnActionCount -= 1;});
-	OnCharacterBonusAction.AddLambda([this](){this->TurnBonusActionCount -= 1;});
+	OnCharacterAction.AddLambda([this](){this->CurTurnActionCount -= 1;});
+	OnCharacterBonusAction.AddLambda([this](){this->CurTurnBonusActionCount -= 1;});
 
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
@@ -51,7 +51,7 @@ void AMoveCharacterBase::BeginPlay()
 
 	CurHP = DetailStatus->GetHp();
 
-	TurnActionCount = 0;
+	CurTurnActionCount = 0;
 }
 
 UNavigationPath* AMoveCharacterBase::ThinkPath(FVector dest)
@@ -116,12 +116,22 @@ UCharacterStatus* AMoveCharacterBase::GetStatus() const
 
 int AMoveCharacterBase::GetCurrentTurnActionCount() const
 {
-	return TurnActionCount;
+	return CurTurnActionCount;
 }
 
 int AMoveCharacterBase::GetCurrentBonusActionCount() const
 {
-	return TurnBonusActionCount;  
+	return CurTurnBonusActionCount;  
+}
+
+int AMoveCharacterBase::GetMaxTurnActionCount() const
+{
+	return MaxTurnActionCount;
+}
+
+int AMoveCharacterBase::GetMaxBonusActionCount() const
+{
+	return MaxTurnBonusActionCount;
 }
 
 bool AMoveCharacterBase::GetIsTurn() const
@@ -133,8 +143,8 @@ void AMoveCharacterBase::TurnReceive()
 {
 	bIsTurn = true;
 	CurrentMOV = Status.MOV;
-	TurnActionCount = 1;
-	TurnBonusActionCount = 1;
+	CurTurnActionCount = 1;
+	CurTurnBonusActionCount = 1;
 	bIsMovable = true;
 	
 	OnCharacterTurnReceive.Broadcast();

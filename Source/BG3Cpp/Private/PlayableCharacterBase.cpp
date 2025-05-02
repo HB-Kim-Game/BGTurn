@@ -100,7 +100,12 @@ float APlayableCharacterBase::ShowPath(FVector dest)
 {
 	UNavigationPath* path = ThinkPath(dest);
 
-	if (nullptr == path) return 0.0f;
+	if (nullptr == path)
+	{
+		Spline->ClearSplinePoints();
+		RemoveSplineMesh();
+		return 0.0f;
+	}
 	
 	const TArray<FVector>& pathPoints = path->PathPoints;
 
@@ -114,6 +119,13 @@ float APlayableCharacterBase::ShowPath(FVector dest)
 	}
 
 	AddSplineMesh();
+
+	if (!path->IsValid())
+	{
+		Spline->ClearSplinePoints();
+		RemoveSplineMesh();
+		return 0.0f;	
+	}
 
 	return path->GetPathLength();
 }

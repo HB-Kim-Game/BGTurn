@@ -20,7 +20,7 @@ void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterB
 	{
 		if (*actionBase)
 		{
-			(*actionBase)->PrepareAction(character);
+			(*actionBase)->PrepareAction(character, action->MaxDistance);
 
 			switch (action->ActionCase)
 			{
