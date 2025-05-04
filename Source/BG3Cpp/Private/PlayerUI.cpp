@@ -63,9 +63,19 @@ void UPlayerUI::ShowCost(APlayableCharacterBase* character, EActionCase actionCa
 	}
 }
 
-void UPlayerUI::ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase)
+void UPlayerUI::ShowUsed(APlayableCharacterBase* character, EActionCase actionCase)
 {
-	
+	switch (actionCase)
+	{
+	case EActionCase::DefaultAction:
+		ActionCountUI->UseAction(character->GetCurrentTurnActionCount());	
+		break;
+	case EActionCase::BonusAction:
+		ActionCountUI->UseAction(character->GetCurrentBonusActionCount());	
+		break;
+	}
+
+	ActionListViewer->FetchDatas(character->GetActions());
 }
 
 void UPlayerUI::NativeConstruct()

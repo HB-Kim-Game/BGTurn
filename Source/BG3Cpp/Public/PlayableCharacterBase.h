@@ -17,6 +17,7 @@ class BG3CPP_API APlayableCharacterBase : public AMoveCharacterBase
 public:
 	// Sets default values for this character's properties
 	APlayableCharacterBase();
+
 public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
@@ -36,14 +37,19 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY()
 	class USplineComponent* Spline;
+	UPROPERTY()
 	class UStaticMesh* SplineMeshInstance;
+	UPROPERTY()
 	class UMaterial* SplineMaterial;
 
+	UPROPERTY()
 	TArray<class UCharacterActionData*> Actions;
 	
 	bool bIsMoving = false;
 
+	UPROPERTY()
 	TArray<class USplineMeshComponent*> SplineMeshes;
 
 	void AddSplineMesh();

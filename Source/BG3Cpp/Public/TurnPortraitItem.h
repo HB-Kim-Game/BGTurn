@@ -37,9 +37,11 @@ protected:
 	virtual void Selected() override;
 	virtual void Deselected() override;
 	virtual void FetchData(UObject* Data) override;
-	
+
+	UPROPERTY()
 	class AMouseControlledPlayer* Player;
 
+	UPROPERTY()
 	class AMoveCharacterBase* FetchedCharacter;
 
 };

@@ -131,7 +131,8 @@ public:
 
 	bool bIsFocus = false;
 	bool bIsOutline = false;
-	
+
+	UPROPERTY()
 	class APlayableCharacterBase* selectedPlayableChar;
 
 	FVector ForwardDirection;

@@ -11,5 +11,16 @@ void UMoveCursor::ShowDistance(float distance, bool isMovable)
 	temp.Append("m");
 	Distance->SetText(FText::FromString(temp));
 
-	WarningText->SetVisibility(isMovable ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+	if (distance < 0.01f)
+	{
+		FString text = TEXT("목표 지점에 도달할 수 없습니다.");
+		WarningText->SetText(FText::FromString(text));
+	}
+	else
+	{
+		FString text = TEXT("이동력 부족");
+		WarningText->SetText(FText::FromString(text));	
+	}
+	
+	WarningText->SetVisibility(isMovable ? ESlateVisibility::Collapsed: ESlateVisibility::Visible);
 }

@@ -5,9 +5,11 @@
 
 #include "CharacterActionData.h"
 #include "CharacterStatus.h"
+#include "InitiativeUI.h"
 #include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "Blueprint/UserWidget.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 

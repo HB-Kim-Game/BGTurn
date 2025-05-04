@@ -74,3 +74,15 @@ struct FGameAction : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString TexturePath;
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FCharacterTurnData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AMoveCharacterBase* Character;
+	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	int32 Initiative;
+};

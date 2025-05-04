@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BG3Struct.h"
 #include "BattleTurnManager.generated.h"
 
 
@@ -25,7 +26,7 @@ public:
 
 	UPROPERTY()
 	class UTurnListViewer* TurnList;
-	
+	UPROPERTY()
 	class AMouseControlledPlayer* Player;
 
 protected:
@@ -37,5 +38,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	TArray<class AMoveCharacterBase*> Characters;
+	UPROPERTY()
+	TArray<FCharacterTurnData> Characters;
+	UPROPERTY()
+	TArray<class AMoveCharacterBase*> SortedCharacters;
+
+	TArray<class AMoveCharacterBase*> SortCharacters();
 };

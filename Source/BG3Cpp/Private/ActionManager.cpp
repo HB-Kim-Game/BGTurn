@@ -15,12 +15,13 @@ void UActionManager::InitializeAction()
 
 void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterBase* character)
 {
-	if (!action->IsValidLowLevel()) return;
+	if (nullptr == action) return;
+	if (!IsValid(action)) return;
 	if (auto* actionBase = ActionMap.Find(action->ActionID))
 	{
 		if (*actionBase)
 		{
-			(*actionBase)->PrepareAction(character, action->MaxDistance);
+			(*actionBase)->PrepareAction(character, action);
 
 			switch (action->ActionCase)
 			{

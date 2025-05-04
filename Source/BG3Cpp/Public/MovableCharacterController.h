@@ -10,7 +10,7 @@
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAIMoveCompletedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnAIMoveCompletedDelegate);
 
 UCLASS()
 class BG3CPP_API AMovableCharacterController : public AAIController
@@ -18,7 +18,7 @@ class BG3CPP_API AMovableCharacterController : public AAIController
 	GENERATED_BODY()
 
 public:
-	void Move(FVector Location);
+	void Move(const FVector& Location);
 	FOnAIMoveCompletedDelegate OnAIMoveCompleted;
 	
 protected:

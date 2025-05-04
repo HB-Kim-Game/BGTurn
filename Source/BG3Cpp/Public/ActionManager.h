@@ -14,7 +14,7 @@ class BG3CPP_API UActionManager : public UObject
 	GENERATED_BODY()
 
 public:
-	
+	UPROPERTY()
 	TMap<FString, class UActionBase*> ActionMap;
 	
 	void InitializeAction();

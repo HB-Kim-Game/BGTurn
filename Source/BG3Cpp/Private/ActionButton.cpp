@@ -49,7 +49,7 @@ void UActionButton::OnButtonHovered()
 
 void UActionButton::OnButtonUnhovered()
 {
-	if (Player)
+	if (Player && *Player->GetMouseManager()->MouseStatePtr != EGameMouseState::Action)
 	{
 		Player->GetMouseManager()->SetMouseMode(lastState);
 	}
@@ -57,7 +57,8 @@ void UActionButton::OnButtonUnhovered()
 
 void UActionButton::OnButtonClicked()
 {
-	if (!Action) return;
+	if (nullptr == Action) return;
+	if (!IsValid(Action)) return;
 	
 	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -81,6 +82,8 @@ void UActionButton::OnButtonClicked()
 				{
 					auto* cast = Cast<AMoveCharacterBase>(c);
 					gm->ActionManager->PrepareAction(Action, cast);
+					lastState = *(Player->GetMouseManager()->MouseStatePtr);
+					UE_LOG(LogTemp,Warning, TEXT("%d"), lastState);
 				}
 			}
 		}

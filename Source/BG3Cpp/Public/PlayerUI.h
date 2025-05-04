@@ -67,6 +67,7 @@ public :
 	virtual void NativeConstruct() override;
 
 private:
+	UPROPERTY()
 	class APlayableCharacterBase* SelectedCharacter;
 	
 	void ShowSelectedCharHP(int32 curHp, int32 maxHp);

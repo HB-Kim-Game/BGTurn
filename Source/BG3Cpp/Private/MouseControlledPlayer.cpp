@@ -3,14 +3,21 @@
 
 #include "MouseControlledPlayer.h"
 
+#include "ActionCountUI.h"
+#include "ActionCursor.h"
+#include "ActionManager.h"
 #include "BG3Enums.h"
 #include "BG3GameMode.h"
+#include "CharacterActionData.h"
 #include "CharacterStatus.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "MouseManager.h"
+#include "MovableCharacterController.h"
 #include "MoveCursor.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "SelectableObject.h"
@@ -66,6 +73,32 @@ void AMouseControlledPlayer::BeginPlay()
 	PlayerUI = Cast<UPlayerUI>(CreateWidget(GetWorld(), PlayerUIClass));
 	PlayerUI->AddToViewport();
 
+	TArray<AActor*> actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayableCharacterBase::StaticClass(),actors);
+	for (auto* a : actors)
+	{
+		if (auto* cast = Cast<APlayableCharacterBase>(a))
+		{
+			cast->OnInitialized.AddLambda([cast, this]()
+			{
+				cast->OnCharacterPrepareAction.AddLambda([this, cast]()
+				{
+					this->PlayerUI->ShowCost(cast, EActionCase::DefaultAction);
+				});
+				cast->OnCharacterAction.AddLambda([this, cast]()
+				{
+					this->PlayerUI->ShowUsed(cast, EActionCase::DefaultAction);
+				});
+				cast->OnCharacterBonusAction.AddLambda([this, cast]()
+				{
+					this->PlayerUI->ShowUsed(cast, EActionCase::BonusAction);
+				});
+			});
+
+			cast->OnInitialized.Broadcast();
+		}
+	}
+
 	// 임시 - 월드내의 아무 APlayableCharacterBase 타입의 객체를 가져와서 선택.
 	AActor* actor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayableCharacterBase::StaticClass());
 
@@ -74,21 +107,6 @@ void AMouseControlledPlayer::BeginPlay()
 		Select(temp);
 		Focus(FVector(actor->GetActorLocation().X, actor->GetActorLocation().Y, GetActorLocation().Z));
 	}
-
-	TArray<AActor*> actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayableCharacterBase::StaticClass(),actors);
-
-	for (auto* a : actors)
-	{
-		if (auto* cast = Cast<APlayableCharacterBase>(a))
-		{
-			cast->OnCharacterPrepareAction.AddLambda([this, cast]()
-			{
-				this->PlayerUI->ShowCost(cast, EActionCase::DefaultAction);
-			});
-		}
-	}
-	
 
 	if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -148,6 +166,13 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 
 						PlayerUI->ShowMoveProgress(curProgress, resultProgress);
 					}
+					else if (auto* castCursor2 = Cast<UActionCursor>(cursor))
+					{
+						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+
+						PlayerUI->ShowMoveProgress(curProgress, resultProgress);
+					}
 					else
 					{
 						PlayerUI->ShowMoveProgress(0, 0);
@@ -157,6 +182,7 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 		}
 	}
 
+	// Cursor가 ActionCursor일 경우
 }
 
 UMouseManager* AMouseControlledPlayer::GetMouseManager() const
@@ -269,6 +295,29 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 			// 이후 현재 선택된 오브젝트 변수에 담아둠
 			if (auto* actor = Cast<ISelectableObject>(hit.GetActor()))
 			{
+				if (nullptr != selectedPlayableChar && selectedPlayableChar->GetIsTurn())
+				{
+					if (auto* castCursor = Cast<UActionCursor>(MouseManager->GetCursor()))
+					{
+						float Distance = selectedPlayableChar->ShowPath(hit.GetActor()->GetActorLocation());
+						
+						if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
+						
+						if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+						{
+							if (Distance / 100.f <= castCursor->GetAction()->MaxDistance)
+							{
+								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+							}
+							else
+							{
+								selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), hit.GetActor()->GetActorLocation());
+							}
+							return;
+						}
+					}
+				}
+				
 				Select(actor);
 				
 				return;

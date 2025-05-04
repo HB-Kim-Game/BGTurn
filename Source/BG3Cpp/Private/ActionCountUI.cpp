@@ -85,12 +85,12 @@ void UActionCountUI::CostBonus(int currentCount)
 
 void UActionCountUI::UseAction(int remainCount)
 {
-	ActionIcons[FMath::Clamp(remainCount, 0, ActionIcons.Num())]->PlayUsedAnimation();
+	ActionIcons[FMath::Clamp(remainCount, 0, ActionIcons.Num()-1)]->PlayUsedAnimation();
 }
 
 void UActionCountUI::UseBonus(int remainCount)
 {
-	BonusIcons[FMath::Clamp(remainCount, 0, BonusIcons.Num())]->PlayUsedAnimation();
+	BonusIcons[FMath::Clamp(remainCount, 0, BonusIcons.Num()-1)]->PlayUsedAnimation();
 }
 
 void UActionCountUI::NativeConstruct()

@@ -3,6 +3,8 @@
 
 #include "BattleTurnManager.h"
 
+#include "BGUtil.h"
+#include "DiceChecker.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
 #include "NonPlayableCharacterBase.h"
@@ -63,22 +65,28 @@ void UBattleTurnManager::StartBattle()
 					np->TurnEnd();
 				});
 
-				Characters.Add(np);
+				FCharacterTurnData npData = FCharacterTurnData();
+				npData.Character = np;
+				
+				Characters.Add(npData);
 				continue;
 			};
+
+			FCharacterTurnData data = FCharacterTurnData();
+			data.Character = cast;
 			
-			Characters.Add(cast);
+			Characters.Add(data);
 		}
 	}
 
-	TurnList->FetchDatas(Characters);
+	TurnList->FetchDatas(SortCharacters());
 }
 
 void UBattleTurnManager::SetOutlineAllBattleCharacters(bool condition)
 {
-	for (auto* character : Characters)
+	for (auto& character : Characters)
 	{
-		character->SetOutline(condition);
+		character.Character->SetOutline(condition);
 	}
 }
 
@@ -98,5 +106,29 @@ void UBattleTurnManager::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+TArray<AMoveCharacterBase*> UBattleTurnManager::SortCharacters()
+{
+	SortedCharacters.Empty();
+	
+	for (auto& data : Characters)
+	{
+		int32 initiative = FMath::Clamp(UDiceChecker::RollDice() + UBGUtil::CalculateBonus(data.Character->Status.Dex), 1, 20);
+		data.Initiative = initiative;
+		data.Character->ShowInitiative(data.Initiative);
+	}
+
+	Characters.Sort([](const FCharacterTurnData& A,const FCharacterTurnData& B)
+	{
+		return A.Initiative > B.Initiative;
+	});
+
+	for (auto& data : Characters)
+	{
+		SortedCharacters.Add(data.Character);
+	}
+	
+	return SortedCharacters;
 }
 

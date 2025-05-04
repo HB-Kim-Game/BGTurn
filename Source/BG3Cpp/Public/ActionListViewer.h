@@ -27,5 +27,6 @@ public:
 	virtual void MoveCursor(int32 Gap) override;
 
 private:
+	UPROPERTY()
 	class AMouseControlledPlayer* Player;
 };

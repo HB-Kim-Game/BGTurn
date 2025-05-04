@@ -14,6 +14,7 @@ DECLARE_MULTICAST_DELEGATE(FOnCharacterBonusAction);
 DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareBonusAction);
 DECLARE_MULTICAST_DELEGATE(FOnTurnReceive);
 DECLARE_MULTICAST_DELEGATE(FOnTurnEnd);
+DECLARE_MULTICAST_DELEGATE(FOnInitialized);
 
 UCLASS()
 class BG3CPP_API AMoveCharacterBase : public ACharacter, public ISelectableObject
@@ -24,11 +25,13 @@ public:
 	// Sets default values for this character's properties
 	AMoveCharacterBase();
 	
+	virtual void Initialize();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	class UNavigationPath* ThinkPath(FVector dest);
+	class UNavigationPath* ThinkPath(const FVector& dest);
 
 public:	
 	// Called every frame
@@ -37,9 +40,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-	void SetDestination(FVector location);
+	void SetDestination(const FVector& location);
+
+	void ShowInitiative(int32 num);
 
 	virtual void Move();
+
+	void ExecuteAction(class ABG3GameMode* mode,class UCharacterActionData* action, const FVector& targetLocation);
 
 	UFUNCTION()
 	virtual void OnMoveCompleted();
@@ -57,6 +64,8 @@ public:
 
 	bool GetIsTurn() const;
 
+	bool GetIsPrepare() const;
+
 	void TurnReceive();
 	void TurnEnd();
 
@@ -73,6 +82,8 @@ public:
 	FOnTurnReceive OnCharacterTurnReceive;
 
 	FOnTurnEnd OnCharacterTurnEnd;
+
+	FOnInitialized OnInitialized;
 	
 	const bool* MovablePtr;
 
@@ -85,12 +96,18 @@ public:
 	FName TableName;
 	
 protected:
-
+	UPROPERTY()
 	class UDataTable* DataTable;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* SelectedMaterial;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UInitiativeUI> InitiativeClass;
+
+	UPROPERTY()
+	class UInitiativeUI* InitiativeUI;
+	
 	UPROPERTY()
 	class UMaterialInstanceDynamic* SelectedMatDynamic;
 
@@ -102,13 +119,15 @@ protected:
 	
 	bool bIsMovable = true;
 	bool bIsTurn = false;
+	bool bIsPrepareAction = false;
 	int32 CurHP;
-	
-	class AMovableCharacterController* controller;
+
+	UPROPERTY()
+	class AMovableCharacterController* charController;
 	
 	UPROPERTY(EditAnywhere)
 	class UCharacterStatus* DetailStatus;
-
+	
 	TArray<FGameAction> Actions;
 	
 	int CurTurnActionCount = 1;

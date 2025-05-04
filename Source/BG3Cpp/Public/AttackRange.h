@@ -17,5 +17,7 @@ class BG3CPP_API AAttackRange : public ADecalActor
 public:
 	AAttackRange();
 	void SetDecalRange(float Distance);
+	
+	UPROPERTY()
 	class UMaterialInstanceDynamic* DecalMaterial;
 };

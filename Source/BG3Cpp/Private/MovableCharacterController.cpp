@@ -4,7 +4,7 @@
 #include "MovableCharacterController.h"
 #include "Navigation/PathFollowingComponent.h"
 
-void AMovableCharacterController::Move(FVector Location)
+void AMovableCharacterController::Move(const FVector& Location)
 {
 	MoveToLocation(Location);
 }

@@ -56,14 +56,22 @@ class BG3CPP_API UActionCountUI : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
 	TArray<class UHorizontalBox*> ActionIconParents;
+	UPROPERTY()
 	TArray<class UHorizontalBox*> BonusIconParents;
+	UPROPERTY()
 	TArray<class UHorizontalBox*> Spell1IconParents;
+	UPROPERTY()
 	TArray<class UHorizontalBox*> Spell2IconParents;
-	
+
+	UPROPERTY()
 	TArray<class UActionCountIcon*> ActionIcons;
+	UPROPERTY()
 	TArray<class UActionCountIcon*> BonusIcons;
+	UPROPERTY()
 	TArray<class UActionCountIcon*> Spell1Icons;
+	UPROPERTY()
 	TArray<class UActionCountIcon*> Spell2Icons;
 
 	void InitializeIcons();

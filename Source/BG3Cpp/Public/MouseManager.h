@@ -38,6 +38,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class UCursorBase*> Cursors;
 
+	UPROPERTY()
 	class UCursorBase* CurrentCursor;
 	EGameMouseState MouseState = EGameMouseState::Default;
 	

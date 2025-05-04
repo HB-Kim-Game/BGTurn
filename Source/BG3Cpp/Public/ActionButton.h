@@ -38,8 +38,10 @@ protected:
 
 private:
 	EGameMouseState lastState;
+	UPROPERTY()
 	class UCharacterActionData* Action;
 
+	UPROPERTY()
 	class AMouseControlledPlayer* Player;
 
 	bool bIsSelected = false;
