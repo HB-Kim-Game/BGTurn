@@ -25,13 +25,15 @@ public:
 
 	TArray<class UCharacterActionData*> GetActions() const;
 	
-	float ShowPath(FVector dest);
+	float ShowPath(const FVector& dest, const FVector& extent = FVector(150.f, 150.f, 200.f));
 
 	virtual void OnMoveCompleted() override;
 
-	float GetCurrentMOV();
+	virtual void Initialize() override;
+	
+	float GetCurrentMOV() const;
 
-	bool GetIsMoving();
+	bool GetIsMoving() const;
 
 protected:
 	virtual void BeginPlay() override;

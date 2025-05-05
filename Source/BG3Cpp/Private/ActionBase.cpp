@@ -14,9 +14,18 @@ void UActionBase::PrepareAction(AMoveCharacterBase* character, UCharacterActionD
 {
 }
 
-void UActionBase::ExecuteAction(AMoveCharacterBase* character)
+void UActionBase::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	
+	TArray<AActor*> actors;
+	character->GetAttachedActors(actors);
+
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+	}
 }
 
 void UMeleeAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
@@ -42,6 +51,11 @@ void UMeleeAction::PrepareAction(AMoveCharacterBase* character, UCharacterAction
 	decal->SetDecalRange(action->MaxDistance);
 	
 	decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+	
 	// 마우스 커서 교체
 
 	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
@@ -55,10 +69,13 @@ void UMeleeAction::PrepareAction(AMoveCharacterBase* character, UCharacterAction
 	}
 }
 
-void UMeleeAction::ExecuteAction(AMoveCharacterBase* character)
+void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	Super::ExecuteAction(character);
+	Super::ExecuteAction(character, action);
 
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
 	UE_LOG(LogTemp, Warning, TEXT("Melee"));
 
 }
@@ -68,9 +85,9 @@ void USprintAction::PrepareAction(AMoveCharacterBase* character, UCharacterActio
 	Super::PrepareAction(character, action);
 }
 
-void USprintAction::ExecuteAction(AMoveCharacterBase* character)
+void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	Super::ExecuteAction(character);
+	Super::ExecuteAction(character, action);
 	
 }
 
@@ -110,7 +127,11 @@ void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterAct
 	}
 }
 
-void UFireBallAction::ExecuteAction(AMoveCharacterBase* character)
+void UFireBallAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	Super::ExecuteAction(character);
+	Super::ExecuteAction(character, action);
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
 }

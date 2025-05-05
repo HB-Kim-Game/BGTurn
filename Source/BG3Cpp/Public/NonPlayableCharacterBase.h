@@ -17,4 +17,7 @@ class BG3CPP_API ANonPlayableCharacterBase : public AMoveCharacterBase
 public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
+
+protected:
+	virtual void BeginPlay() override;
 };

@@ -5,6 +5,7 @@
 
 #include "ActionCountUI.h"
 #include "ActionCursor.h"
+#include "ActionListViewer.h"
 #include "ActionManager.h"
 #include "BG3Enums.h"
 #include "BG3GameMode.h"
@@ -85,17 +86,25 @@ void AMouseControlledPlayer::BeginPlay()
 				{
 					this->PlayerUI->ShowCost(cast, EActionCase::DefaultAction);
 				});
-				cast->OnCharacterAction.AddLambda([this, cast]()
+				cast->OnCharacterPrepareBonusAction.AddLambda([this, cast]()
+				{
+					this->PlayerUI->ShowCost(cast, EActionCase::BonusAction);
+				});
+				cast->OnCharacterAction.Add(FSimpleDelegate::CreateLambda([this, cast]()
 				{
 					this->PlayerUI->ShowUsed(cast, EActionCase::DefaultAction);
-				});
-				cast->OnCharacterBonusAction.AddLambda([this, cast]()
+					this->PlayerUI->ActionListViewer->MoveCursor(0);
+					this->MouseManager->SetMouseMode(EGameMouseState::Move);
+				}));
+				cast->OnCharacterBonusAction.Add(FSimpleDelegate::CreateLambda([this, cast]()
 				{
 					this->PlayerUI->ShowUsed(cast, EActionCase::BonusAction);
-				});
+					this->PlayerUI->ActionListViewer->MoveCursor(0);
+					this->MouseManager->SetMouseMode(EGameMouseState::Move);
+				}));
 			});
 
-			cast->OnInitialized.Broadcast();
+			cast->Initialize();
 		}
 	}
 
@@ -144,9 +153,17 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 			{
 				FVector dest = FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
+				FVector extent = FVector(150.f, 150.f, 200.f);
+				if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
+				{
+					dest.Z = hit.GetActor()->GetActorLocation().Z;
+					FVector actorBoundsOrigin, ActorBoundsExtent;
+					hit.GetActor()->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
+					extent += ActorBoundsExtent;
+				}
 				if (FVector::Distance(dest, lastCursorPos) < 20.f) return;
 				lastCursorPos = dest;
-				float Distance = selectedPlayableChar->ShowPath(dest);
+				float Distance = selectedPlayableChar->ShowPath(dest, extent);
 
 				if (auto* cursor = MouseManager->GetCursor())
 				{
@@ -305,7 +322,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 						
 						if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 						{
-							if (Distance / 100.f <= castCursor->GetAction()->MaxDistance)
+							if (Distance / 100.f - 2.f <= castCursor->GetAction()->MaxDistance)
 							{
 								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
 							}

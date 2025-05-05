@@ -16,7 +16,7 @@ class BG3CPP_API UActionBase : public UObject
 	
 public:
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action);
-	virtual void ExecuteAction(class AMoveCharacterBase* character);
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action);
 	
 };
 
@@ -27,7 +27,7 @@ class BG3CPP_API UMeleeAction : public UActionBase
 
 public:
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
-	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 };
 
 UCLASS()
@@ -37,7 +37,7 @@ class BG3CPP_API USprintAction : public UActionBase
 
 public:
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
-	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 };
 
 UCLASS()
@@ -47,5 +47,5 @@ class BG3CPP_API UFireBallAction : public UActionBase
 
 public:
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
-	virtual void ExecuteAction(class AMoveCharacterBase* character) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 };

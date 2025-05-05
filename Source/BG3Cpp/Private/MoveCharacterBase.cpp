@@ -40,11 +40,9 @@ AMoveCharacterBase::AMoveCharacterBase()
 void AMoveCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Initialize();
 }
 
-UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest)
+UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVector& extent)
 {
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
 
@@ -70,7 +68,7 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest)
 			ProjectedLocation,
 			nullptr,
 			nullptr,
-			FVector(150, 150, 200));
+			extent);
 
 		if (bIsSuccess)
 		{
@@ -95,6 +93,8 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest)
 
 void AMoveCharacterBase::Initialize()
 {
+	OnInitialized.Broadcast();
+
 	SelectedMatDynamic = UMaterialInstanceDynamic::Create(SelectedMaterial, this);
 	SpawnDefaultController();
 
@@ -103,16 +103,16 @@ void AMoveCharacterBase::Initialize()
 	
 	OnCharacterPrepareAction.AddLambda([this](){ this-> bIsPrepareAction = true;});
 	OnCharacterPrepareBonusAction.AddLambda([this](){ this-> bIsPrepareAction = true;});
-	OnCharacterAction.AddLambda([this]()
+	OnCharacterAction.Add(FSimpleDelegate::CreateLambda([this]()
 	{
 		this->CurTurnActionCount -= 1;
 		this->bIsPrepareAction = false;
-	});
-	OnCharacterBonusAction.AddLambda([this]()
+	}));
+	OnCharacterBonusAction.Add(FSimpleDelegate::CreateLambda([this]()
 	{
 		this->CurTurnBonusActionCount -= 1;
 		this->bIsPrepareAction = false;
-	});
+	}));
 
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
@@ -126,7 +126,7 @@ void AMoveCharacterBase::Initialize()
 	InitiativeUI = Cast<UInitiativeUI>(CreateWidget(GetWorld(), InitiativeClass));
 	InitiativeUI->AddToViewport();
 
-	OnInitialized.Broadcast();
+	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMoveCharacterBase::OnMontageEnded);
 }
 
 void AMoveCharacterBase::Move()
@@ -136,6 +136,7 @@ void AMoveCharacterBase::Move()
 	{
 		LastMoveDistance = path->GetPathLength() / 100.f;
 		charController->Move(Destination);
+		GetMesh()->PlayAnimation(MoveAnimation, true);
 		bIsMovable = false;
 	}
 }
@@ -181,11 +182,12 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 	{
 		if (auto* castController = Cast<AMovableCharacterController>(GetController()))
 		{
-			FDelegateHandle handle = castController->OnAIMoveCompleted.AddLambda([mode, action, castController, handle, this]()
+			ExecuteActionHandle = castController->OnAIMoveCompleted.Add(FSimpleDelegate::CreateLambda([mode, action, castController, this]()
 			{
 				mode->ActionManager->ExecuteAction(action, this);
-				castController->OnAIMoveCompleted.Remove(handle);
-			});
+				bool removeSuccess = castController->OnAIMoveCompleted.Remove(this->ExecuteActionHandle);
+				UE_LOG(LogTemp, Warning, TEXT("%d"), removeSuccess);
+			}));
 		}
 		SetDestination(bestLocation);
 		Move();
@@ -277,6 +279,11 @@ void AMoveCharacterBase::SetOutline(bool condition)
 	}
 }
 
+void AMoveCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	GetMesh()->PlayAnimation(IdleAnimation, true);
+}
+
 // Called every frame
 void AMoveCharacterBase::Tick(float DeltaTime)
 {
@@ -288,6 +295,23 @@ void AMoveCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
+}
+
+void AMoveCharacterBase::PlayAnimation(const FString& actionID)
+{
+	if (auto* animation = AnimationMap.Find(actionID))
+	{
+		if (auto* sequence = Cast<UAnimSequence>(*animation))
+		{
+			GetMesh()->PlayAnimation(sequence, true);
+		}
+		else if (auto* montage = Cast<UAnimMontage>(*animation))
+		{
+			GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationBlueprint);
+			PlayAnimMontage(montage);
+		}
+		
+	}
 }
 
 void AMoveCharacterBase::SetDestination(const FVector& location)

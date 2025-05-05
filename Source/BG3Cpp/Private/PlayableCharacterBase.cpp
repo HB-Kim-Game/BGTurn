@@ -67,19 +67,9 @@ void APlayableCharacterBase::OnMoveCompleted()
 	bIsMoving = false;
 }
 
-float APlayableCharacterBase::GetCurrentMOV()
+void APlayableCharacterBase::Initialize()
 {
-	return CurrentMOV;
-}
-
-bool APlayableCharacterBase::GetIsMoving()
-{
-	return bIsMoving;
-}
-
-void APlayableCharacterBase::BeginPlay()
-{
-	Super::BeginPlay();
+	Super::Initialize();
 
 	for (auto action : DetailStatus->GetActions())
 	{
@@ -98,9 +88,24 @@ void APlayableCharacterBase::BeginPlay()
 	}
 }
 
-float APlayableCharacterBase::ShowPath(FVector dest)
+float APlayableCharacterBase::GetCurrentMOV() const
 {
-	UNavigationPath* path = ThinkPath(dest);
+	return CurrentMOV;
+}
+
+bool APlayableCharacterBase::GetIsMoving() const
+{
+	return bIsMoving;
+}
+
+void APlayableCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+float APlayableCharacterBase::ShowPath(const FVector& dest, const FVector& extent)
+{
+	UNavigationPath* path = ThinkPath(dest, extent);
 
 	if (nullptr == path)
 	{

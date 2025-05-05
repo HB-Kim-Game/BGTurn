@@ -26,12 +26,15 @@ public:
 	AMoveCharacterBase();
 	
 	virtual void Initialize();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FString, class UAnimSequenceBase*> AnimationMap;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	class UNavigationPath* ThinkPath(const FVector& dest);
+	class UNavigationPath* ThinkPath(const FVector& dest, const FVector& extent = FVector(150.f, 150.f, 200.f));
 
 public:	
 	// Called every frame
@@ -39,6 +42,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void PlayAnimation(const FString& actionID);
 	
 	void SetDestination(const FVector& location);
 
@@ -94,6 +99,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TableName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimationAsset* IdleAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimationAsset* MoveAnimation;
 	
 protected:
 	UPROPERTY()
@@ -135,4 +146,9 @@ protected:
 
 	int MaxTurnActionCount = 1;
 	int MaxTurnBonusActionCount = 1;
+
+	UFUNCTION()
+	void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
+
+	FDelegateHandle ExecuteActionHandle;
 };

@@ -43,7 +43,7 @@ void UActionManager::ExecuteAction(UCharacterActionData* action, AMoveCharacterB
 	{
 		if (*actionBase)
 		{
-			(*actionBase)->ExecuteAction(character);
+			(*actionBase)->ExecuteAction(character, action);
 
 			switch (action->ActionCase)
 			{

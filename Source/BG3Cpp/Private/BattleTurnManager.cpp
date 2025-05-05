@@ -3,11 +3,13 @@
 
 #include "BattleTurnManager.h"
 
+#include "AttackRange.h"
 #include "BGUtil.h"
 #include "DiceChecker.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
 #include "NonPlayableCharacterBase.h"
+#include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "TurnListViewer.h"
 #include "Components/Button.h"
@@ -23,10 +25,8 @@ UBattleTurnManager::UBattleTurnManager()
 	// ...
 }
 
-void UBattleTurnManager::StartBattle()
+void UBattleTurnManager::Initialize()
 {
-	Characters.Empty();
-
 	TurnList = Cast<UTurnListViewer>(CreateWidget(GetWorld(), TurnListClass));
 	TurnList->AddToViewport(10);
 
@@ -34,6 +34,16 @@ void UBattleTurnManager::StartBattle()
 	{
 		Player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	}
+
+	TurnList->SetVisibility(ESlateVisibility::Collapsed);
+	
+}
+
+void UBattleTurnManager::StartBattle()
+{
+	Characters.Empty();
+
+	TurnList->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	
 	// 임시 - 월드내의 MovableCharacterBase 타입의 객체들을 전부 가져와서 저장.
 	TArray<AActor*> actors;
@@ -70,7 +80,24 @@ void UBattleTurnManager::StartBattle()
 				
 				Characters.Add(npData);
 				continue;
-			};
+			}
+			if (auto* p = Cast<APlayableCharacterBase>(cast))
+			{
+				p->OnCharacterTurnEnd.AddLambda([p]()
+				{
+					TArray<AActor*> children;
+
+					p->GetAttachedActors(children);
+
+					for (auto* child : children)
+					{
+						if (auto* range = Cast<AAttackRange>(child))
+						{
+							range->Destroy();
+						}
+					}
+				});
+			}
 
 			FCharacterTurnData data = FCharacterTurnData();
 			data.Character = cast;

@@ -17,6 +17,8 @@ public:
 	// Sets default values for this component's properties
 	UBattleTurnManager();
 
+	void Initialize();
+	
 	void StartBattle();
 
 	void SetOutlineAllBattleCharacters(bool condition);

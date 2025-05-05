@@ -16,3 +16,10 @@ void ANonPlayableCharacterBase::Deselected()
 
 	//GetMesh()->SetOverlayMaterial(nullptr);
 }
+
+void ANonPlayableCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	Initialize();
+}
