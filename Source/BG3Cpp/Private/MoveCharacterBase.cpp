@@ -13,7 +13,7 @@
 #include "CharacterActionData.h"
 #include "BG3GameMode.h"
 #include "ActionManager.h"
-#include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AMoveCharacterBase::AMoveCharacterBase()
@@ -34,6 +34,8 @@ AMoveCharacterBase::AMoveCharacterBase()
 	GetCapsuleComponent()->bDynamicObstacle = true;
 
 	DetailStatus = CreateDefaultSubobject<UCharacterStatus>(TEXT("DisplayStatus"));
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -89,6 +91,24 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVecto
 
 	bIsMovable = false;
 	return nullptr;
+}
+
+float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	CurHP -= damage;
+
+	FVector dir = EventInstigator->GetPawn()->GetActorLocation() - GetActorLocation();
+	dir.Z = 0;
+	FRotator rotation = dir.Rotation();
+	this->SetActorRotation(rotation);
+	PlayAnimation(TEXT("TakeDamage"));
+
+	OnTakeDefaultDamage.Broadcast(DamageAmount, this, Cast<AMoveCharacterBase>(EventInstigator->GetPawn()));
+	
+	return damage;
 }
 
 void AMoveCharacterBase::Initialize()
@@ -184,12 +204,16 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 		{
 			ExecuteActionHandle = castController->OnAIMoveCompleted.Add(FSimpleDelegate::CreateLambda([mode, action, castController, this]()
 			{
+				FVector dir = this->Destination - this->GetActorLocation();
+				dir.Z = 0;
+				FRotator rotation = dir.Rotation();
+				this->SetActorRotation(rotation);
 				mode->ActionManager->ExecuteAction(action, this);
 				bool removeSuccess = castController->OnAIMoveCompleted.Remove(this->ExecuteActionHandle);
-				UE_LOG(LogTemp, Warning, TEXT("%d"), removeSuccess);
 			}));
 		}
 		SetDestination(bestLocation);
+		
 		Move();
 	}
 }
@@ -198,6 +222,11 @@ void AMoveCharacterBase::OnMoveCompleted()
 {
 	bIsMovable = true;
 	CurrentMOV -= LastMoveDistance;
+
+	if(!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+	{
+		GetMesh()->PlayAnimation(IdleAnimation,true);
+	}
 }
 
 void AMoveCharacterBase::Selected()

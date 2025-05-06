@@ -60,12 +60,4 @@ void UActionCursor::NativeConstruct()
 void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	// if (nullptr == player) return;
-	//
-	// if (player->GetPlayableCharacter())
-	// {
-	// 	
-	// }
-	
 }

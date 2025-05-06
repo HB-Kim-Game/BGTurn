@@ -304,47 +304,62 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 	if (pc)
 	{
 		FHitResult hit;
-		// TraceChannel - Pawn으로 커서로 누른 지점에 hit 체크
-		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), false, hit))
-		{
-			// HitActor가 선택할 수 있는 물체일경우
-			// Selected 함수 실행
-			// 이후 현재 선택된 오브젝트 변수에 담아둠
-			if (auto* actor = Cast<ISelectableObject>(hit.GetActor()))
-			{
-				if (nullptr != selectedPlayableChar && selectedPlayableChar->GetIsTurn())
-				{
-					if (auto* castCursor = Cast<UActionCursor>(MouseManager->GetCursor()))
-					{
-						float Distance = selectedPlayableChar->ShowPath(hit.GetActor()->GetActorLocation());
-						
-						if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
-						
-						if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
-						{
-							if (Distance / 100.f - 2.f <= castCursor->GetAction()->MaxDistance)
-							{
-								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
-							}
-							else
-							{
-								selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), hit.GetActor()->GetActorLocation());
-							}
-							return;
-						}
-					}
-				}
-				
-				Select(actor);
-				
-				return;
-			}
-		};
+		// // TraceChannel - Pawn으로 커서로 누른 지점에 hit 체크
+		// if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), false, hit))
+		// {
+		// 	
+		// };
 
 		// 클릭한 곳이 바닥일 경우, 현재 선택한 오브젝트가 존재하고, 그 캐릭터가 move가 가능하다면 클릭한 지점으로 이동
 
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 		{
+			if (nullptr != selectedPlayableChar && selectedPlayableChar->GetIsTurn())
+			{
+				if (auto* castCursor = Cast<UActionCursor>(MouseManager->GetCursor()))
+				{
+					FVector extent = FVector(150.f, 150.f, 200.f);
+					UCharacterActionData* data = castCursor->GetAction();
+					if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
+					{
+						FVector actorBoundsOrigin, ActorBoundsExtent;
+						castChar->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
+						extent += ActorBoundsExtent;
+						data->Target = castChar;
+					}
+					
+					float Distance = selectedPlayableChar->ShowPath(lastCursorPos, extent);
+						
+					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
+						
+					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+					{
+						if (Distance / 100.f <= castCursor->GetAction()->MaxDistance)
+						{
+							FVector dir = lastCursorPos - selectedPlayableChar->GetActorLocation();
+							dir.Z = 0;
+							FRotator rotation = dir.Rotation();
+							selectedPlayableChar->SetActorRotation(rotation);
+							gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+						}
+						else
+						{
+							selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), lastCursorPos);
+						}
+						return;
+					}
+				}
+			}
+			
+			// HitActor가 선택할 수 있는 물체일경우
+			// Selected 함수 실행
+			// 이후 현재 선택된 오브젝트 변수에 담아둠
+			if (auto* actor = Cast<ISelectableObject>(hit.GetActor()))
+			{
+				Select(actor);
+				return;
+			}
+			
 			if (nullptr == selectedPlayableChar) return;
 			if (*(selectedPlayableChar->MovablePtr) && selectedPlayableChar->GetCurrentMOV() > 0.0f)
 			{

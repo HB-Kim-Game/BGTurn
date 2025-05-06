@@ -83,7 +83,6 @@ void UActionButton::OnButtonClicked()
 					auto* cast = Cast<AMoveCharacterBase>(c);
 					gm->ActionManager->PrepareAction(Action, cast);
 					lastState = *(Player->GetMouseManager()->MouseStatePtr);
-					UE_LOG(LogTemp,Warning, TEXT("%d"), lastState);
 				}
 			}
 		}

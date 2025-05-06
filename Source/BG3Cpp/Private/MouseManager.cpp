@@ -55,7 +55,6 @@ void UMouseManager::CreateCursors()
 	{
 		auto c = Cast<UCursorBase>(CreateWidget(GetWorld(), cursor));
 		Cursors.Add(c);
-		UE_LOG(LogTemp, Warning, TEXT("Add Cursor"));
 	}
 }
 

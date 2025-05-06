@@ -26,6 +26,9 @@ class BG3CPP_API UMeleeAction : public UActionBase
 	GENERATED_BODY()
 
 public:
+	
+	FDelegateHandle ExecuteActionHandle;
+	
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 };

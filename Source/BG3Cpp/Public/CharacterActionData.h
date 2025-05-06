@@ -26,7 +26,8 @@ public:
 	float MinDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AmountTurn;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AMoveCharacterBase* Target;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;
