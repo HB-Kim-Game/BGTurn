@@ -58,7 +58,7 @@ public:
 
 	void StopAction();
 
-	void AddMOV(float value);
+	void AddMOV(float value, bool isSprint = true);
 
 	UFUNCTION()
 	virtual void OnMoveCompleted();

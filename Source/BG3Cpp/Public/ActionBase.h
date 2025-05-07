@@ -44,6 +44,16 @@ public:
 };
 
 UCLASS()
+class BG3CPP_API UJumpAction : public UActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
+};
+
+UCLASS()
 class BG3CPP_API UFireBallAction : public UActionBase
 {
 	GENERATED_BODY()

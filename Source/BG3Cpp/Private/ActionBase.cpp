@@ -198,6 +198,59 @@ void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActio
 	character->AddMOV(character->Status.MOV);
 }
 
+void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
+{
+	Super::PrepareAction(character, action);
+
+	TArray<AActor*> actors;
+	character->GetAttachedActors(actors);
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+	}
+
+	// 캐릭터 주변으로 범위 표시
+	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+		AAttackRange::StaticClass(),
+		character->GetActorLocation(),
+		FRotator(0, 0, 0));
+
+	decal->SetDecalRange(action->MaxDistance);
+	
+	decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+
+	// 마우스 커서 교체 (도약용)
+	// 도약 지점 데칼 생성
+
+	// 도약 거리 공식
+	// 도약은 기본 4.5m + 힘 스탯 8에서 2 증가할때마다 1m 증가
+
+	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+	{
+		
+	}
+}
+
+void UJumpAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
+{
+	Super::ExecuteAction(character, action);
+
+	// 점프
+
+	// 점프는 이동거리 3m를 소모함.
+	character->AddMOV(-3.f, false);
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
+}
+
 void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);

@@ -249,10 +249,14 @@ void AMoveCharacterBase::StopAction()
 	// 사용 코스트 표시 취소
 }
 
-void AMoveCharacterBase::AddMOV(float value)
+void AMoveCharacterBase::AddMOV(float value, bool isSprint)
 {
 	CurrentMOV += value;
-	MaxMOV += value;
+	if (isSprint)
+	{
+		MaxMOV += value;
+	}
+	
 }
 
 void AMoveCharacterBase::OnMoveCompleted()
