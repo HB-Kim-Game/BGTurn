@@ -24,6 +24,12 @@ public :
 	UPROPERTY(meta = (BindWidget))
 	class USizeBox* SizeBox;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* HpMaterial;
+	
+	UPROPERTY()
+	UMaterialInstanceDynamic* HpMatDynamic;
+
 protected:
 	UFUNCTION()
 	virtual void OnButtonHovered();

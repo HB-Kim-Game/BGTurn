@@ -156,7 +156,7 @@ void UCharacterStatus::CreateActions()
 		break;
 	}
 
-	UDataTable* actionTable = LoadObject<UDataTable>(nullptr, *actionTablePath, NULL, LOAD_None, NULL);
+	UDataTable* actionTable = LoadObject<UDataTable>(nullptr, *actionTablePath, nullptr, LOAD_None, nullptr);
 
 	if (actionTable)
 	{

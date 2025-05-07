@@ -42,6 +42,10 @@ public:
 	void OnLeftMouseButtonDown();
 	void OnAltTriggered();
 	void OnAltComplete();
+	void OnRightMouseButtonDown();
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	
 #pragma region Camera Movement
 	void StartForwardMove(const FInputActionValue& value);
@@ -80,10 +84,10 @@ public:
 	float WheelSpeed = 300.f;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	float MinLength = 100.f;
+	float MinLength = 450.f;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	float MaxLength = 1200.f;
+	float MaxLength = 2200.f;
 
 	UPROPERTY()
 	float TargetLength = MaxLength;
@@ -93,6 +97,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* ClickAction;
+
+	UPROPERTY(VisibleAnywhere, Category = Input)
+	class UInputAction* RightClickAction;
 
 	UPROPERTY(VisibleAnywhere, Category = Input)
 	class UInputAction* OutlineAction;
@@ -119,8 +126,9 @@ public:
 	class UInputAction* WheelAction;
 	
 #pragma  endregion 
-
+	
 	class ISelectableObject* SelectedObject;
+
 
 	bool bIsforward = false;
 	bool bIsback = false;
@@ -134,6 +142,8 @@ public:
 
 	UPROPERTY()
 	class APlayableCharacterBase* selectedPlayableChar;
+	UPROPERTY()
+	class AMoveCharacterBase* hoverCharacter;
 
 	FVector ForwardDirection;
 	FVector RightDirection;

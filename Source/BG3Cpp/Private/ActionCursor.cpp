@@ -5,6 +5,8 @@
 
 #include "CharacterActionData.h"
 #include "MouseControlledPlayer.h"
+#include "MoveCharacterBase.h"
+#include "PlayableCharacterBase.h"
 #include "Components/Image.h"
 #include "Components/RichTextBlock.h"
 
@@ -20,7 +22,7 @@ void UActionCursor::ShowActionDescription(UCharacterActionData* action, int perc
 	
 	if (percent > 90)
 	{
-		FString text = "<ActionPercentHigh>" + FString::FromInt(percent);
+		FString text = "<ActionPercentHigh>" + FString::FromInt(percent) + "%</>";
 		Percent->SetText(FText::FromString(text));
 	}
 	else
@@ -32,7 +34,7 @@ void UActionCursor::ShowActionDescription(UCharacterActionData* action, int perc
 		else
 		{
 			Percent->SetVisibility(ESlateVisibility::Visible);
-			FString text = "<ActionPercent>" + FString::FromInt(percent);
+			FString text = "<ActionPercent>" + FString::FromInt(percent) + "%</>";
 			Percent->SetText(FText::FromString(text));		
 		}
 	}
@@ -60,4 +62,69 @@ void UActionCursor::NativeConstruct()
 void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (nullptr == player && !player->IsValidLowLevel()) return;
+	if (nullptr == Action && !Action->IsValidLowLevel()) return;
+
+	auto* pc = GetWorld()->GetFirstPlayerController();
+	if (pc)
+	{
+		FHitResult hit;
+		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
+		{
+			if (auto* character = Cast<AMoveCharacterBase>(hit.GetActor()))
+			{
+				float percent;
+				switch (Action->SkillCase)
+				{
+					case ESkillCase::DefaultAttack:
+						if (auto* playableCharacter = Cast<APlayableCharacterBase>(character))
+						{
+							if (player->GetPlayableCharacter() == playableCharacter) break;
+						}
+						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						ShowActionDescription(Action, static_cast<int>(percent));
+						break;
+					case ESkillCase::Buff:
+						ShowActionDescription(Action, 100);
+						break;
+					case ESkillCase::SpellOne:
+						if (auto* playableCharacter = Cast<APlayableCharacterBase>(character))
+						{
+							if (player->GetPlayableCharacter() == playableCharacter) break;
+						}
+						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						ShowActionDescription(Action, static_cast<int>(percent));
+						break;
+					case ESkillCase::SpellTwo:
+						if (auto* playableCharacter = Cast<APlayableCharacterBase>(character))
+						{
+							if (player->GetPlayableCharacter() == playableCharacter) break;
+						}
+						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						ShowActionDescription(Action, static_cast<int>(percent));
+						break;
+				}
+			}
+			else
+			{
+				switch (Action->SkillCase)
+				{
+				case ESkillCase::DefaultAttack:
+					ShowActionDescription(Action, 0);
+					break;
+				case ESkillCase::Buff:
+					ShowActionDescription(Action, 100);
+					break;
+				case ESkillCase::SpellOne:
+					ShowActionDescription(Action, 0);
+					break;
+				case ESkillCase::SpellTwo:
+					ShowActionDescription(Action, 0);
+					break;
+				}	
+			}
+		}
+	}
+	
 }

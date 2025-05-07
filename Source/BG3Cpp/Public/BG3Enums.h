@@ -58,3 +58,12 @@ enum class EActionCase : uint8
 	DefaultAction UMETA(DisplayName = "DefaultAction"),
 	BonusAction UMETA(DisplayName = "BonusAction"),
 };
+
+UENUM(BlueprintType)
+enum class ESkillCase : uint8
+{
+	DefaultAttack UMETA(DisplayName = "Attack"),
+	Buff UMETA(DisplayName = "Buff"),
+	SpellOne UMETA(DisplayName = "SpellOne"),
+	SpellTwo UMETA(DisplayName = "SpellTwo"),
+};

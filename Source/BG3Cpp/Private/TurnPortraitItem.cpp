@@ -3,6 +3,7 @@
 
 #include "TurnPortraitItem.h"
 
+#include "CharacterStatus.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
 #include "PlayableCharacterBase.h"
@@ -36,6 +37,10 @@ void UTurnPortraitItem::NativeConstruct()
 	SelectButton->OnClicked.AddDynamic(this, &UTurnPortraitItem::OnButtonClicked);
 	SelectButton->OnHovered.AddDynamic(this, &UTurnPortraitItem::OnButtonHovered);
 	SelectButton->OnUnhovered.AddDynamic(this, &UTurnPortraitItem::OnButtonUnhovered);
+
+	HpMatDynamic = UMaterialInstanceDynamic::Create(HpMaterial, this);
+
+	Portrait->SetBrushFromMaterial(HpMatDynamic);
 }
 
 void UTurnPortraitItem::Selected()
@@ -70,7 +75,8 @@ void UTurnPortraitItem::FetchData(UObject* Data)
 		else style.Normal.TintColor = FLinearColor::Red;
 		
 		SelectButton->SetStyle(style);
-		Portrait->SetBrushFromTexture(c->Status.Portrait);
+		HpMatDynamic->SetTextureParameterValue("CharacterPortrait", c->Status.Portrait);
+		HpMatDynamic->SetScalarParameterValue("Percentage", static_cast<float>(c->GetStatus()->GetHp() - *c->CurHPPtr) / c->GetStatus()->GetHp());
 		Portrait->SetDesiredSizeOverride(FVector2D(64.f, 64.f));
 	}
 	

@@ -64,6 +64,8 @@ struct FGameAction : public FTableRowBase
 	float MinDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AmountTurn;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillCase SkillCase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;

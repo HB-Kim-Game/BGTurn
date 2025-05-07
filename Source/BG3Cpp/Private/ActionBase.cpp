@@ -9,6 +9,7 @@
 #include "DiceChecker.h"
 #include "BGUtil.h"
 #include "BG3Enums.h"
+#include "DamageUI.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
@@ -102,6 +103,8 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		int8 damageResult = UDiceChecker::RollDice(6) + UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus) * 2;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 		
+		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);
+		
 		ExecuteActionHandle = action->Target->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
 			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 		{
@@ -127,6 +130,8 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		int8 damageResult = UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus);
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 
+		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);
+
 		ExecuteActionHandle = action->Target->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
 			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 		{
@@ -147,17 +152,50 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 	FRotator rotation = dir.Rotation();
 	action->Target->SetActorRotation(rotation);
 	action->Target->PlayAnimation(TEXT("Dodge"));
+	action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), -1);
 }
 
 void USprintAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);
+
+	TArray<AActor*> actors;
+	character->GetAttachedActors(actors);
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+	}
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+
+	// 마우스 커서 교체
+
+	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+	{
+		p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
+
+		if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
+		{
+			cursor->ShowActionDescription(action, 100);
+		}
+	}
 }
 
 void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::ExecuteAction(character, action);
 	
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
+	UE_LOG(LogTemp, Warning, TEXT("Sprint"));
+
+	character->AddMOV(character->Status.MOV);
 }
 
 void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)

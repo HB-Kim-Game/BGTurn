@@ -28,6 +28,8 @@ public:
 	int AmountTurn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AMoveCharacterBase* Target;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillCase SkillCase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;

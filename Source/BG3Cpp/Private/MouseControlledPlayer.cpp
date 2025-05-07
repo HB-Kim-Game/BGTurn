@@ -40,7 +40,7 @@ AMouseControlledPlayer::AMouseControlledPlayer()
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->SetRelativeRotation(FRotator(-42.f, 0, 0));
-	SpringArmComp->TargetArmLength = 400.f;
+	SpringArmComp->TargetArmLength = 1600.f;
 	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
@@ -104,6 +104,8 @@ void AMouseControlledPlayer::BeginPlay()
 				}));
 			});
 
+			cast->GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMouseControlledPlayer::OnMontageEnded);
+
 			cast->Initialize();
 		}
 	}
@@ -160,6 +162,28 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 					FVector actorBoundsOrigin, ActorBoundsExtent;
 					hit.GetActor()->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
 					extent += ActorBoundsExtent;
+
+					if (nullptr != hoverCharacter && hoverCharacter != castChar)
+					{
+						hoverCharacter->SetOutline(false);
+						hoverCharacter = castChar;
+						castChar->SetOutline(true);
+						PlayerUI->ShowSelectedObjectInfo(hoverCharacter);
+					}
+					else if (nullptr == hoverCharacter)
+					{
+						hoverCharacter = castChar;
+						hoverCharacter->SetOutline(true);
+						PlayerUI->ShowSelectedObjectInfo(hoverCharacter);
+					}
+				}
+				else
+				{
+					if (nullptr != hoverCharacter)
+					{
+						hoverCharacter->SetOutline(false);
+						hoverCharacter = nullptr;
+					}
 				}
 				if (FVector::Distance(dest, lastCursorPos) < 20.f) return;
 				lastCursorPos = dest;
@@ -178,15 +202,15 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 						
 						castCursor->ShowDistance(Distance, condition);
 
-						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
-						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->GetMaxMov(), 0.0f, 1.0f);
+						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->GetMaxMov(), 0.0f, 1.0f);
 
 						PlayerUI->ShowMoveProgress(curProgress, resultProgress);
 					}
 					else if (auto* castCursor2 = Cast<UActionCursor>(cursor))
 					{
-						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
-						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->Status.MOV, 0.0f, 1.0f);
+						float curProgress = FMath::Clamp(selectedPlayableChar->GetCurrentMOV() / selectedPlayableChar->GetMaxMov(), 0.0f, 1.0f);
+						float resultProgress = FMath::Clamp((selectedPlayableChar->GetCurrentMOV() - Distance / 100.f) / selectedPlayableChar->GetMaxMov(), 0.0f, 1.0f);
 
 						PlayerUI->ShowMoveProgress(curProgress, resultProgress);
 					}
@@ -266,6 +290,7 @@ void AMouseControlledPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::OnLeftMouseButtonDown);
+		EnhancedInputComponent->BindAction(RightClickAction, ETriggerEvent::Started, this, &AMouseControlledPlayer::OnRightMouseButtonDown);
 		EnhancedInputComponent->BindAction(OutlineAction, ETriggerEvent::Triggered, this, &AMouseControlledPlayer::OnAltTriggered);
 		EnhancedInputComponent->BindAction(OutlineAction, ETriggerEvent::Completed, this, &AMouseControlledPlayer::OnAltComplete);
 		
@@ -318,25 +343,51 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 			{
 				if (auto* castCursor = Cast<UActionCursor>(MouseManager->GetCursor()))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("%hd"), castCursor->GetAction()->SkillCase);
+					if (castCursor->GetAction()->SkillCase == ESkillCase::Buff)
+					{
+						if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+						{
+							gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+							return;
+						}
+					}
+					
 					FVector extent = FVector(150.f, 150.f, 200.f);
-					UCharacterActionData* data = castCursor->GetAction();
+					FVector destination = lastCursorPos;
 					if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
 					{
 						FVector actorBoundsOrigin, ActorBoundsExtent;
 						castChar->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
 						extent += ActorBoundsExtent;
-						data->Target = castChar;
+						destination = castChar->GetActorLocation();
+						if (auto* playableCharacter = Cast<APlayableCharacterBase>(castChar))
+						{
+							if (playableCharacter != selectedPlayableChar) castCursor->GetAction()->Target = castChar;
+							else return;
+						}
+						else
+						{
+							castCursor->GetAction()->Target = castChar;
+						}
+					}
+					else
+					{
+						castCursor->GetAction()->Target = nullptr;
 					}
 					
-					float Distance = selectedPlayableChar->ShowPath(lastCursorPos, extent);
+					float Distance = selectedPlayableChar->ShowPath(destination, extent);
 						
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
-						
+
+					UE_LOG(LogTemp,Warning,TEXT("%f"), (FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) - extent.X) / 100.f);
+					
 					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 					{
-						if (Distance / 100.f <= castCursor->GetAction()->MaxDistance)
+						if ((FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) - extent.X) / 100.f <= castCursor->GetAction()->MaxDistance)
 						{
-							FVector dir = lastCursorPos - selectedPlayableChar->GetActorLocation();
+							UE_LOG(LogTemp,Warning,TEXT("Execute"));
+							FVector dir = destination - selectedPlayableChar->GetActorLocation();
 							dir.Z = 0;
 							FRotator rotation = dir.Rotation();
 							selectedPlayableChar->SetActorRotation(rotation);
@@ -344,7 +395,8 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 						}
 						else
 						{
-							selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), lastCursorPos);
+							UE_LOG(LogTemp,Warning,TEXT("MoveExecute"));
+							selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), destination);
 						}
 						return;
 					}
@@ -394,6 +446,16 @@ void AMouseControlledPlayer::OnAltComplete()
 	{
 		SelectedObject->Selected();	
 	}
+}
+
+void AMouseControlledPlayer::OnRightMouseButtonDown()
+{
+	
+}
+
+void AMouseControlledPlayer::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	MouseManager->SetMouseMode(EGameMouseState::Move);
 }
 
 void AMouseControlledPlayer::StartForwardMove(const FInputActionValue& value)
@@ -613,6 +675,13 @@ void AMouseControlledPlayer::InitializeInput()
 	if (outlineAction.Succeeded())
 	{
 		OutlineAction = outlineAction.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction> rightClickAction(TEXT("/Game/BG3/Input/Action/IA_Right.IA_Right"));
+	
+	if (rightClickAction.Succeeded())
+	{
+		RightClickAction = rightClickAction.Object;
 	}
 }
 

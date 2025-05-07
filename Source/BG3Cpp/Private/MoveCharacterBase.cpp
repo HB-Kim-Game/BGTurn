@@ -13,6 +13,7 @@
 #include "CharacterActionData.h"
 #include "BG3GameMode.h"
 #include "ActionManager.h"
+#include "DamageUI.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -98,15 +99,22 @@ float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	CurHP -= damage;
+	CurHP = FMath::Clamp(CurHP- damage, 0, GetStatus()->GetHp());
 
 	FVector dir = EventInstigator->GetPawn()->GetActorLocation() - GetActorLocation();
 	dir.Z = 0;
 	FRotator rotation = dir.Rotation();
 	this->SetActorRotation(rotation);
-	PlayAnimation(TEXT("TakeDamage"));
 
-	OnTakeDefaultDamage.Broadcast(DamageAmount, this, Cast<AMoveCharacterBase>(EventInstigator->GetPawn()));
+	OnTakeDefaultDamage.Broadcast(DamageAmount, this, Cast<AMoveCharacterBase>(EventInstigator->GetPawn()));	
+	if (CurHP > 0)
+	{
+		PlayAnimation(TEXT("TakeDamage"));
+	}
+	else
+	{
+		OnDead.Broadcast();
+	}
 	
 	return damage;
 }
@@ -121,21 +129,32 @@ void AMoveCharacterBase::Initialize()
 	charController = Cast<AMovableCharacterController>(GetController());
 	charController->OnAIMoveCompleted.AddUObject(this, &AMoveCharacterBase::OnMoveCompleted);
 	
-	OnCharacterPrepareAction.AddLambda([this](){ this-> bIsPrepareAction = true;});
+	OnCharacterPrepareAction.AddLambda([this]()
+	{
+		this-> bIsPrepareAction = true;
+	});
 	OnCharacterPrepareBonusAction.AddLambda([this](){ this-> bIsPrepareAction = true;});
 	OnCharacterAction.Add(FSimpleDelegate::CreateLambda([this]()
 	{
+		bIsPrepareAction = false;
 		this->CurTurnActionCount -= 1;
-		this->bIsPrepareAction = false;
 	}));
 	OnCharacterBonusAction.Add(FSimpleDelegate::CreateLambda([this]()
 	{
+		bIsPrepareAction = false;
 		this->CurTurnBonusActionCount -= 1;
-		this->bIsPrepareAction = false;
+	}));
+	OnDead.Add(FSimpleDelegate::CreateLambda([this]()
+	{
+		this->GetMesh()->PlayAnimation(DeadAnimation, false);
+		this->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		this->GetCapsuleComponent()->bDynamicObstacle = false;
+		this->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}));
 
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
+	MaxMOV = Status.MOV;
 
 	DetailStatus->Initialize(Status);
 
@@ -145,6 +164,9 @@ void AMoveCharacterBase::Initialize()
 	
 	InitiativeUI = Cast<UInitiativeUI>(CreateWidget(GetWorld(), InitiativeClass));
 	InitiativeUI->AddToViewport();
+
+	DamageUI = Cast<UDamageUI>(CreateWidget(GetWorld(), DamageUIClass));
+	DamageUI->AddToViewport();
 
 	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMoveCharacterBase::OnMontageEnded);
 }
@@ -158,6 +180,7 @@ void AMoveCharacterBase::Move()
 		charController->Move(Destination);
 		GetMesh()->PlayAnimation(MoveAnimation, true);
 		bIsMovable = false;
+		CurrentMOV -= LastMoveDistance;
 	}
 }
 
@@ -166,7 +189,7 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 	// 이동후 행동
 	TArray<FVector> points;
 	const int count = 16;
-	const float radius = action->MaxDistance * 100.f - 200.f;
+	const float radius = action->MaxDistance * 100.f;
 	FVector center = targetLocation;
 
 	for (int i = 0; i < count; i++)
@@ -202,9 +225,9 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 	{
 		if (auto* castController = Cast<AMovableCharacterController>(GetController()))
 		{
-			ExecuteActionHandle = castController->OnAIMoveCompleted.Add(FSimpleDelegate::CreateLambda([mode, action, castController, this]()
+			ExecuteActionHandle = castController->OnAIMoveCompleted.Add(FSimpleDelegate::CreateLambda([mode, action, castController, this, targetLocation]()
 			{
-				FVector dir = this->Destination - this->GetActorLocation();
+				FVector dir = targetLocation - this->GetActorLocation();
 				dir.Z = 0;
 				FRotator rotation = dir.Rotation();
 				this->SetActorRotation(rotation);
@@ -218,12 +241,24 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 	}
 }
 
+void AMoveCharacterBase::StopAction()
+{
+	// 공격범위 제거
+	// 마우스 커서 변경
+	// 애니메이션 idle 변경
+	// 사용 코스트 표시 취소
+}
+
+void AMoveCharacterBase::AddMOV(float value)
+{
+	CurrentMOV += value;
+	MaxMOV += value;
+}
+
 void AMoveCharacterBase::OnMoveCompleted()
 {
 	bIsMovable = true;
-	CurrentMOV -= LastMoveDistance;
-
-	if(!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
+	if (!GetMesh()->GetAnimInstance()->IsAnyMontagePlaying())
 	{
 		GetMesh()->PlayAnimation(IdleAnimation,true);
 	}
@@ -278,12 +313,22 @@ bool AMoveCharacterBase::GetIsPrepare() const
 	return bIsPrepareAction;
 }
 
+UDamageUI* AMoveCharacterBase::GetDamageUI() const
+{
+	return DamageUI;
+}
+
+float AMoveCharacterBase::GetMaxMov() const
+{
+	return MaxMOV;
+}
+
 void AMoveCharacterBase::TurnReceive()
 {
 	bIsTurn = true;
-	CurrentMOV = Status.MOV;
-	CurTurnActionCount = 1;
-	CurTurnBonusActionCount = 1;
+	CurrentMOV = MaxMOV;
+	CurTurnActionCount = MaxTurnActionCount;
+	CurTurnBonusActionCount = MaxTurnBonusActionCount;
 	bIsMovable = true;
 	
 	OnCharacterTurnReceive.Broadcast();
@@ -310,6 +355,7 @@ void AMoveCharacterBase::SetOutline(bool condition)
 
 void AMoveCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
+	bIsMovable = true;
 	GetMesh()->PlayAnimation(IdleAnimation, true);
 }
 
@@ -336,8 +382,10 @@ void AMoveCharacterBase::PlayAnimation(const FString& actionID)
 		}
 		else if (auto* montage = Cast<UAnimMontage>(*animation))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("montage"));
 			GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationBlueprint);
 			PlayAnimMontage(montage);
+			bIsMovable = false;
 		}
 		
 	}

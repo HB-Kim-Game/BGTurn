@@ -53,6 +53,7 @@ void UTurnListViewer::MoveCursor(int32 Gap)
 		for (int i = 0; i< SpawnItems.Num(); i++)
 		{
 			SpawnItems[i]->Deselected();
+			SpawnItems[i]->FetchData(FetchedDatas[UBGUtil::ClampCursor(CursorOffset + i, FetchedDatas.Num())]);
 		}
 
 		SpawnItems[GetCursor()]->Selected();

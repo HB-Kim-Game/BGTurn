@@ -64,6 +64,12 @@ void UBattleTurnManager::StartBattle()
 				auto* moveC = Cast<AMoveCharacterBase>(this->TurnList->GetSelectedItem());
 				Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));
 			});
+
+			cast->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([this]
+			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
+			{
+				this->TurnList->MoveCursor(0);
+			}));
 			
 			if (auto* np = Cast<ANonPlayableCharacterBase>(cast))
 			{

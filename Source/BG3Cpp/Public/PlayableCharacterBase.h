@@ -38,6 +38,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted) override;
+
 private:
 	UPROPERTY()
 	class USplineComponent* Spline;

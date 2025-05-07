@@ -6,6 +6,7 @@
 #include "CharacterActionData.h"
 #include "CharacterStatus.h"
 #include "InitiativeUI.h"
+#include "MouseControlledPlayer.h"
 #include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
@@ -78,6 +79,7 @@ void APlayableCharacterBase::Initialize()
 		data->ActionCase = action->ActionCase;
 		data->MaxDistance = action->MaxDistance;
 		data->MinDistance = action->MinDistance;
+		data->SkillCase = action->SkillCase;
 		data->AmountTurn = action->AmountTurn;
 		data->DisplayName = action->DisplayName;
 		data->Description = action->Description;
@@ -101,6 +103,11 @@ bool APlayableCharacterBase::GetIsMoving() const
 void APlayableCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APlayableCharacterBase::OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted)
+{
+	Super::OnMontageEnded(Montage, bInterrupted);
 }
 
 float APlayableCharacterBase::ShowPath(const FVector& dest, const FVector& extent)

@@ -15,6 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareBonusAction);
 DECLARE_MULTICAST_DELEGATE(FOnTurnReceive);
 DECLARE_MULTICAST_DELEGATE(FOnTurnEnd);
 DECLARE_MULTICAST_DELEGATE(FOnInitialized);
+DECLARE_MULTICAST_DELEGATE(FOnDead);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnTakeDefaultDamage, float/* Damage */, AMoveCharacterBase*/* DamagedCharacter */, AMoveCharacterBase* /* Instigator */);
 
 UCLASS()
@@ -55,6 +56,10 @@ public:
 
 	void ExecuteAction(class ABG3GameMode* mode,class UCharacterActionData* action, const FVector& targetLocation);
 
+	void StopAction();
+
+	void AddMOV(float value);
+
 	UFUNCTION()
 	virtual void OnMoveCompleted();
 
@@ -72,6 +77,10 @@ public:
 	bool GetIsTurn() const;
 
 	bool GetIsPrepare() const;
+
+	class UDamageUI* GetDamageUI() const;
+
+	float GetMaxMov() const;
 
 	void TurnReceive();
 	void TurnEnd();
@@ -93,6 +102,8 @@ public:
 	FOnInitialized OnInitialized;
 
 	FOnTakeDefaultDamage OnTakeDefaultDamage;
+
+	FOnDead OnDead;
 	
 	const bool* MovablePtr;
 
@@ -109,6 +120,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAnimationAsset* MoveAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimationAsset* DeadAnimation;
 	
 protected:
 	UPROPERTY()
@@ -119,9 +133,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UInitiativeUI> InitiativeClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UDamageUI> DamageUIClass;
 
 	UPROPERTY()
 	class UInitiativeUI* InitiativeUI;
+
+	UPROPERTY()
+	class UDamageUI* DamageUI;
 	
 	UPROPERTY()
 	class UMaterialInstanceDynamic* SelectedMatDynamic;
@@ -131,6 +151,7 @@ protected:
 
 	float LastMoveDistance;
 	float CurrentMOV;
+	float MaxMOV;
 	
 	bool bIsMovable = true;
 	bool bIsTurn = false;
@@ -152,7 +173,7 @@ protected:
 	int MaxTurnBonusActionCount = 1;
 
 	UFUNCTION()
-	void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
+	virtual void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
 
 	FDelegateHandle ExecuteActionHandle;
 };
