@@ -256,7 +256,6 @@ void AMoveCharacterBase::AddMOV(float value, bool isSprint)
 	{
 		MaxMOV += value;
 	}
-	
 }
 
 void AMoveCharacterBase::OnMoveCompleted()
@@ -405,6 +404,11 @@ void AMoveCharacterBase::ShowInitiative(int32 num)
 	FVector worldLocation = GetActorLocation() + FVector(0, 0, 200.f);
 	
 	InitiativeUI->ShowInitiative(worldLocation, num);
+}
+
+void AMoveCharacterBase::SetIsMovable(bool condition)
+{
+	bIsMovable = condition;
 }
 
 

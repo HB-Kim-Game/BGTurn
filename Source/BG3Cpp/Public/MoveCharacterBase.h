@@ -86,6 +86,7 @@ public:
 	void TurnEnd();
 
 	void SetOutline(bool condition);
+	void SetIsMovable(bool condition);
 	
 	FOnCharacterAction OnCharacterAction;
 	

@@ -22,6 +22,7 @@ void UActionCursor::ShowActionDescription(UCharacterActionData* action, int perc
 	
 	if (percent > 90)
 	{
+		Percent->SetVisibility(ESlateVisibility::Visible);
 		FString text = "<ActionPercentHigh>" + FString::FromInt(percent) + "%</>";
 		Percent->SetText(FText::FromString(text));
 	}
@@ -45,7 +46,7 @@ void UActionCursor::ShowActionDescription(UCharacterActionData* action, int perc
 	}
 	else
 	{
-		FString text = "<CursorDesc>" + description + "</CursorDesc>";
+		FString text = "<CursorDesc>" + FString::Printf(TEXT("%s"), *description)+ "</>";
 		Description->SetText(FText::FromString(text));
 		Description->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -83,10 +84,23 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						{
+							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
+							break;
+						}
 						ShowActionDescription(Action, static_cast<int>(percent));
 						break;
 					case ESkillCase::Buff:
-						ShowActionDescription(Action, 100);
+						if (Action->MaxDistance > 0.05f)
+						{
+							if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+							{
+								ShowActionDescription(Action, 0, TEXT("거리가 너무 멉니다!"));
+								break;
+							}
+						}
+						ShowActionDescription(Action, 0);
 						break;
 					case ESkillCase::SpellOne:
 						if (auto* playableCharacter = Cast<APlayableCharacterBase>(character))
@@ -94,6 +108,11 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						{
+							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
+							break;
+						}
 						ShowActionDescription(Action, static_cast<int>(percent));
 						break;
 					case ESkillCase::SpellTwo:
@@ -102,6 +121,11 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive) / 20 * 100.f;
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						{
+							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
+							break;
+						}
 						ShowActionDescription(Action, static_cast<int>(percent));
 						break;
 				}
@@ -111,15 +135,38 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 				switch (Action->SkillCase)
 				{
 				case ESkillCase::DefaultAttack:
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					{
+						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
+						break;
+					}
 					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::Buff:
-					ShowActionDescription(Action, 100);
+					if (Action->MaxDistance > 0.05f)
+					{
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance)
+						{
+							ShowActionDescription(Action, 0, TEXT("거리가 너무 멉니다!"));
+							break;
+						}
+					}
+					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::SpellOne:
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					{
+						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
+						break;
+					}
 					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::SpellTwo:
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					{
+						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
+						break;
+					}
 					ShowActionDescription(Action, 0);
 					break;
 				}	

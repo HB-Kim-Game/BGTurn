@@ -9,6 +9,7 @@
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
 #include "NonPlayableCharacterBase.h"
+#include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "TurnListViewer.h"
@@ -100,6 +101,16 @@ void UBattleTurnManager::StartBattle()
 						if (auto* range = Cast<AAttackRange>(child))
 						{
 							range->Destroy();
+						}
+						if (auto* parabola = Cast<AParabolaSpline>(child))
+						{
+							TArray<AActor*> parabolaChildren;
+							parabola->GetAttachedActors(parabolaChildren);
+							for (auto* parabolaChild : parabolaChildren)
+							{
+								parabolaChild->Destroy();
+							}
+							parabola->Destroy();
 						}
 					}
 				});

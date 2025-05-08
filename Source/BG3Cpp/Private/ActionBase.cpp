@@ -9,10 +9,13 @@
 #include "DiceChecker.h"
 #include "BGUtil.h"
 #include "BG3Enums.h"
+#include "CustomTimer.h"
 #include "DamageUI.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
+#include "ParabolaSpline.h"
+#include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -29,6 +32,16 @@ void UActionBase::ExecuteAction(AMoveCharacterBase* character, UCharacterActionD
 	{
 		if (auto* cast = Cast<AAttackRange>(actor))
 		{
+			cast->Destroy();
+		}
+		if (auto* cast = Cast<AParabolaSpline>(actor))
+		{
+			TArray<AActor*> parabolaChildren;
+			cast->GetAttachedActors(parabolaChildren);
+			for (auto* child : parabolaChildren)
+			{
+				child->Destroy();
+			}
 			cast->Destroy();
 		}
 	}
@@ -201,54 +214,102 @@ void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActio
 void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);
-
-	TArray<AActor*> actors;
-	character->GetAttachedActors(actors);
-	for (auto* actor : actors)
-	{
-		if (auto* cast = Cast<AAttackRange>(actor))
-		{
-			cast->Destroy();
-		}
-	}
-
-	// 캐릭터 주변으로 범위 표시
-	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
-		AAttackRange::StaticClass(),
-		character->GetActorLocation(),
-		FRotator(0, 0, 0));
-
-	decal->SetDecalRange(action->MaxDistance);
 	
-	decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
-
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Prepare";
 	character->PlayAnimation(prepareID);
 
-	// 마우스 커서 교체 (도약용)
-	// 도약 지점 데칼 생성
-
-	// 도약 거리 공식
-	// 도약은 기본 4.5m + 힘 스탯 8에서 2 증가할때마다 1m 증가
-
-	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
+		TArray<AActor*> actors;
+		character->GetAttachedActors(actors);
+		for (auto* actor : actors)
+		{
+			if (auto* cast = Cast<AAttackRange>(actor))
+			{
+				cast->Destroy();
+			}
+		}
+
+		// 캐릭터 주변으로 범위 표시
+		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+			AAttackRange::StaticClass(),
+			character->GetActorLocation(),
+			FRotator(0, 0, 0));
+
+		float jumpHeight = (action->MaxDistance + UBGUtil::CalculateBonus(character->Status.Str));
+		action->MaxDistance = jumpHeight;
+		decal->SetDecalRange(jumpHeight);
+	
+		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+		// 도약 거리 공식
+		// 도약은 기본 4.5m + 힘 스탯 8에서 2 증가할때마다 1m 증가
+
+		AParabolaSpline* parabola = character->GetWorld()->SpawnActor<AParabolaSpline>(
+			AParabolaSpline::StaticClass(),
+			character->GetActorLocation(),
+			FRotator(0,0,0));
+
+		parabola->InitializeParabola(0.025f, 200.f);
+
+		parabola->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+		playable->SetSplineCondition(false);
+
+		if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+		{
+			p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
 		
+			if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
+			{
+				cursor->ShowActionDescription(action, 0);
+			}
+		}	
 	}
 }
 
 void UJumpAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	Super::ExecuteAction(character, action);
-
-	// 점프
-
 	// 점프는 이동거리 3m를 소모함.
 	character->AddMOV(-3.f, false);
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Execute";
 	character->PlayAnimation(prepareID);
+
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
+	{
+		playable->SetSplineCondition(true);
+		TArray<AActor*> actors;
+		character->GetAttachedActors(actors);
+		FVector startLocation = character->GetActorLocation();
+		AParabolaSpline* spline;
+
+		for (auto* actor : actors)
+		{
+			if (auto* cast = Cast<AParabolaSpline>(actor))
+			{
+				spline = cast;
+			}
+		}
+		// 점프
+		character->SetIsMovable(false);
+		UCustomTimer::SetTimer(character->GetWorld(), 1.0f, [character, startLocation, spline](float alpha)
+		{
+			FVector dir = spline->GetDestination() - character->GetActorLocation();
+			dir.Z = 0;
+			FRotator rotation = dir.Rotation();
+			character->SetActorRotation(rotation);
+			character->SetActorLocation(spline->CalculateParabola(startLocation, alpha), true);
+		},
+		[character]()
+		{
+			character->SetIsMovable(true);
+			UE_LOG(LogTemp, Warning, TEXT("점프 완료"));
+		});
+	}
+
+	Super::ExecuteAction(character, action);
 }
 
 void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)

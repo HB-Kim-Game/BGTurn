@@ -58,7 +58,7 @@ void UPlayerUI::ShowCost(APlayableCharacterBase* character, EActionCase actionCa
 		ActionCountUI->CostAction(character->GetCurrentTurnActionCount());	
 		break;
 		case EActionCase::BonusAction:
-		ActionCountUI->CostAction(character->GetCurrentBonusActionCount());	
+		ActionCountUI->CostBonus(character->GetCurrentBonusActionCount());	
 		break;
 	}
 }
@@ -71,7 +71,7 @@ void UPlayerUI::ShowUsed(APlayableCharacterBase* character, EActionCase actionCa
 		ActionCountUI->UseAction(character->GetCurrentTurnActionCount());	
 		break;
 	case EActionCase::BonusAction:
-		ActionCountUI->UseAction(character->GetCurrentBonusActionCount());	
+		ActionCountUI->UseBonus(character->GetCurrentBonusActionCount());	
 		break;
 	}
 

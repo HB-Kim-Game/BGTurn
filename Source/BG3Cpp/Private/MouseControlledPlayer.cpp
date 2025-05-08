@@ -186,7 +186,10 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 					}
 				}
 				if (FVector::Distance(dest, lastCursorPos) < 20.f) return;
+
 				lastCursorPos = dest;
+				if (!selectedPlayableChar->GetSplineCondition()) return;
+				
 				float Distance = selectedPlayableChar->ShowPath(dest, extent);
 
 				if (auto* cursor = MouseManager->GetCursor())
@@ -329,12 +332,6 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 	if (pc)
 	{
 		FHitResult hit;
-		// // TraceChannel - Pawn으로 커서로 누른 지점에 hit 체크
-		// if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), false, hit))
-		// {
-		// 	
-		// };
-
 		// 클릭한 곳이 바닥일 경우, 현재 선택한 오브젝트가 존재하고, 그 캐릭터가 move가 가능하다면 클릭한 지점으로 이동
 
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
@@ -343,18 +340,27 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 			{
 				if (auto* castCursor = Cast<UActionCursor>(MouseManager->GetCursor()))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("%hd"), castCursor->GetAction()->SkillCase);
+					FVector extent = FVector(150.f, 150.f, 200.f);
+					FVector destination = lastCursorPos;
+					
 					if (castCursor->GetAction()->SkillCase == ESkillCase::Buff)
 					{
 						if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 						{
-							gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+							if (castCursor->GetAction()->MaxDistance < 0.05f)
+							{
+								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+							}
+							else
+							{
+								float Distance = FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) / 100.f;
+								if (castCursor->GetAction()->MaxDistance < Distance) return;
+								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+							}
 							return;
 						}
 					}
-					
-					FVector extent = FVector(150.f, 150.f, 200.f);
-					FVector destination = lastCursorPos;
+
 					if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
 					{
 						FVector actorBoundsOrigin, ActorBoundsExtent;
@@ -377,7 +383,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					}
 					
 					float Distance = selectedPlayableChar->ShowPath(destination, extent);
-						
+					
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
 
 					UE_LOG(LogTemp,Warning,TEXT("%f"), (FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) - extent.X) / 100.f);

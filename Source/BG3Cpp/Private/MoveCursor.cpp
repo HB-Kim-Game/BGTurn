@@ -23,4 +23,5 @@ void UMoveCursor::ShowDistance(float distance, bool isMovable)
 	}
 	
 	WarningText->SetVisibility(isMovable ? ESlateVisibility::Collapsed: ESlateVisibility::Visible);
+	Distance->SetVisibility(distance < 0.01f ? ESlateVisibility::Collapsed: ESlateVisibility::Visible);
 }

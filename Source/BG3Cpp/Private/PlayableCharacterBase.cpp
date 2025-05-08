@@ -100,6 +100,22 @@ bool APlayableCharacterBase::GetIsMoving() const
 	return bIsMoving;
 }
 
+bool APlayableCharacterBase::GetSplineCondition() const
+{
+	return SplineCondition;
+}
+
+void APlayableCharacterBase::SetSplineCondition(bool condition)
+{
+	SplineCondition = condition;
+
+	if (!SplineCondition)
+	{
+		Spline->ClearSplinePoints();
+		RemoveSplineMesh();
+	}
+}
+
 void APlayableCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

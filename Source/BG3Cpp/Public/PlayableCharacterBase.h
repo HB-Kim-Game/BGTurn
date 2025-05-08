@@ -35,6 +35,10 @@ public:
 
 	bool GetIsMoving() const;
 
+	bool GetSplineCondition() const;
+
+	void SetSplineCondition(bool condition);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -52,6 +56,7 @@ private:
 	TArray<class UCharacterActionData*> Actions;
 	
 	bool bIsMoving = false;
+	bool SplineCondition = true;
 
 	UPROPERTY()
 	TArray<class USplineMeshComponent*> SplineMeshes;
