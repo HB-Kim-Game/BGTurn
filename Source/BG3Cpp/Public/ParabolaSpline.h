@@ -29,6 +29,8 @@ public:
 
 	float GetLength() const;
 
+	bool GetIsBlocked() const;
+
 	FVector GetDestination() const;
 
 private:
@@ -55,6 +57,7 @@ private:
 	float Height;
 
 	bool bInitialized = false;
+	bool bIsBlocked = false;
 
 	float SplineLength;
 

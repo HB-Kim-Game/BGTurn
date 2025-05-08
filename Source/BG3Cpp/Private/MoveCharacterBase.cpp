@@ -99,7 +99,7 @@ float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	CurHP = FMath::Clamp(CurHP- damage, 0, GetStatus()->GetHp());
+	CurHP = FMath::Clamp(CurHP - damage, 0, GetStatus()->GetHp());
 
 	FVector dir = EventInstigator->GetPawn()->GetActorLocation() - GetActorLocation();
 	dir.Z = 0;
@@ -114,6 +114,7 @@ float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 	else
 	{
 		OnDead.Broadcast();
+		TurnEnd();
 	}
 	
 	return damage;
@@ -159,8 +160,6 @@ void AMoveCharacterBase::Initialize()
 	DetailStatus->Initialize(Status);
 
 	CurHP = DetailStatus->GetHp();
-
-	CurTurnActionCount = 0;
 	
 	InitiativeUI = Cast<UInitiativeUI>(CreateWidget(GetWorld(), InitiativeClass));
 	InitiativeUI->AddToViewport();

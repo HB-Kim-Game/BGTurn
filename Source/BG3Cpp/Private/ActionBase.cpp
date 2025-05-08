@@ -318,6 +318,7 @@ void UJumpAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionD
 				int32 damageResult = UBGUtil::CalculateFallingDamage(character->GetStatus()->GetHp(), fallingDistance);
 				UGameplayStatics::ApplyDamage(character, damageResult, character->GetController(), character, UDamageType::StaticClass());
 				character->GetDamageUI()->ShowDamage(character->GetActorLocation(), damageResult);
+				
 			}
 		});
 	}

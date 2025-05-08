@@ -61,6 +61,7 @@ void UTurnListViewer::MoveCursor(int32 Gap)
 
 	if (auto* cast = Cast<AMoveCharacterBase>(GetSelectedItem()))
 	{
+		if (cast->GetIsTurn()) return;
 		cast->TurnReceive();
 	}
 	

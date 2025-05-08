@@ -100,11 +100,26 @@ float AParabolaSpline::SetTarget(const FVector& targetLocation)
 	Direction = (targetLocation - GetActorLocation()).GetSafeNormal();
 
 	Height = DefaultHeight + FVector::DistXY(GetActorLocation(), targetLocation) / 450.f * 100.f;
+
+	bIsBlocked = false;
+
+	PointDecal->SetDecalRange(1.f);
 	
 	for (float alpha = 0.f; alpha <= 1.f; alpha += PointValue)
 	{
 		FVector location = FMath::Lerp(GetActorLocation(), targetLocation, alpha)
 							+ (FVector::UpVector * FMath::Sin(alpha * PI) * Height);
+
+		FHitResult hit;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(GetAttachParentActor());
+		if (GetWorld()->LineTraceSingleByChannel(hit, Spline->GetLocationAtSplinePoint(Spline->GetNumberOfSplinePoints() - 1, ESplineCoordinateSpace::World), location, ECC_WorldDynamic, params))
+		{
+			bIsBlocked = true;
+			PointDecal->SetDecalRange(0.f);
+			RemoveSplineMesh();
+			return 0.0f;
+		}
 		
 		Spline->AddSplinePoint(location, ESplineCoordinateSpace::World);
 	}
@@ -125,6 +140,11 @@ float AParabolaSpline::GetLength() const
 	if (Spline->GetNumberOfSplinePoints() > 0) return Spline->GetSplineLength();
 
 	return 0.f;
+}
+
+bool AParabolaSpline::GetIsBlocked() const
+{
+	return bIsBlocked;
 }
 
 FVector AParabolaSpline::GetDestination() const

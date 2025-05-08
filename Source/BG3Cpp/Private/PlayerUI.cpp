@@ -15,8 +15,7 @@
 void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 {
 	SelectedCharacter = character;
-
-	ActionListViewer->FetchDatas(character->GetActions());
+	ActionListViewer->FetchDatas(SelectedCharacter->GetActions());
 	
 	ShowSelectedCharHP(*SelectedCharacter->CurHPPtr, SelectedCharacter->GetStatus()->GetHp());
 	float progress = SelectedCharacter->GetCurrentMOV() / SelectedCharacter->Status.MOV;
@@ -35,7 +34,16 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 		DefaultButton->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	ActionCountUI->ShowCharacterActionCount(character);
+	ActionCountUI->ShowCharacterActionCount(SelectedCharacter);
+
+	if (SelectedCharacter->GetCurrentTurnActionCount() != character->GetMaxTurnActionCount())
+	{
+		ShowUsed(SelectedCharacter, EActionCase::DefaultAction);
+	}
+	if (SelectedCharacter->GetCurrentBonusActionCount() != character->GetMaxBonusActionCount())
+	{
+		ShowUsed(SelectedCharacter, EActionCase::BonusAction);
+	}
 }
 
 void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
@@ -99,6 +107,7 @@ void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
 {
 	HpMatDynamic->SetTextureParameterValue("CharacterImage", SelectedCharacter->Status.Portrait);
 	HpMatDynamic->SetScalarParameterValue("Percentage", static_cast<float>(maxHp - curHp) / maxHp);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), static_cast<float>(maxHp - curHp) / maxHp);
 	
 	FString str = FString::FromInt(curHp) + " / " + FString::FromInt(maxHp);
 	

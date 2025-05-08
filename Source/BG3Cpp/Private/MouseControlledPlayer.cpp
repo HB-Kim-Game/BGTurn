@@ -16,6 +16,7 @@
 #include "JumpCursor.h"
 #include "MouseManager.h"
 #include "MoveCursor.h"
+#include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "SelectableObject.h"
@@ -98,6 +99,12 @@ void AMouseControlledPlayer::BeginPlay()
 					this->PlayerUI->ShowUsed(cast, EActionCase::BonusAction);
 					this->PlayerUI->ActionListViewer->MoveCursor(0);
 					this->MouseManager->SetMouseMode(EGameMouseState::Move);
+				}));
+				cast->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([this, cast]
+				(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
+				{
+					this->GetPlayerUI()->ShowSelectedObjectInfo(instigator);
+					this->GetPlayerUI()->SetSelectedCharacter(cast);
 				}));
 			});
 
@@ -405,8 +412,20 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 						float fallingDistance = GetPlayableCharacter()->GetActorLocation().Z - hit.ImpactPoint.Z;
 						if (fallingDistance <= -castCursor2->GetMaxDistance()) return;
 
+						TArray<AActor*> actors;
+						GetPlayableCharacter()->GetAttachedActors(actors);
+						for (auto* actor : actors)
+						{
+							if (auto* cast = Cast<AParabolaSpline>(actor))
+							{
+								if (cast->GetIsBlocked()) return;
+							}
+						}
+
 						gm->ActionManager->ExecuteAction(castCursor2->GetActionData(), selectedPlayableChar);
+						return;
 					}
+					return;
 				}
 			}
 			
