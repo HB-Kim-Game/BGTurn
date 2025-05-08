@@ -23,5 +23,10 @@ public:
 #pragma region 리스트 Clamp 함수, Max는 exclude
 	UFUNCTION(BlueprintCallable, Category = "Math")
 	static int32 ClampCursor(int32 value, int32 max, int min = 0);
-#pragma endregion 
+#pragma endregion
+
+#pragma region 낙하 데미지 함수
+	UFUNCTION(BlueprintCallable, Category = "Math")
+	static int32 CalculateFallingDamage(int32 maxHp, float fallingDistance);
+#pragma endregion
 };

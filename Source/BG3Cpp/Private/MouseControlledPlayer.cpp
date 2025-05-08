@@ -3,7 +3,6 @@
 
 #include "MouseControlledPlayer.h"
 
-#include "ActionCountUI.h"
 #include "ActionCursor.h"
 #include "ActionListViewer.h"
 #include "ActionManager.h"
@@ -14,11 +13,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "JumpCursor.h"
 #include "MouseManager.h"
-#include "MovableCharacterController.h"
 #include "MoveCursor.h"
-#include "NavigationPath.h"
-#include "NavigationSystem.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "SelectableObject.h"
@@ -225,8 +222,6 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			}
 		}
 	}
-
-	// Cursor가 ActionCursor일 경우
 }
 
 UMouseManager* AMouseControlledPlayer::GetMouseManager() const
@@ -350,14 +345,8 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 							if (castCursor->GetAction()->MaxDistance < 0.05f)
 							{
 								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
+								return;
 							}
-							else
-							{
-								float Distance = FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) / 100.f;
-								if (castCursor->GetAction()->MaxDistance < Distance) return;
-								gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
-							}
-							return;
 						}
 					}
 
@@ -405,6 +394,18 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 							selectedPlayableChar->ExecuteAction(gm, castCursor->GetAction(), destination);
 						}
 						return;
+					}
+				}
+
+				else if (auto* castCursor2 = Cast<UJumpCursor>(MouseManager->GetCursor()))
+				{
+					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+					{
+						if (FVector::DistXY(GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > castCursor2->GetMaxDistance()) return;
+						float fallingDistance = GetPlayableCharacter()->GetActorLocation().Z - hit.ImpactPoint.Z;
+						if (fallingDistance <= -castCursor2->GetMaxDistance()) return;
+
+						gm->ActionManager->ExecuteAction(castCursor2->GetActionData(), selectedPlayableChar);
 					}
 				}
 			}

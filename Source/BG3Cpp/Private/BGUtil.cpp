@@ -22,3 +22,10 @@ int32 UBGUtil::ClampCursor(int32 value, int32 max, int min)
 
 	return value;
 }
+
+int32 UBGUtil::CalculateFallingDamage(int32 maxHp, float fallingDistance)
+{
+	int32 damageResult = maxHp * (fallingDistance / 100.f - 4.f) / 17.f + 1;
+
+	return damageResult;
+}

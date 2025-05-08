@@ -67,6 +67,7 @@ void AParabolaSpline::InitializeParabola(float pointValue, float height)
 {
 	PointValue = pointValue;
 	Height = height;
+	DefaultHeight = height;
 	
 	// 도약 지점 데칼 생성
 	// 캐릭터 주변으로 범위 표시
@@ -97,6 +98,8 @@ float AParabolaSpline::SetTarget(const FVector& targetLocation)
 	Spline->AddSplinePoint(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z), ESplineCoordinateSpace::World);
 
 	Direction = (targetLocation - GetActorLocation()).GetSafeNormal();
+
+	Height = DefaultHeight + FVector::DistXY(GetActorLocation(), targetLocation) / 450.f * 100.f;
 	
 	for (float alpha = 0.f; alpha <= 1.f; alpha += PointValue)
 	{

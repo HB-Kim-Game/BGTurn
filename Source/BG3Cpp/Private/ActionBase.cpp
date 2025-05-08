@@ -9,8 +9,10 @@
 #include "DiceChecker.h"
 #include "BGUtil.h"
 #include "BG3Enums.h"
+#include "CharacterStatus.h"
 #include "CustomTimer.h"
 #include "DamageUI.h"
+#include "JumpCursor.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
@@ -140,7 +142,7 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		// 피해 굴림
 		// 무기 기본 피해량(1d6을 기준으로 함.) + 능력치 수정값
 		UE_LOG(LogTemp, Warning, TEXT("Success"));
-		int8 damageResult = UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus);
+		int32 damageResult = UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus);
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 
 		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);
@@ -259,11 +261,12 @@ void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionD
 
 		if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
 		{
-			p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
+			p->GetMouseManager()->SetMouseMode(EGameMouseState::Jump);
 		
-			if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
+			if (auto* cursor = Cast<UJumpCursor>(p->GetMouseManager()->GetCursor()))
 			{
-				cursor->ShowActionDescription(action, 0);
+				cursor->InitializeCursor(jumpHeight, action);
+				cursor->ShowJumpDescription();
 			}
 		}	
 	}
@@ -302,10 +305,20 @@ void UJumpAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionD
 			character->SetActorRotation(rotation);
 			character->SetActorLocation(spline->CalculateParabola(startLocation, alpha), true);
 		},
-		[character]()
+		[character, startLocation, spline]()
 		{
 			character->SetIsMovable(true);
 			UE_LOG(LogTemp, Warning, TEXT("점프 완료"));
+
+			// 낙하거리가 4m 보다 클 경우 데미지
+			float fallingDistance = startLocation.Z - spline->GetDestination().Z;
+
+			if (fallingDistance >= 400.f)
+			{
+				int32 damageResult = UBGUtil::CalculateFallingDamage(character->GetStatus()->GetHp(), fallingDistance);
+				UGameplayStatics::ApplyDamage(character, damageResult, character->GetController(), character, UDamageType::StaticClass());
+				character->GetDamageUI()->ShowDamage(character->GetActorLocation(), damageResult);
+			}
 		});
 	}
 

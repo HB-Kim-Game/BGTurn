@@ -12,6 +12,7 @@ enum class EGameMouseState : uint8
 	Move UMETA(DisplayName = "Move"),
 	ActionHover UMETA(DisplayName = "ActionHover"),
 	Action UMETA(DisplayName = "Action"),
+	Jump UMETA(DisplayName = "Jump"),
 };
 
 UENUM(BlueprintType)

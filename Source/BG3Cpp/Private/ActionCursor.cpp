@@ -94,7 +94,7 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 					case ESkillCase::Buff:
 						if (Action->MaxDistance > 0.05f)
 						{
-							if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+							if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance)
 							{
 								ShowActionDescription(Action, 0, TEXT("거리가 너무 멉니다!"));
 								break;

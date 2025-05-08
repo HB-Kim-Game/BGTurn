@@ -51,6 +51,7 @@ private:
 	FVector Direction;
 	FVector lastCursorPos;
 	float PointValue;
+	float DefaultHeight;
 	float Height;
 
 	bool bInitialized = false;
