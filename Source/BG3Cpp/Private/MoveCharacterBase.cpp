@@ -14,6 +14,7 @@
 #include "BG3GameMode.h"
 #include "ActionManager.h"
 #include "DamageUI.h"
+#include "ParabolaSpline.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -106,13 +107,16 @@ float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 	FRotator rotation = dir.Rotation();
 	this->SetActorRotation(rotation);
 
-	OnTakeDefaultDamage.Broadcast(DamageAmount, this, Cast<AMoveCharacterBase>(EventInstigator->GetPawn()));	
+	OnTakeDefaultDamage.Broadcast(DamageAmount, this, Cast<AMoveCharacterBase>(EventInstigator->GetPawn()));
+	
 	if (CurHP > 0)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("hp: %d"), CurHP);
 		PlayAnimation(TEXT("TakeDamage"));
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Dead: %d"), CurHP);
 		OnDead.Broadcast();
 		TurnEnd();
 	}
@@ -229,7 +233,23 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 				FVector dir = targetLocation - this->GetActorLocation();
 				dir.Z = 0;
 				FRotator rotation = dir.Rotation();
+				
+				FQuat temp = rotation.Quaternion() * this->GetActorRotation().Quaternion().Inverse();
+
+				TArray<AActor*> actors;
+
+				this->GetAttachedActors(actors);
 				this->SetActorRotation(rotation);
+							
+				for (auto* actor : actors)
+				{
+					if (auto* cast = Cast<AParabolaSpline>(actor))
+					{
+						FQuat splineQuat = cast->GetActorQuat();
+						FQuat newSplineQuat = temp.Inverse() * splineQuat;
+						cast->SetActorRotation(newSplineQuat);
+					}
+				}
 				mode->ActionManager->ExecuteAction(action, this);
 				bool removeSuccess = castController->OnAIMoveCompleted.Remove(this->ExecuteActionHandle);
 			}));
@@ -242,10 +262,7 @@ void AMoveCharacterBase::ExecuteAction(ABG3GameMode* mode, UCharacterActionData*
 
 void AMoveCharacterBase::StopAction()
 {
-	// 공격범위 제거
-	// 마우스 커서 변경
-	// 애니메이션 idle 변경
-	// 사용 코스트 표시 취소
+
 }
 
 void AMoveCharacterBase::AddMOV(float value, bool isSprint)
@@ -384,7 +401,6 @@ void AMoveCharacterBase::PlayAnimation(const FString& actionID)
 		}
 		else if (auto* montage = Cast<UAnimMontage>(*animation))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("montage"));
 			GetMesh()->SetAnimationMode(EAnimationMode::Type::AnimationBlueprint);
 			PlayAnimMontage(montage);
 			bIsMovable = false;

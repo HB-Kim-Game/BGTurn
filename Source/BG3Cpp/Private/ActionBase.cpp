@@ -12,6 +12,7 @@
 #include "CharacterStatus.h"
 #include "CustomTimer.h"
 #include "DamageUI.h"
+#include "FireBall.h"
 #include "JumpCursor.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
@@ -176,10 +177,21 @@ void USprintAction::PrepareAction(AMoveCharacterBase* character, UCharacterActio
 
 	TArray<AActor*> actors;
 	character->GetAttachedActors(actors);
+
 	for (auto* actor : actors)
 	{
 		if (auto* cast = Cast<AAttackRange>(actor))
 		{
+			cast->Destroy();
+		}
+		if (auto* cast = Cast<AParabolaSpline>(actor))
+		{
+			TArray<AActor*> parabolaChildren;
+			cast->GetAttachedActors(parabolaChildren);
+			for (auto* child : parabolaChildren)
+			{
+				child->Destroy();
+			}
 			cast->Destroy();
 		}
 	}
@@ -216,6 +228,27 @@ void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActio
 void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);
+
+	TArray<AActor*> actors;
+	character->GetAttachedActors(actors);
+
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+		if (auto* cast = Cast<AParabolaSpline>(actor))
+		{
+			TArray<AActor*> parabolaChildren;
+			cast->GetAttachedActors(parabolaChildren);
+			for (auto* child : parabolaChildren)
+			{
+				child->Destroy();
+			}
+			cast->Destroy();
+		}
+	}
 	
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Prepare";
@@ -223,16 +256,6 @@ void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionD
 
 	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
-		TArray<AActor*> actors;
-		character->GetAttachedActors(actors);
-		for (auto* actor : actors)
-		{
-			if (auto* cast = Cast<AAttackRange>(actor))
-			{
-				cast->Destroy();
-			}
-		}
-
 		// 캐릭터 주변으로 범위 표시
 		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
 			AAttackRange::StaticClass(),
@@ -240,7 +263,6 @@ void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionD
 			FRotator(0, 0, 0));
 
 		float jumpHeight = (action->MaxDistance + UBGUtil::CalculateBonus(character->Status.Str));
-		action->MaxDistance = jumpHeight;
 		decal->SetDecalRange(jumpHeight);
 	
 		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
@@ -286,32 +308,35 @@ void UJumpAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionD
 		TArray<AActor*> actors;
 		character->GetAttachedActors(actors);
 		FVector startLocation = character->GetActorLocation();
-		AParabolaSpline* spline;
+		FVector destination = FVector::ZeroVector;
+		float height = 0.0f;
 
 		for (auto* actor : actors)
 		{
 			if (auto* cast = Cast<AParabolaSpline>(actor))
 			{
-				spline = cast;
+				AParabolaSpline* spline = cast;
+				destination = spline->GetDestination();
+				height = spline->GetHeight();
 			}
 		}
 		// 점프
 		character->SetIsMovable(false);
-		UCustomTimer::SetTimer(character->GetWorld(), 1.0f, [character, startLocation, spline](float alpha)
+		UCustomTimer::SetTimer(character->GetWorld(), 1.0f, [character, startLocation, destination, height](float alpha)
 		{
-			FVector dir = spline->GetDestination() - character->GetActorLocation();
+			FVector dir = destination - character->GetActorLocation();
 			dir.Z = 0;
 			FRotator rotation = dir.Rotation();
 			character->SetActorRotation(rotation);
-			character->SetActorLocation(spline->CalculateParabola(startLocation, alpha), true);
+			character->SetActorLocation(UBGUtil::CalculateParabola(startLocation, destination, height,  alpha), true);
 		},
-		[character, startLocation, spline]()
+		[character, startLocation, destination]()
 		{
 			character->SetIsMovable(true);
 			UE_LOG(LogTemp, Warning, TEXT("점프 완료"));
 
 			// 낙하거리가 4m 보다 클 경우 데미지
-			float fallingDistance = startLocation.Z - spline->GetDestination().Z;
+			float fallingDistance = startLocation.Z - destination.Z;
 
 			if (fallingDistance >= 400.f)
 			{
@@ -330,43 +355,110 @@ void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterAct
 {
 	Super::PrepareAction(character, action);
 
-	TArray<AActor*> actors;
-	character->GetAttachedActors(actors);
-	for (auto* actor : actors)
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
-		if (auto* cast = Cast<AAttackRange>(actor))
+		TArray<AActor*> actors;
+		character->GetAttachedActors(actors);
+		for (auto* actor : actors)
 		{
-			cast->Destroy();
+			if (auto* cast = Cast<AAttackRange>(actor))
+			{
+				cast->Destroy();
+			}
+		}
+	
+		// 캐릭터 주변으로 범위 표시
+		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+			AAttackRange::StaticClass(),
+			character->GetActorLocation(),
+			FRotator(0, 0, 0));
+
+		decal->SetDecalRange(action->MaxDistance);
+		playable->SetSplineCondition(false);
+	
+		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+		FVector parabolaLocation = character->GetMesh()->GetSocketLocation(TEXT("StaffSocket"));
+
+		AParabolaSpline* parabola = character->GetWorld()->SpawnActor<AParabolaSpline>(
+		AParabolaSpline::StaticClass(),
+		parabolaLocation,
+		FRotator(0,0,0));
+
+		parabola->InitializeParabola(1.0f, 0);
+
+		parabola->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+		
+		// 마우스 커서 교체
+
+		if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+		{
+			p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
+
+			if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
+			{
+				cursor->ShowActionDescription(action, 0);
+			}
 		}
 	}
-	
-	// 캐릭터 주변으로 범위 표시
-	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
-		AAttackRange::StaticClass(),
-		character->GetActorLocation(),
-		FRotator(0, 0, 0));
 
-	decal->SetDecalRange(action->MaxDistance);
-	
-	decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
-	// 마우스 커서 교체
-
-	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
-	{
-		p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
-
-		if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
-		{
-			cursor->ShowActionDescription(action, 0);
-		}
-	}
 }
 
 void UFireBallAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
-	Super::ExecuteAction(character, action);
-
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Execute";
 	character->PlayAnimation(prepareID);
+
+	AFireBall* fireBall = character->GetWorld()->SpawnActor<AFireBall>(
+	AFireBall::StaticClass(),
+	character->GetMesh()->GetSocketLocation(TEXT("StaffSocket")),
+	FRotator(0, 0, 0));
+
+	FVector startPosition = character->GetMesh()->GetSocketLocation(TEXT("StaffSocket"));
+	fireBall->Initialize(action, character);
+	
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
+	{
+		playable->SetSplineCondition(true);
+		TArray<AActor*> actors;
+		character->GetAttachedActors(actors);
+		FVector destination = FVector::ZeroVector;
+		float height = 0.f;
+
+		for (auto* actor : actors)
+		{
+			if (auto* cast = Cast<AParabolaSpline>(actor))
+			{
+				AParabolaSpline* spline = cast;
+				spline->SetbIsExecute(true);
+				destination = spline->GetDestination();
+				height = spline->GetHeight();
+			}
+		}
+		
+		// 파이어볼 이동
+		UCustomTimer::SetTimer(character->GetWorld(), 0.3f, [destination, fireBall, startPosition, height](float alpha)
+		{
+			if (fireBall)
+			{
+				FVector dir = fireBall->GetActorLocation() - destination;
+				FRotator rotation = dir.Rotation();
+				fireBall->SetActorRotation(rotation);
+				fireBall->SetActorLocation(UBGUtil::CalculateParabola(startPosition,destination, height, alpha), true);	
+			}
+		},
+		[destination, fireBall, startPosition, height]()
+		{
+			if (fireBall)
+			{
+				fireBall->SetActorLocation(UBGUtil::CalculateParabola(startPosition,destination, height, 1.0f), true);
+			}
+		});
+	}
+	Super::ExecuteAction(character, action);
 }

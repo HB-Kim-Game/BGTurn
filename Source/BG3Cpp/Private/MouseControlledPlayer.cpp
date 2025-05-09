@@ -104,7 +104,7 @@ void AMouseControlledPlayer::BeginPlay()
 				(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 				{
 					this->GetPlayerUI()->ShowSelectedObjectInfo(instigator);
-					this->GetPlayerUI()->SetSelectedCharacter(cast);
+					if (cast->GetIsTurn()) this->GetPlayerUI()->SetSelectedCharacter(cast);
 				}));
 			});
 
@@ -381,18 +381,32 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					float Distance = selectedPlayableChar->ShowPath(destination, extent);
 					
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
-
-					UE_LOG(LogTemp,Warning,TEXT("%f"), (FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) - extent.X) / 100.f);
 					
 					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 					{
 						if ((FVector::Distance(selectedPlayableChar->GetActorLocation(), destination) - extent.X) / 100.f <= castCursor->GetAction()->MaxDistance)
 						{
 							UE_LOG(LogTemp,Warning,TEXT("Execute"));
+							
 							FVector dir = destination - selectedPlayableChar->GetActorLocation();
 							dir.Z = 0;
 							FRotator rotation = dir.Rotation();
+							FQuat temp = rotation.Quaternion() * selectedPlayableChar->GetActorRotation().Quaternion().Inverse();
+
+							TArray<AActor*> actors;
+
+							selectedPlayableChar->GetAttachedActors(actors);
 							selectedPlayableChar->SetActorRotation(rotation);
+							
+							for (auto* actor : actors)
+							{
+								if (auto* cast = Cast<AParabolaSpline>(actor))
+								{
+									FQuat splineQuat = cast->GetActorQuat();
+									FQuat newSplineQuat = temp.Inverse() * splineQuat;
+									cast->SetActorRotation(newSplineQuat);
+								}
+							}
 							gm->ActionManager->ExecuteAction(castCursor->GetAction(), selectedPlayableChar);
 						}
 						else
@@ -476,7 +490,10 @@ void AMouseControlledPlayer::OnAltComplete()
 
 void AMouseControlledPlayer::OnRightMouseButtonDown()
 {
-	
+	MouseManager->SetMouseMode(EGameMouseState::Move);
+	// 사용 코스트 표시 취소
+	PlayerUI->SetSelectedCharacter(GetPlayableCharacter());
+	selectedPlayableChar->StopAction();
 }
 
 void AMouseControlledPlayer::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -703,7 +720,7 @@ void AMouseControlledPlayer::InitializeInput()
 		OutlineAction = outlineAction.Object;
 	}
 
-	ConstructorHelpers::FObjectFinder<UInputAction> rightClickAction(TEXT("/Game/BG3/Input/Action/IA_Right.IA_Right"));
+	ConstructorHelpers::FObjectFinder<UInputAction> rightClickAction(TEXT("/Script/EnhancedInput.InputAction'/Game/BG3/Input/Action/IA_RightClick.IA_RightClick'"));
 	
 	if (rightClickAction.Succeeded())
 	{

@@ -39,6 +39,8 @@ public:
 
 	void SetSplineCondition(bool condition);
 
+	virtual void StopAction() override;
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -27,7 +27,11 @@ public:
 	FVector CalculateParabola(const FVector& startPosition, float alpha) const;
 	float SetTarget(const FVector& targetLocation);
 
+	void SetbIsExecute(bool condition);
+
 	float GetLength() const;
+
+	float GetHeight() const;
 
 	bool GetIsBlocked() const;
 
@@ -46,12 +50,15 @@ private:
 
 	UPROPERTY()
 	TArray<class USplineMeshComponent*> SplineMeshes;
+	
+	bool bIsExecute;
 
 	void AddSplineMesh();
 	void RemoveSplineMesh();
 
 	FVector Direction;
 	FVector lastCursorPos;
+	FVector Destination = FVector::ZeroVector;
 	float PointValue;
 	float DefaultHeight;
 	float Height;
@@ -61,6 +68,7 @@ private:
 
 	float SplineLength;
 
+	UPROPERTY()
 	class AAttackRange* PointDecal;
 
 	UPROPERTY()

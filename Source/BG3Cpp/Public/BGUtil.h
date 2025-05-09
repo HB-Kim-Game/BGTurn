@@ -29,4 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Math")
 	static int32 CalculateFallingDamage(int32 maxHp, float fallingDistance);
 #pragma endregion
+
+#pragma region 포물선계산
+	UFUNCTION(BlueprintCallable, Category = "Math")
+	static FVector CalculateParabola(const FVector& startPosition, const FVector& endPosition, float Height, float alpha);
+#pragma endregion 
 };

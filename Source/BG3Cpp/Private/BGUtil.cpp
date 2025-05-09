@@ -29,3 +29,12 @@ int32 UBGUtil::CalculateFallingDamage(int32 maxHp, float fallingDistance)
 
 	return damageResult;
 }
+
+FVector UBGUtil::CalculateParabola(const FVector& startPosition, const FVector& endPosition, float Height,
+	float alpha)
+{
+	FVector location = FMath::Lerp(startPosition, endPosition, alpha)
+					+ (FVector::UpVector * FMath::Sin(alpha * PI) * Height);
+
+	return location;
+}

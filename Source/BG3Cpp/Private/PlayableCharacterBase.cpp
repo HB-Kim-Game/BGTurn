@@ -3,14 +3,12 @@
 
 #include "PlayableCharacterBase.h"
 
+#include "AttackRange.h"
 #include "CharacterActionData.h"
 #include "CharacterStatus.h"
-#include "InitiativeUI.h"
-#include "MouseControlledPlayer.h"
-#include "MovableCharacterController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
-#include "Blueprint/UserWidget.h"
+#include "ParabolaSpline.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 
@@ -114,6 +112,40 @@ void APlayableCharacterBase::SetSplineCondition(bool condition)
 		Spline->ClearSplinePoints();
 		RemoveSplineMesh();
 	}
+}
+
+void APlayableCharacterBase::StopAction()
+{
+	Super::StopAction();
+
+	// 공격범위 제거
+	// 애니메이션 idle 변경
+	TArray<AActor*> actors;
+	GetAttachedActors(actors);
+
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+		if (auto* cast = Cast<AParabolaSpline>(actor))
+		{
+			TArray<AActor*> parabolaChildren;
+			cast->GetAttachedActors(parabolaChildren);
+			for (auto* child : parabolaChildren)
+			{
+				child->Destroy();
+			}
+			cast->Destroy();
+		}
+	}
+
+	SetSplineCondition(true);
+
+	GetMesh()->PlayAnimation(IdleAnimation, true);
+
+	bIsPrepareAction = false;
 }
 
 void APlayableCharacterBase::BeginPlay()

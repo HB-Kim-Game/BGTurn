@@ -102,6 +102,15 @@ void UJumpCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			{
 				damageResult = UBGUtil::CalculateFallingDamage(player->GetPlayableCharacter()->GetStatus()->GetHp(), fallingDistance);
 			}
+
+			if (bIsBlocked)
+			{
+				ShowJumpDescription(0, TEXT("경로가 가로막혔습니다!"));
+				CursorImage->SetBrushFromTexture(HighIcon);
+				CursorImage->SetDesiredSizeOverride(FVector2D(41.f, 40.f));
+				Description->SetVisibility(ESlateVisibility::HitTestInvisible);
+				return;
+			}
 			
 			if (FVector::DistXY(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > MaxDistance)
 			{
@@ -115,15 +124,6 @@ void UJumpCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			if (fallingDistance <= -MaxDistance)
 			{
 				ShowJumpDescription(0, TEXT("너무 높습니다!"), true);
-				return;
-			}
-
-			if (bIsBlocked)
-			{
-				ShowJumpDescription(0, TEXT("경로가 가로막혔습니다!"));
-				CursorImage->SetBrushFromTexture(HighIcon);
-				CursorImage->SetDesiredSizeOverride(FVector2D(41.f, 40.f));
-				Description->SetVisibility(ESlateVisibility::HitTestInvisible);
 				return;
 			}
 		

@@ -56,7 +56,7 @@ public:
 
 	void ExecuteAction(class ABG3GameMode* mode,class UCharacterActionData* action, const FVector& targetLocation);
 
-	void StopAction();
+	virtual void StopAction();
 
 	void AddMOV(float value, bool isSprint = true);
 

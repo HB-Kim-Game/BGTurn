@@ -6,6 +6,7 @@
 #include "CharacterActionData.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
+#include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "Components/Image.h"
 #include "Components/RichTextBlock.h"
@@ -71,6 +72,26 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (pc)
 	{
 		FHitResult hit;
+
+		bool bIsBlocked = false;
+		TArray<AActor*> actors;
+		player->GetPlayableCharacter()->GetAttachedActors(actors);
+
+		for (auto* actor : actors)
+		{
+			if (auto* cast = Cast<AParabolaSpline>(actor))
+			{
+				bIsBlocked = cast->GetIsBlocked();
+			}
+		}
+
+		if (bIsBlocked)
+		{
+			ShowActionDescription(Action, 0, TEXT("경로가 가로막혔습니다!"));
+			Description->SetVisibility(ESlateVisibility::HitTestInvisible);
+			return;
+		}
+		
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 		{
 			if (auto* character = Cast<AMoveCharacterBase>(hit.GetActor()))
