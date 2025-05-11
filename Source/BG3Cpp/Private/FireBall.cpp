@@ -75,6 +75,7 @@ void AFireBall::Tick(float DeltaTime)
 	{
 		if (auto* cast = Cast<AMoveCharacterBase>(hit.GetActor()))
 		{
+			if (ActionData->Target != cast) return;
 			uint8 statBonus = FireballInstigator->Status.Int;
 	
 			int8 diceResult = UDiceChecker::RollDice();
@@ -102,7 +103,8 @@ void AFireBall::Tick(float DeltaTime)
 					UE_LOG(LogTemp, Warning, TEXT("%d"), isSuccess);
 				}));
 				
-				UGameplayStatics::ApplyDamage(cast, damageResult, FireballInstigator->GetController(), this, UDamageType::StaticClass());	
+				UGameplayStatics::ApplyDamage(cast, damageResult, FireballInstigator->GetController(), this, UDamageType::StaticClass());
+				SpawnHitEffect(hit.ImpactPoint);
 				return;
 			}
 			
@@ -126,10 +128,11 @@ void AFireBall::Tick(float DeltaTime)
 						p->GetPlayerUI()->ShowSelectedObjectInfo(damagedCharacter);
 					}
 					bool isSuccess = cast->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
-					UE_LOG(LogTemp, Warning, TEXT("%d"), isSuccess);
 				}));
 		
 				UGameplayStatics::ApplyDamage(ActionData->Target, damageResult, FireballInstigator->GetController(), this, UDamageType::StaticClass());
+				SpawnHitEffect(hit.ImpactPoint);
+				return;
 			}
 			
 			FVector dir = FireballInstigator->GetActorLocation() - cast->GetActorLocation();
@@ -138,15 +141,8 @@ void AFireBall::Tick(float DeltaTime)
 			cast->SetActorRotation(rotation);
 			cast->PlayAnimation(TEXT("Dodge"));
 			cast->GetDamageUI()->ShowDamage(cast->GetActorLocation(), -1);
+			SpawnHitEffect(hit.ImpactPoint);
 		}
-		
-		if (HitSystem != nullptr)
-		{
-			UNiagaraComponent* hitEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitSystem, hit.ImpactPoint);
-			hitEffect->SetActive(true);
-		}
-		
-		GetWorld()->DestroyActor(this);
 	}
 }
 
@@ -156,5 +152,15 @@ void AFireBall::Initialize(class UCharacterActionData* data, class AMoveCharacte
 	FireballInstigator = instigator;
 	
 	bIsInitialized = true;	
+}
+
+void AFireBall::SpawnHitEffect(FVector hitLocation)
+{
+	if (HitSystem != nullptr)
+	{
+		UNiagaraComponent* hitEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitSystem, hitLocation);
+		hitEffect->SetActive(true);
+		Destroy();
+	}
 }
 

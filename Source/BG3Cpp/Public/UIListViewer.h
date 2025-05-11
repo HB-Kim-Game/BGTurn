@@ -17,7 +17,7 @@ class BG3CPP_API UUIListViewer : public UListViewerBase
 	GENERATED_BODY()
 
 public:
-	virtual void MoveCursor(int32 Gap) override;
+	virtual void MoveCursor(int32 Gap, bool bIsRefresh = false) override;
 	
 	virtual void OnDataFetched() override
 	{

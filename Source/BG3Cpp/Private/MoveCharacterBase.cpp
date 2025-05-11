@@ -349,6 +349,8 @@ void AMoveCharacterBase::TurnReceive()
 	CurTurnActionCount = MaxTurnActionCount;
 	CurTurnBonusActionCount = MaxTurnBonusActionCount;
 	bIsMovable = true;
+
+	UE_LOG(LogTemp, Warning, TEXT("DisplayName : %s"), *GetStatus()->GetName());
 	
 	OnCharacterTurnReceive.Broadcast();
 }

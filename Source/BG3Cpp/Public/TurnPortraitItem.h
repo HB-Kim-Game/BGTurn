@@ -29,6 +29,12 @@ public :
 	
 	UPROPERTY()
 	UMaterialInstanceDynamic* HpMatDynamic;
+	
+	class AMoveCharacterBase* GetFetchedCharacter() const;
+	
+	virtual void Selected() override;
+	virtual void Deselected() override;
+	virtual void FetchData(UObject* Data) override;
 
 protected:
 	UFUNCTION()
@@ -39,10 +45,6 @@ protected:
 	virtual void OnButtonClicked();
 
 	virtual void NativeConstruct() override;
-	
-	virtual void Selected() override;
-	virtual void Deselected() override;
-	virtual void FetchData(UObject* Data) override;
 
 	UPROPERTY()
 	class AMouseControlledPlayer* Player;

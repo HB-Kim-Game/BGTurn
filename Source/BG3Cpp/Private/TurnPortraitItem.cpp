@@ -11,6 +11,11 @@
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
 
+AMoveCharacterBase* UTurnPortraitItem::GetFetchedCharacter() const
+{
+	return FetchedCharacter;
+}
+
 void UTurnPortraitItem::OnButtonHovered()
 {
 }

@@ -15,10 +15,20 @@ class BG3CPP_API UTurnListViewer : public UUIListViewer
 	GENERATED_BODY()
 
 public:
+
+	int32 CharacterCount = 0;
 	
 	virtual void OnDataFetched() override;
 	
 	virtual void InitializeItem() override;
 
-	virtual void MoveCursor(int32 Gap) override;
+	virtual void MoveCursor(int32 Gap, bool bIsRefresh = false) override;
+
+	TArray<class UTurnPortraitItem*> GetSelectedItems();
+
+	UPROPERTY()
+	TArray<class UTurnPortraitItem*> SelectedItems;
+
+	UPROPERTY()
+	TArray<class UTurnPortraitItem*> CastedSpawnItems;
 };

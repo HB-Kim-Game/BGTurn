@@ -143,7 +143,7 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		// 피해 굴림
 		// 무기 기본 피해량(1d6을 기준으로 함.) + 능력치 수정값
 		UE_LOG(LogTemp, Warning, TEXT("Success"));
-		int32 damageResult = UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus);
+		int32 damageResult = FMath::Max(UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus), 0);
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 
 		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);

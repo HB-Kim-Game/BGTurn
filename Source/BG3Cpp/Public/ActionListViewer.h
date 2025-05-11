@@ -24,7 +24,7 @@ protected:
 	virtual void NativeConstruct() override;
 	
 public:
-	virtual void MoveCursor(int32 Gap) override;
+	virtual void MoveCursor(int32 Gap, bool bIsRefresh = false) override;
 
 private:
 	UPROPERTY()

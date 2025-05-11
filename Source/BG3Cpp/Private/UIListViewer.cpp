@@ -5,7 +5,7 @@
 
 #include "BGUtil.h"
 
-void UUIListViewer::MoveCursor(int32 Gap)
+void UUIListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 {
 	Super::MoveCursor(Gap);
 	

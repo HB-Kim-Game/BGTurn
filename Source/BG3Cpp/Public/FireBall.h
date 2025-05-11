@@ -47,4 +47,6 @@ private:
 	class UCharacterActionData* ActionData;
 	UPROPERTY()
 	class AMoveCharacterBase* FireballInstigator;
+
+	void SpawnHitEffect(FVector location);
 };

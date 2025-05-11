@@ -3,8 +3,11 @@
 
 #include "BattleTurnManager.h"
 
+#include <list>
+
 #include "AttackRange.h"
 #include "BGUtil.h"
+#include "CharacterStatus.h"
 #include "DiceChecker.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
@@ -12,7 +15,9 @@
 #include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
+#include "TurnCharacterList.h"
 #include "TurnListViewer.h"
+#include "TurnPortraitItem.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -49,27 +54,43 @@ void UBattleTurnManager::StartBattle()
 	// 임시 - 월드내의 MovableCharacterBase 타입의 객체들을 전부 가져와서 저장.
 	TArray<AActor*> actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoveCharacterBase::StaticClass(), actors);
+	TurnList->CharacterCount = actors.Num();
 	for (AActor* actor : actors)
 	{
 		if (auto* cast = Cast<AMoveCharacterBase>(actor))
 		{
-			cast->OnCharacterTurnEnd.AddLambda([this]()
+			cast->OnCharacterTurnEnd.AddLambda([this, cast]()
 			{
+				if (this->TurnList->GetSelectedItems().Num() > 1)
+				{
+					for (auto* item : this->TurnList->GetSelectedItems())
+					{
+						if(item->GetFetchedCharacter() == cast) continue;
+						if(item->GetFetchedCharacter()->GetIsTurn())
+						{
+							auto* selectableObject = Cast<ISelectableObject>(item->GetFetchedCharacter());
+							Player->Select(selectableObject);
+							auto* moveC = item->GetFetchedCharacter();
+							Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));
+							return;
+						}
+					}	
+				}
 				this->TurnList->MoveCursor(1);
 			});
 
 			cast->OnCharacterTurnReceive.AddLambda([this]()
 			{
-				auto* item = Cast<ISelectableObject>(this->TurnList->GetSelectedItem());
+				auto* item = Cast<ISelectableObject>(this->TurnList->GetSelectedItems()[0]->GetFetchedCharacter());
 				Player->Select(item);
-				auto* moveC = Cast<AMoveCharacterBase>(this->TurnList->GetSelectedItem());
-				Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));
+				auto* moveC = this->TurnList->GetSelectedItems()[0]->GetFetchedCharacter();
+				Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));	
 			});
 
 			cast->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([this]
 			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 			{
-				this->TurnList->MoveCursor(0);
+				this->TurnList->MoveCursor(0, true);
 			}));
 			
 			if (auto* np = Cast<ANonPlayableCharacterBase>(cast))
@@ -152,27 +173,51 @@ void UBattleTurnManager::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-TArray<AMoveCharacterBase*> UBattleTurnManager::SortCharacters()
+TArray<UTurnCharacterList*> UBattleTurnManager::SortCharacters()
 {
-	SortedCharacters.Empty();
+	TurnCharacterList.Empty();
 	
 	for (auto& data : Characters)
 	{
-		int32 initiative = FMath::Clamp(UDiceChecker::RollDice() + UBGUtil::CalculateBonus(data.Character->Status.Dex), 1, 20);
+		int32 initiative = FMath::Max(UDiceChecker::RollDice(4) + UBGUtil::CalculateBonus(data.Character->Status.Dex), 1);
 		data.Initiative = initiative;
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *data.Character->GetStatus()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Initiative : %d"), initiative);
+		if (TurnCharacterList.Num() <= 0)
+		{
+			UTurnCharacterList* list = NewObject<UTurnCharacterList>(this);
+			list->Characters.Add(data);
+			TurnCharacterList.Add(list);
+			UE_LOG(LogTemp, Warning, TEXT("New"));
+		}
+		else
+		{
+			if (auto* charList = TurnCharacterList.FindByPredicate([initiative, data](const UTurnCharacterList* list)
+			{
+				return list->Characters[0].Initiative == initiative && list->Characters[0].Character->GetClass() == data.Character->GetClass();
+			}))
+			{
+				(*charList)->Characters.Add(data);
+				UE_LOG(LogTemp, Warning, TEXT("Add"));
+			}
+			else
+			{
+				UTurnCharacterList* list = NewObject<UTurnCharacterList>(this);
+				list->Characters.Add(data);
+				TurnCharacterList.Add(list);
+				UE_LOG(LogTemp, Warning, TEXT("New"));
+			}
+		}
 		data.Character->ShowInitiative(data.Initiative);
 	}
 
-	Characters.Sort([](const FCharacterTurnData& A,const FCharacterTurnData& B)
+	TurnCharacterList.Sort([](const UTurnCharacterList& A, const UTurnCharacterList& B)
 	{
-		return A.Initiative > B.Initiative;
+		return A.Characters[0].Initiative > B.Characters[0].Initiative;
 	});
 
-	for (auto& data : Characters)
-	{
-		SortedCharacters.Add(data.Character);
-	}
+	UE_LOG(LogTemp, Warning, TEXT("TurnCharacterListCount : %d"), TurnCharacterList.Num());
 	
-	return SortedCharacters;
+	return TurnCharacterList;
 }
 

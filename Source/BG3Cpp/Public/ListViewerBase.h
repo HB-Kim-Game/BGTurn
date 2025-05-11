@@ -39,7 +39,7 @@ public:
 		OnDataFetched();
 	}
 
-	virtual void MoveCursor(int32 Gap);
+	virtual void MoveCursor(int32 Gap, bool bIsRefresh = false);
 	
 	
 protected:

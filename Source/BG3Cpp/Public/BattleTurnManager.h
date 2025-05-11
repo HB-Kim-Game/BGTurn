@@ -42,8 +42,9 @@ public:
 private:
 	UPROPERTY()
 	TArray<FCharacterTurnData> Characters;
-	UPROPERTY()
-	TArray<class AMoveCharacterBase*> SortedCharacters;
 
-	TArray<class AMoveCharacterBase*> SortCharacters();
+	UPROPERTY()
+	TArray<class UTurnCharacterList*> TurnCharacterList;
+
+	TArray<class UTurnCharacterList*> SortCharacters();
 };

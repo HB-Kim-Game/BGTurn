@@ -19,7 +19,7 @@ UObject* UListViewerBase::GetSelectedItem() const
 	return FetchedDatas[Cursor];
 }
 
-void UListViewerBase::MoveCursor(int32 Gap)
+void UListViewerBase::MoveCursor(int32 Gap, bool bIsRefresh)
 {
 	SetCursor(Cursor + Gap);
 }

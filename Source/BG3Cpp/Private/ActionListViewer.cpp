@@ -64,7 +64,7 @@ void UActionListViewer::NativeConstruct()
 	Player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
-void UActionListViewer::MoveCursor(int32 Gap)
+void UActionListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 {
 	auto* p = Player->GetPlayableCharacter();
 	

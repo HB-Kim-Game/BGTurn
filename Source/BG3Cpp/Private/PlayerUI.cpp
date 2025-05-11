@@ -36,11 +36,11 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 
 	ActionCountUI->ShowCharacterActionCount(SelectedCharacter);
 
-	if (SelectedCharacter->GetCurrentTurnActionCount() != character->GetMaxTurnActionCount())
+	if (SelectedCharacter->GetCurrentTurnActionCount() != SelectedCharacter->GetMaxTurnActionCount())
 	{
 		ShowUsed(SelectedCharacter, EActionCase::DefaultAction);
 	}
-	if (SelectedCharacter->GetCurrentBonusActionCount() != character->GetMaxBonusActionCount())
+	if (SelectedCharacter->GetCurrentBonusActionCount() != SelectedCharacter->GetMaxBonusActionCount())
 	{
 		ShowUsed(SelectedCharacter, EActionCase::BonusAction);
 	}
