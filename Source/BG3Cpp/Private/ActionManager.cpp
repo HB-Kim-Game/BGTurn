@@ -12,6 +12,7 @@ void UActionManager::InitializeAction()
 	ActionMap.Add("Sprint", NewObject<USprintAction>(this));
 	ActionMap.Add("Jump", NewObject<UJumpAction>(this));
 	ActionMap.Add("FireBall", NewObject<UFireBallAction>(this));
+	ActionMap.Add("RangedAttack", NewObject<URangedAttackAction>(this));
 }
 
 void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterBase* character)

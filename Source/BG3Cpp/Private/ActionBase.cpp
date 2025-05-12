@@ -4,6 +4,7 @@
 #include "ActionBase.h"
 
 #include "ActionCursor.h"
+#include "Arrow.h"
 #include "AttackRange.h"
 #include "CharacterActionData.h"
 #include "DiceChecker.h"
@@ -24,6 +25,26 @@
 
 void UActionBase::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
+	TArray<AActor*> actors;
+	character->GetAttachedActors(actors);
+
+	for (auto* actor : actors)
+	{
+		if (auto* cast = Cast<AAttackRange>(actor))
+		{
+			cast->Destroy();
+		}
+		if (auto* cast = Cast<AParabolaSpline>(actor))
+		{
+			TArray<AActor*> parabolaChildren;
+			cast->GetAttachedActors(parabolaChildren);
+			for (auto* child : parabolaChildren)
+			{
+				child->Destroy();
+			}
+			cast->Destroy();
+		}
+	}
 }
 
 void UActionBase::ExecuteAction(AMoveCharacterBase* character, UCharacterActionData* action)
@@ -53,17 +74,13 @@ void UActionBase::ExecuteAction(AMoveCharacterBase* character, UCharacterActionD
 void UMeleeAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);
-	
-	TArray<AActor*> actors;
-	character->GetAttachedActors(actors);
-	for (auto* actor : actors)
+
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
-		if (auto* cast = Cast<AAttackRange>(actor))
-		{
-			cast->Destroy();
-		}
-	}
+		playable->SetSplineCondition(true);
 	
+	}
+
 	// 캐릭터 주변으로 범위 표시
 	AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
 		AAttackRange::StaticClass(),
@@ -175,27 +192,6 @@ void USprintAction::PrepareAction(AMoveCharacterBase* character, UCharacterActio
 {
 	Super::PrepareAction(character, action);
 
-	TArray<AActor*> actors;
-	character->GetAttachedActors(actors);
-
-	for (auto* actor : actors)
-	{
-		if (auto* cast = Cast<AAttackRange>(actor))
-		{
-			cast->Destroy();
-		}
-		if (auto* cast = Cast<AParabolaSpline>(actor))
-		{
-			TArray<AActor*> parabolaChildren;
-			cast->GetAttachedActors(parabolaChildren);
-			for (auto* child : parabolaChildren)
-			{
-				child->Destroy();
-			}
-			cast->Destroy();
-		}
-	}
-
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Prepare";
 	character->PlayAnimation(prepareID);
@@ -228,27 +224,6 @@ void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActio
 void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
 	Super::PrepareAction(character, action);
-
-	TArray<AActor*> actors;
-	character->GetAttachedActors(actors);
-
-	for (auto* actor : actors)
-	{
-		if (auto* cast = Cast<AAttackRange>(actor))
-		{
-			cast->Destroy();
-		}
-		if (auto* cast = Cast<AParabolaSpline>(actor))
-		{
-			TArray<AActor*> parabolaChildren;
-			cast->GetAttachedActors(parabolaChildren);
-			for (auto* child : parabolaChildren)
-			{
-				child->Destroy();
-			}
-			cast->Destroy();
-		}
-	}
 	
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Prepare";
@@ -361,16 +336,6 @@ void UFireBallAction::PrepareAction(AMoveCharacterBase* character, UCharacterAct
 
 	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
-		TArray<AActor*> actors;
-		character->GetAttachedActors(actors);
-		for (auto* actor : actors)
-		{
-			if (auto* cast = Cast<AAttackRange>(actor))
-			{
-				cast->Destroy();
-			}
-		}
-	
 		// 캐릭터 주변으로 범위 표시
 		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
 			AAttackRange::StaticClass(),
@@ -457,6 +422,115 @@ void UFireBallAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAct
 			if (fireBall)
 			{
 				fireBall->SetActorLocation(UBGUtil::CalculateParabola(startPosition,destination, height, 1.0f), true);
+			}
+		});
+	}
+	Super::ExecuteAction(character, action);
+}
+
+void URangedAttackAction::PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action)
+{
+	Super::PrepareAction(character, action);
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+	
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
+	{
+		// 캐릭터 주변으로 범위 표시
+		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+			AAttackRange::StaticClass(),
+			character->GetActorLocation(),
+			FRotator(0, 0, 0));
+
+		decal->SetDecalRange(action->MaxDistance);
+		playable->SetSplineCondition(false);
+	
+		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+		UCustomTimer::SetTimer(character->GetWorld(), 0.1f, [](float alpha)
+		{
+		},
+		[character]()
+		{
+			FVector parabolaLocation = character->GetMesh()->GetSocketLocation(TEXT("BowSocket"));
+
+			AParabolaSpline* parabola = character->GetWorld()->SpawnActor<AParabolaSpline>(
+			AParabolaSpline::StaticClass(),
+			parabolaLocation,
+			FRotator(0,0,0));
+
+			parabola->InitializeParabola(0.05f, 5.f);
+
+			parabola->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+		
+		});
+
+		// 마우스 커서 교체
+
+		if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+		{
+			p->GetMouseManager()->SetMouseMode(EGameMouseState::Action);
+
+			if (auto* cursor = Cast<UActionCursor>(p->GetMouseManager()->GetCursor()))
+			{
+				cursor->ShowActionDescription(action, 0);
+			}
+		}
+	}
+
+}
+
+void URangedAttackAction::ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action)
+{
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
+
+	AArrow* arrow = character->GetWorld()->SpawnActor<AArrow>(
+	AArrow::StaticClass(),
+	character->GetMesh()->GetSocketLocation(TEXT("BowSocket")),
+	FRotator(0, 0, 0));
+	
+	FVector startPosition = character->GetMesh()->GetSocketLocation(TEXT("BowSocket"));
+	arrow->Initialize(action, character);
+	
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
+	{
+		playable->SetSplineCondition(true);
+		TArray<AActor*> actors;
+		character->GetAttachedActors(actors);
+		FVector destination = FVector::ZeroVector;
+		float height = 0.f;
+	
+		for (auto* actor : actors)
+		{
+			if (auto* cast = Cast<AParabolaSpline>(actor))
+			{
+				AParabolaSpline* spline = cast;
+				spline->SetbIsExecute(true);
+				destination = spline->GetDestination();
+				height = spline->GetHeight();
+			}
+		}
+		
+		// 화살 이동
+		UCustomTimer::SetTimer(character->GetWorld(), 0.4f, [destination, arrow, startPosition, height](float alpha)
+		{
+			if (arrow)
+			{
+				FVector dir = destination - arrow->GetActorLocation();
+				FRotator rotation = dir.Rotation();
+				arrow->SetActorRotation(rotation);
+				arrow->SetActorLocation(UBGUtil::CalculateParabola(startPosition,destination, height, alpha), true);	
+			}
+		},
+		[destination, arrow, startPosition, height]()
+		{
+			if (arrow)
+			{
+				arrow->SetActorLocation(UBGUtil::CalculateParabola(startPosition,destination, height, 1.0f), true);
 			}
 		});
 	}

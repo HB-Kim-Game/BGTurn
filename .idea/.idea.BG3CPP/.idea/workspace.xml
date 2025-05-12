@@ -17,20 +17,27 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_PlayableCharacterBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_PlayableCharacterBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionCursor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/AllActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/AllActionTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/RogueActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/RogueActionTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/WizardActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/WizardActionTable.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/M_Spline.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/M_Spline.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Wizard/Mage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Wizard/Mage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Wizard/Mage_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Wizard/Mage_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/BG3Cpp.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/BG3Cpp.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Aiming.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Aiming.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Shoot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Shoot.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Skeleton.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/BGUtil.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/BGUtil.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ParabolaSpline.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ParabolaSpline.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/BGUtil.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/BGUtil.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ParabolaSpline.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ParabolaSpline.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +80,7 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionListViewer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/Arrow.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/AttackRange.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Enums.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3GameMode.h" root0="FORCE_HIGHLIGHTING" />
@@ -95,9 +103,6 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/TurnPortraitItem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/UIListViewer.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../UE_5.5/Engine/Source/Runtime/Core/Public/Math/MathFwd.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../UE_5.5/Engine/Source/Runtime/Engine/Private/Components/SplineComponent.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -159,13 +164,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/AutomationTool/AutomationTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -182,13 +182,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/UnrealBuildTool/UnrealBuildTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -214,13 +209,6 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile">
-        <settings />
-      </deployment>
-      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
-      <method v="2" />
-    </configuration>
     <configuration name="EpicGames.Perforce.Fixture/Dockerfile (1)" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
@@ -239,6 +227,13 @@
           <option name="contextFolderPath" value="C:\Projects\BG3CPP" />
           <option name="sourceFilePath" value="../../UnrealEngine/UE_5.5/Engine/Source/Programs/Shared/EpicGames.Perforce.Fixture/Dockerfile" />
         </settings>
+      </deployment>
+      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
       </deployment>
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
@@ -300,11 +295,32 @@
       <workItem from="1746762273876" duration="21558000" />
       <workItem from="1746945072146" duration="1356000" />
       <workItem from="1746946960044" duration="19281000" />
+      <workItem from="1747028929810" duration="10961000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnitTestsCoverage.Settings">
+    <option name="coveragePercentColumnWidth" value="75" />
+    <option name="sortOrder" value="DESCENDING" />
+    <option name="sortedColumn" value="1" />
+    <option name="symbolColumnWidth" value="75" />
+    <coverage-tree-state>
+      <expand>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Programs 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+      </expand>
+      <select />
+    </coverage-tree-state>
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />

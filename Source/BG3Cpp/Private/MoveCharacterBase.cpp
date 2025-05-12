@@ -90,7 +90,6 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVecto
 			}
 		}
 	}
-
 	bIsMovable = false;
 	return nullptr;
 }

@@ -158,7 +158,7 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			FHitResult hit;
 			if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 			{
-				FVector dest = FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z + selectedPlayableChar->GetActorLocation().Z);
+				FVector dest = FVector(hit.ImpactPoint.X, hit.ImpactPoint.Y, hit.ImpactPoint.Z);
 				FVector extent = FVector(150.f, 150.f, 200.f);
 				if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
 				{
@@ -381,6 +381,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					float Distance = selectedPlayableChar->ShowPath(destination, extent);
 					
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
+					if (!*selectedPlayableChar->MovablePtr && castCursor->GetAction()->MaxDistance < 2.1f) return;
 					
 					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 					{
@@ -424,7 +425,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					{
 						if (FVector::DistXY(GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > castCursor2->GetMaxDistance()) return;
 						float fallingDistance = GetPlayableCharacter()->GetActorLocation().Z - hit.ImpactPoint.Z;
-						if (fallingDistance <= -castCursor2->GetMaxDistance()) return;
+						if (fallingDistance / 100.f <= -castCursor2->GetMaxDistance()) return;
 
 						TArray<AActor*> actors;
 						GetPlayableCharacter()->GetAttachedActors(actors);

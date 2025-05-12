@@ -87,7 +87,7 @@ public:
 	float MinLength = 450.f;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	float MaxLength = 2200.f;
+	float MaxLength = 2400.f;
 
 	UPROPERTY()
 	float TargetLength = MaxLength;

@@ -24,9 +24,23 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class URichTextBlock* Description;
 
+	UPROPERTY(meta = (BindWidget))
+	class URichTextBlock* BonusDescription;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* BonusIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTexture2D* BonusTexture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTexture2D* MinusTexture;
+
 	class UCharacterActionData* GetAction() const;
 	
 	void ShowActionDescription(class UCharacterActionData* action, int percent,const FString& description = TEXT(""));
+
+	void ShowActionBonus(int bonus, const FString& description = TEXT(""));
 
 protected:
 	virtual void NativeConstruct() override;;

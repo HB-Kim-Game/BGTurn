@@ -83,6 +83,11 @@ void UJumpCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		
 		if (pc->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, hit))
 		{
+			FVector dir = hit.Location - player->GetPlayableCharacter()->GetActorLocation();
+			dir.Z = 0;
+			FRotator rotation = dir.Rotation();
+			player->GetPlayableCharacter()->SetActorRotation(rotation);
+			
 			float fallingDistance = player->GetPlayableCharacter()->GetActorLocation().Z - hit.ImpactPoint.Z;
 			bool bIsBlocked = false;
 			TArray<AActor*> actors;
@@ -121,7 +126,7 @@ void UJumpCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 				return;
 			}
 			// 뛸 수 있는 거리보다 높음
-			if (fallingDistance <= -MaxDistance)
+			if (fallingDistance / 100.f <= -MaxDistance)
 			{
 				ShowJumpDescription(0, TEXT("너무 높습니다!"), true);
 				return;
