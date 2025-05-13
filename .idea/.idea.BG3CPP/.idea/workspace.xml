@@ -14,30 +14,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionCursor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/AllActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/AllActionTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/RogueActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/RogueActionTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/WizardActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/WizardActionTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionHoverCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionHoverCursor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionTypeDescription.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionTypeDescription.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_JumpCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_JumpCursor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_MoveCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_MoveCursor.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Aiming.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Aiming.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Shoot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Anim_1H_Ranged_Shoot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Rogue/Rogue_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc596.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc596.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/RichTextStyleTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/RichTextStyleTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_Damage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_Damage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_InitiativeUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_InitiativeUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_SelectObjectInfo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_SelectObjectInfo.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionHoverCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionHoverCursor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ParabolaSpline.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ParabolaSpline.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/SelectObjectInfoUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/SelectObjectInfoUI.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionHoverCursor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionHoverCursor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/BattleTurnManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/BattleTurnManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +60,7 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionListViewer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ActionTypeDescriptionUI.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/AttackRange.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3GameMode.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/BG3Struct.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -80,6 +84,7 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionListViewer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ActionTypeDescriptionUI.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/Arrow.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/AttackRange.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Enums.h" root0="FORCE_HIGHLIGHTING" />
@@ -296,6 +301,8 @@
       <workItem from="1746945072146" duration="1356000" />
       <workItem from="1746946960044" duration="19281000" />
       <workItem from="1747028929810" duration="10961000" />
+      <workItem from="1747116394159" duration="3243000" />
+      <workItem from="1747121406112" duration="11578000" />
     </task>
     <servers />
   </component>

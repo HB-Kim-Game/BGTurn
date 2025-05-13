@@ -11,7 +11,7 @@ void USelectObjectInfoUI::ShowSelectObjectInfo(AMoveCharacterBase* character)
 {
 	DisplayNameText->SetText(FText::FromString(character->GetStatus()->GetName()));
 
-	FString level = "Lv. " + FString::FromInt(character->Status.Level);
+	FString level = "Lv." + FString::FromInt(character->Status.Level);
 	
 	LevelText->SetText(FText::FromString(level));
 	

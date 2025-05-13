@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BG3Struct.h"
 #include "CursorBase.h"
 #include "ActionCursor.generated.h"
 

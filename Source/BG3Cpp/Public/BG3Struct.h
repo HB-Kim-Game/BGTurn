@@ -88,3 +88,15 @@ public:
 	UPROPERTY(editAnywhere, BlueprintReadWrite)
 	int32 Initiative;
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FUIData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTexture2D* Texture;
+	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	FString Description;
+};

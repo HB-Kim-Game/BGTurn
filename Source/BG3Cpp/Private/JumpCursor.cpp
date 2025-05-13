@@ -32,7 +32,7 @@ void UJumpCursor::ShowJumpDescription(int32 damage, const FString& description, 
 
 	if (damage > 0)
 	{
-		FString text = "<ActionPercent>-" + FString::FromInt(damage) + " HP</>";
+		FString text = "<ActionPercent>-" + FString::FromInt(damage) + "HP</>";
 		Damage->SetText(FText::FromString(text));
 		Damage->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}

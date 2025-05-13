@@ -381,7 +381,7 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					float Distance = selectedPlayableChar->ShowPath(destination, extent);
 					
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
-					if (!*selectedPlayableChar->MovablePtr && castCursor->GetAction()->MaxDistance < 2.1f) return;
+					if (selectedPlayableChar->GetIsNoPath() && castCursor->GetAction()->MaxDistance < 2.1f) return;
 					
 					if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 					{
@@ -491,6 +491,9 @@ void AMouseControlledPlayer::OnAltComplete()
 
 void AMouseControlledPlayer::OnRightMouseButtonDown()
 {
+	if (selectedPlayableChar == nullptr) return;
+	if (!selectedPlayableChar->GetIsTurn()) return;
+	
 	MouseManager->SetMouseMode(EGameMouseState::Move);
 	// 사용 코스트 표시 취소
 	PlayerUI->SetSelectedCharacter(GetPlayableCharacter());

@@ -25,7 +25,28 @@ class BG3CPP_API UActionHoverCursor : public UCursorBase
 	class UHorizontalBox* ActionTypeDetailBox;
 
 	UPROPERTY(meta = (BindWidget))
+	class UHorizontalBox* ActionCaseBox;
+
+	UPROPERTY(meta = (BindWidget))
 	class UImage* IconImage;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FString, FUIData> ActionTypeIconList;
+	
 	void ShowActionDetail(class UCharacterActionData* action);
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UActionTypeDescriptionUI> ActionTypeItemClass;
+
+	UPROPERTY()
+	TArray<UActionTypeDescriptionUI*> ActionTypeDetailItems;
+	UPROPERTY()
+	UActionTypeDescriptionUI* ActionCaseItem;
+
+	int32 detailCount = 0;
+
+	bool bIsInitialize = false;
+
+protected:
+	virtual void NativeConstruct() override;
 };

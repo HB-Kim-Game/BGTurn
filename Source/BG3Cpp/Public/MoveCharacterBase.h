@@ -82,6 +82,8 @@ public:
 
 	float GetMaxMov() const;
 
+	bool GetIsNoPath() const;
+
 	void TurnReceive();
 	void TurnEnd();
 
@@ -157,6 +159,7 @@ protected:
 	bool bIsMovable = true;
 	bool bIsTurn = false;
 	bool bIsPrepareAction = false;
+	bool bIsNoPath = false;
 	int32 CurHP;
 
 	UPROPERTY()

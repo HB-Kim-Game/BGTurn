@@ -18,6 +18,16 @@ public:
 	virtual void Selected() override;
 	virtual void Deselected() override;
 
+	void ThinkAction();
+	
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	class ABG3GameMode* Mode;
+
+	UPROPERTY()
+	TArray<class AMoveCharacterBase*> EnemyCharacters;
+
+	FDelegateHandle MoveDelegateHandle;
 };

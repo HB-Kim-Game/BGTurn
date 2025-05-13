@@ -109,7 +109,7 @@ void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
 	HpMatDynamic->SetScalarParameterValue("Percentage", static_cast<float>(maxHp - curHp) / maxHp);
 	UE_LOG(LogTemp, Warning, TEXT("%f"), static_cast<float>(maxHp - curHp) / maxHp);
 	
-	FString str = FString::FromInt(curHp) + " / " + FString::FromInt(maxHp);
+	FString str = FString::FromInt(curHp) + "/" + FString::FromInt(maxHp);
 	
 	SelectedCharHP->SetText(FText::FromString(str));
 }

@@ -147,7 +147,8 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive + bonus + 2) / 20 * 100.f;
-						if (!*player->GetPlayableCharacter()->MovablePtr && Action->MaxDistance < 2.1f)
+						if (player->GetPlayableCharacter()->GetIsNoPath() && Action->MaxDistance < 2.1f &&
+							FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f < Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
 						{
 							ShowActionDescription(Action, percent, TEXT("이동할 수 없습니다!"));
 							ShowActionBonus(bonus, bonusDescription);
@@ -211,7 +212,7 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 				switch (Action->SkillCase)
 				{
 				case ESkillCase::DefaultAttack:
-					if (!*player->GetPlayableCharacter()->MovablePtr && Action->MaxDistance < 2.1f)
+					if (player->GetPlayableCharacter()->GetIsNoPath() && Action->MaxDistance < 2.1f)
 					{
 						ShowActionDescription(Action, 0, TEXT("이동할 수 없습니다!"));
 						break;
@@ -221,6 +222,7 @@ void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
 						break;
 					}
+					
 					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::Buff:

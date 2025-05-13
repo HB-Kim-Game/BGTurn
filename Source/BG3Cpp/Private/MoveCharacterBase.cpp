@@ -60,8 +60,10 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVecto
 		
 		if (path && path->IsValid() && !path->IsPartial())
 		{
+			bIsNoPath = false;
 			if (path->GetPathLength() / 100.f > CurrentMOV) bIsMovable = false;
 			else bIsMovable = true;
+			
 			return path;
 		}
 		
@@ -84,6 +86,7 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVecto
 
 			if (adjustPath && adjustPath->IsValid() && !adjustPath->IsPartial())
 			{
+				bIsNoPath = false;
 				if (adjustPath->GetPathLength() / 100.f > CurrentMOV) bIsMovable = false;
 				else bIsMovable = true;
 				return adjustPath;
@@ -91,6 +94,7 @@ UNavigationPath* AMoveCharacterBase::ThinkPath(const FVector& dest, const FVecto
 		}
 	}
 	bIsMovable = false;
+	bIsNoPath = true;
 	return nullptr;
 }
 
@@ -341,6 +345,11 @@ float AMoveCharacterBase::GetMaxMov() const
 	return MaxMOV;
 }
 
+bool AMoveCharacterBase::GetIsNoPath() const
+{
+	return bIsNoPath;
+}
+
 void AMoveCharacterBase::TurnReceive()
 {
 	bIsTurn = true;
@@ -348,8 +357,6 @@ void AMoveCharacterBase::TurnReceive()
 	CurTurnActionCount = MaxTurnActionCount;
 	CurTurnBonusActionCount = MaxTurnBonusActionCount;
 	bIsMovable = true;
-
-	UE_LOG(LogTemp, Warning, TEXT("DisplayName : %s"), *GetStatus()->GetName());
 	
 	OnCharacterTurnReceive.Broadcast();
 }

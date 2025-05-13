@@ -100,7 +100,7 @@ void UBattleTurnManager::StartBattle()
 					// 턴 받을 시, AI가 행동 시작하도록 구현해야함.
 					Player->GetPlayerUI()->TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
 					Player->GetPlayerUI()->DefaultButton->SetVisibility(ESlateVisibility::Visible);
-					np->TurnEnd();
+					np->ThinkAction();
 				});
 
 				FCharacterTurnData npData = FCharacterTurnData();

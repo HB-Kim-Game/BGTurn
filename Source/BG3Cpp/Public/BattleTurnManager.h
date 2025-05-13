@@ -31,6 +31,9 @@ public:
 	UPROPERTY()
 	class AMouseControlledPlayer* Player;
 
+	UPROPERTY()
+	TArray<FCharacterTurnData> Characters;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -40,8 +43,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY()
-	TArray<FCharacterTurnData> Characters;
 
 	UPROPERTY()
 	TArray<class UTurnCharacterList*> TurnCharacterList;
