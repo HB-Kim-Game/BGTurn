@@ -46,6 +46,11 @@ public:
 	float MOV;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Level;
+	// 스펠 갯수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 DefaultSpellOneCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 DefaultSpellTwoCount;
 };
 
 USTRUCT(Atomic, BlueprintType)
@@ -66,6 +71,12 @@ struct FGameAction : public FTableRowBase
 	int AmountTurn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESkillCase SkillCase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETargetCase TargetCase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxTargetCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int UpcastNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;

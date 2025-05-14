@@ -59,24 +59,27 @@ void AFireBall::BeginPlay()
 	}
 }
 
-// Called every frame
 void AFireBall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
-	if (!bIsInitialized) return;
+void AFireBall::TickAction(float DeltaTime)
+{
+	Super::TickAction(DeltaTime);
 
 	FHitResult hit;
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(this);
-	params.AddIgnoredActor(FireballInstigator);
+	params.AddIgnoredActor(AttackInstigator);
 	
 	if (GetWorld()->SweepSingleByChannel(hit, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_WorldDynamic, FCollisionShape::MakeSphere(26.f), params))
 	{
 		if (auto* cast = Cast<AMoveCharacterBase>(hit.GetActor()))
 		{
-			if (ActionData->Target != cast) return;
-			uint8 statBonus = FireballInstigator->Status.Int;
+			if (nullptr == Target) return;
+			if (cast != Target) return;
+			uint8 statBonus = AttackInstigator->Status.Int;
 	
 			int8 diceResult = UDiceChecker::RollDice();
 		
@@ -103,7 +106,7 @@ void AFireBall::Tick(float DeltaTime)
 					UE_LOG(LogTemp, Warning, TEXT("%d"), isSuccess);
 				}));
 				
-				UGameplayStatics::ApplyDamage(cast, damageResult, FireballInstigator->GetController(), this, UDamageType::StaticClass());
+				UGameplayStatics::ApplyDamage(cast, damageResult, AttackInstigator->GetController(), this, UDamageType::StaticClass());
 				SpawnHitEffect(hit.ImpactPoint);
 				return;
 			}
@@ -111,11 +114,11 @@ void AFireBall::Tick(float DeltaTime)
 			// 무조건 무기에 숙련되어 있다는 기준, 숙련도 보너스 +2 를 함.
 			// 공격 판정 성공
 			// 고지대 보정
-			int bonus = FireballInstigator->GetActorLocation().Z >= hit.GetActor()->GetActorLocation().Z + 250.f ? 2 :
-							FireballInstigator->GetActorLocation().Z <= hit.GetActor()->GetActorLocation().Z - 250.f ? -2 : 0;
+			int bonus = AttackInstigator->GetActorLocation().Z >= hit.GetActor()->GetActorLocation().Z + 250.f ? 2 :
+							AttackInstigator->GetActorLocation().Z <= hit.GetActor()->GetActorLocation().Z - 250.f ? -2 : 0;
 
 			// 원거리를 근거리로 공격할 경우 보정
-			bonus += FVector::Distance(FireballInstigator->GetActorLocation(), hit.GetActor()->GetActorLocation()) / 100.f < ActionData->MinDistance ? -2 : 0;
+			bonus += FVector::Distance(AttackInstigator->GetActorLocation(), hit.GetActor()->GetActorLocation()) / 100.f < ActionData->MinDistance ? -2 : 0;
 			
 			if (diceResult + UBGUtil::CalculateBonus(statBonus) + bonus + 2>= cast->Status.Defensive)
 			{
@@ -137,12 +140,12 @@ void AFireBall::Tick(float DeltaTime)
 					bool isSuccess = cast->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
 				}));
 		
-				UGameplayStatics::ApplyDamage(ActionData->Target, damageResult, FireballInstigator->GetController(), this, UDamageType::StaticClass());
+				UGameplayStatics::ApplyDamage(cast, damageResult, AttackInstigator->GetController(), this, UDamageType::StaticClass());
 				SpawnHitEffect(hit.ImpactPoint);
 				return;
 			}
 			
-			FVector dir = FireballInstigator->GetActorLocation() - cast->GetActorLocation();
+			FVector dir = AttackInstigator->GetActorLocation() - cast->GetActorLocation();
 			dir.Z = 0;
 			FRotator rotation = dir.Rotation();
 			cast->SetActorRotation(rotation);
@@ -150,24 +153,6 @@ void AFireBall::Tick(float DeltaTime)
 			cast->GetDamageUI()->ShowDamage(cast->GetActorLocation(), -1);
 			SpawnHitEffect(hit.ImpactPoint);
 		}
-	}
-}
-
-void AFireBall::Initialize(class UCharacterActionData* data, class AMoveCharacterBase* instigator)
-{
-	ActionData = data;
-	FireballInstigator = instigator;
-	
-	bIsInitialized = true;	
-}
-
-void AFireBall::SpawnHitEffect(FVector hitLocation)
-{
-	if (HitSystem != nullptr)
-	{
-		UNiagaraComponent* hitEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitSystem, hitLocation);
-		hitEffect->SetActive(true);
-		Destroy();
 	}
 }
 

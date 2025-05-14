@@ -75,10 +75,16 @@ void APlayableCharacterBase::Initialize()
 		UCharacterActionData* data = NewObject<UCharacterActionData>();
 		data->ActionID = action->ActionID;
 		data->ActionCase = action->ActionCase;
+		data->SkillCase = action->SkillCase;
+		data->TargetCase = action->TargetCase;
+		data->MaxTargetCount = action->MaxTargetCount;
+		data->UpcastNum = action->UpcastNum;
+		data->CurMaxTargetCount = action->MaxTargetCount;
+		
 		data->MaxDistance = action->MaxDistance;
 		data->MinDistance = action->MinDistance;
-		data->SkillCase = action->SkillCase;
 		data->AmountTurn = action->AmountTurn;
+		
 		data->DisplayName = action->DisplayName;
 		data->Description = action->Description;
 		data->Texture = action->Texture;
@@ -86,6 +92,9 @@ void APlayableCharacterBase::Initialize()
 
 		Actions.Add(data);
 	}
+
+	CurrentSpell1Count = Status.DefaultSpellOneCount;
+	CurrentSpell2Count = Status.DefaultSpellTwoCount;
 }
 
 float APlayableCharacterBase::GetCurrentMOV() const
@@ -96,6 +105,19 @@ float APlayableCharacterBase::GetCurrentMOV() const
 bool APlayableCharacterBase::GetIsMoving() const
 {
 	return bIsMoving;
+}
+
+int APlayableCharacterBase::GetCurrentSpellCount(ESkillCase SkillCase) const
+{
+	switch (SkillCase)
+	{
+		case ESkillCase::SpellOne:
+			return CurrentSpell1Count;
+		case ESkillCase::SpellTwo:
+			return CurrentSpell2Count;
+		default:
+			return 0;
+	}
 }
 
 bool APlayableCharacterBase::GetSplineCondition() const

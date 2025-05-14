@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "MoveCharacterBase.h"
+#include "ProjectileBase.h"
 #include "GameFramework/Actor.h"
 #include "FireBall.generated.h"
 
 UCLASS()
-class BG3CPP_API AFireBall : public AActor
+class BG3CPP_API AFireBall : public AProjectileBase
 {
 	GENERATED_BODY()
 	
@@ -33,20 +34,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UNiagaraSystem* NiagaraSystem;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNiagaraSystem* HitSystem;
-	
-	FDelegateHandle ExecuteActionHandle;
-
-	void Initialize(class UCharacterActionData* data, class AMoveCharacterBase* instigator);
-
-private:
-	bool bIsInitialized = false;
-
-	UPROPERTY()
-	class UCharacterActionData* ActionData;
-	UPROPERTY()
-	class AMoveCharacterBase* FireballInstigator;
-
-	void SpawnHitEffect(FVector location);
+protected:
+	virtual void TickAction(float DeltaTime) override;
 };

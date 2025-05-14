@@ -1,89 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ActionCursor.h"
-
+#include "MultiTargetActionCursor.h"
 #include "CharacterActionData.h"
 #include "MouseControlledPlayer.h"
-#include "MoveCharacterBase.h"
 #include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "Components/Image.h"
-#include "Components/PanelWidget.h"
 #include "Components/RichTextBlock.h"
 
-UCharacterActionData* UActionCursor::GetAction() const
+void UMultiTargetActionCursor::ShowActionDescription(UCharacterActionData* action, int percent,
+                                                     const FString& description)
 {
-	return Action;
-}
-
-void UActionCursor::ShowActionDescription(UCharacterActionData* action, int percent,const FString& description)
-{
-	IconImage->SetBrushFromTexture(action->Texture);
-	Action = action;
-	
-	if (percent > 90)
-	{
-		Percent->SetVisibility(ESlateVisibility::Visible);
-		FString text = "<ActionPercentHigh>" + FString::FromInt(percent) + "%</>";
-		Percent->SetText(FText::FromString(text));
-	}
-	else
-	{
-		if (percent <= 0)
-		{
-			Percent->SetVisibility(ESlateVisibility::Collapsed);
-		}
-		else
-		{
-			Percent->SetVisibility(ESlateVisibility::Visible);
-			FString text = "<ActionPercent>" + FString::FromInt(percent) + "%</>";
-			Percent->SetText(FText::FromString(text));		
-		}
-	}
-
-	if (description.IsEmpty())
-	{
-		Description->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	else
-	{
-		FString text = "<CursorDesc>" + FString::Printf(TEXT("%s"), *description)+ "</>";
-		Description->SetText(FText::FromString(text));
-		Description->SetVisibility(ESlateVisibility::Visible);
-	}
+	Super::ShowActionDescription(action, percent, description);
 	
 }
 
-void UActionCursor::ShowActionBonus(int bonus, const FString& description)
+void UMultiTargetActionCursor::ShowCursorInfo()
 {
-	if (bonus == 0)
-	{
-		BonusIcon->GetParent()->SetVisibility(ESlateVisibility::Collapsed);
-	}
-	else
-	{
-		BonusIcon->GetParent()->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-
-		if (bonus > 0)
-		{
-			BonusIcon->SetBrushFromTexture(BonusTexture);
-			BonusIcon->SetDesiredSizeOverride(FVector2D(16.f, 16.f));
-		}
-		else
-		{
-			BonusIcon->SetBrushFromTexture(MinusTexture);
-			BonusIcon->SetDesiredSizeOverride(FVector2D(16.f, 16.f));
-		}
-		
-		FString text = "<CursorDesc>" + FString::Printf(TEXT("%s"), *description)+ "</>";
-		BonusDescription->SetText(FText::FromString(text));
-	}
-}
-
-void UActionCursor::ShowCursorInfo()
-{
-	auto* pc = GetWorld()->GetFirstPlayerController();
+		auto* pc = GetWorld()->GetFirstPlayerController();
 	if (pc)
 	{
 		FHitResult hit;
@@ -136,13 +71,13 @@ void UActionCursor::ShowCursorInfo()
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive + bonus + 2) / 20 * 100.f;
 						if (player->GetPlayableCharacter()->GetIsNoPath() && Action->MaxDistance < 2.1f &&
-							FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f < Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+							FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f < Action->MaxDistance)
 						{
 							ShowActionDescription(Action, percent, TEXT("이동할 수 없습니다!"));
 							ShowActionBonus(bonus, bonusDescription);
 							break;
 						}
-						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance)
 						{
 							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
 							ShowActionBonus(bonus, bonusDescription);
@@ -168,7 +103,7 @@ void UActionCursor::ShowCursorInfo()
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive + bonus) / 20 * 100.f;
-						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance)
 						{
 							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
 							ShowActionBonus(bonus, bonusDescription);
@@ -183,7 +118,7 @@ void UActionCursor::ShowCursorInfo()
 							if (player->GetPlayableCharacter() == playableCharacter) break;
 						}
 						percent = static_cast<float>(20 - character->Status.Defensive + bonus) / 20 * 100.f;
-						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+						if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), character->GetActorLocation()) / 100.f > Action->MaxDistance)
 						{
 							ShowActionDescription(Action, static_cast<int>(percent), TEXT("거리가 너무 멉니다!"));
 							ShowActionBonus(bonus, bonusDescription);
@@ -205,7 +140,7 @@ void UActionCursor::ShowCursorInfo()
 						ShowActionDescription(Action, 0, TEXT("이동할 수 없습니다!"));
 						break;
 					}
-					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance)
 					{
 						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
 						break;
@@ -225,7 +160,7 @@ void UActionCursor::ShowCursorInfo()
 					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::SpellOne:
-					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance)
 					{
 						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
 						break;
@@ -233,7 +168,7 @@ void UActionCursor::ShowCursorInfo()
 					ShowActionDescription(Action, 0);
 					break;
 				case ESkillCase::SpellTwo:
-					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance + player->GetPlayableCharacter()->GetCurrentMOV())
+					if (FVector::Distance(player->GetPlayableCharacter()->GetActorLocation(), hit.ImpactPoint) / 100.f > Action->MaxDistance)
 					{
 						ShowActionDescription(Action, 0,TEXT("거리가 너무 멉니다!"));
 						break;
@@ -244,22 +179,29 @@ void UActionCursor::ShowCursorInfo()
 			}
 		}
 	}
-	
 }
 
-void UActionCursor::NativeConstruct()
+void UMultiTargetActionCursor::ShowTargetProgress(int addNum)
+{
+	if (!Action) return;
+
+	if (CurTargetNum + addNum > Action->MaxTargetCount)
+	{
+		FString text = "<CursorDesc>" + FString::Printf(TEXT("초과했습니다!"))+ "</>";
+		Description->SetText(FText::FromString(text));
+		Description->SetVisibility(ESlateVisibility::Visible);
+		return;
+	}
+	
+	CurTargetNum += addNum;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), static_cast<float>(CurTargetNum) / Action->CurMaxTargetCount);
+	TargetMatDynamic->SetScalarParameterValue("Percent", static_cast<float>(CurTargetNum) / Action->CurMaxTargetCount);
+}
+
+void UMultiTargetActionCursor::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	player = Cast<AMouseControlledPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
-}
-
-void UActionCursor::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (nullptr == player && !player->IsValidLowLevel()) return;
-	if (nullptr == Action && !Action->IsValidLowLevel()) return;
-
-	ShowCursorInfo();
+	TargetMatDynamic = UMaterialInstanceDynamic::Create(TargetMaterial, this);
+	TargetProgress->SetBrushFromMaterial(TargetMatDynamic);
 }

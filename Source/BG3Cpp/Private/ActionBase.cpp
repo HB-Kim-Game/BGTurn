@@ -2,7 +2,6 @@
 
 
 #include "ActionBase.h"
-
 #include "ActionCursor.h"
 #include "Arrow.h"
 #include "AttackRange.h"
@@ -18,6 +17,7 @@
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
+#include "MultiTargetActionCursor.h"
 #include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
@@ -117,10 +117,7 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 	character->PlayAnimation(prepareID);
 	UE_LOG(LogTemp, Warning, TEXT("Melee"));
 	
-	if (nullptr == action->Target) return;
-	if (!action->Target->IsValidLowLevel()) return;
-	
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *action->Target->GetName());
+	if (action->Target.Num() <= 0) return;
 
 	uint8 statBonus = character->Status.Str > character->Status.Dex ? character->Status.Str : character->Status.Dex;
 
@@ -136,26 +133,26 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		int8 damageResult = UDiceChecker::RollDice(6) + UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus) * 2;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 		
-		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);
+		action->Target[0]->GetDamageUI()->ShowDamage(action->Target[0]->GetActorLocation(), damageResult);
 		
-		ExecuteActionHandle = action->Target->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
+		ExecuteActionHandle = action->Target[0]->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
 			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 		{
 			if (auto* p = Cast<AMouseControlledPlayer>(damagedCharacter->GetWorld()->GetFirstPlayerController()->GetPawn()))
 			{
 				p->GetPlayerUI()->ShowSelectedObjectInfo(damagedCharacter);
 			}
-			bool isSuccess = action->Target->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
+			bool isSuccess = action->Target[0]->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
 			UE_LOG(LogTemp, Warning, TEXT("%d"), isSuccess);
 		}));
 		
-		UGameplayStatics::ApplyDamage(action->Target, damageResult, character->GetController(), character, UDamageType::StaticClass());	
+		UGameplayStatics::ApplyDamage(action->Target[0], damageResult, character->GetController(), character, UDamageType::StaticClass());	
 		return;
 	}
 
 	// 무조건 무기에 숙련되어 있다는 기준, 숙련도 보너스 +2 를 함.
 	// 공격 판정 성공
-	if (diceResult + UBGUtil::CalculateBonus(statBonus) + 2 >= action->Target->Status.Defensive)
+	if (diceResult + UBGUtil::CalculateBonus(statBonus) + 2 >= action->Target[0]->Status.Defensive)
 	{
 		// 피해 굴림
 		// 무기 기본 피해량(1d6을 기준으로 함.) + 능력치 수정값
@@ -163,29 +160,29 @@ void UMeleeAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAction
 		int32 damageResult = FMath::Max(UDiceChecker::RollDice(6) + UBGUtil::CalculateBonus(statBonus), 0);
 		UE_LOG(LogTemp, Warning, TEXT("%d"), damageResult);
 
-		action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), damageResult);
+		action->Target[0]->GetDamageUI()->ShowDamage(action->Target[0]->GetActorLocation(), damageResult);
 
-		ExecuteActionHandle = action->Target->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
+		ExecuteActionHandle = action->Target[0]->OnTakeDefaultDamage.Add(FOnTakeDefaultDamage::FDelegate::CreateLambda([action, this]
 			(float Damage, AMoveCharacterBase* damagedCharacter, AMoveCharacterBase* instigator)
 		{
 			if (auto* p = Cast<AMouseControlledPlayer>(damagedCharacter->GetWorld()->GetFirstPlayerController()->GetPawn()))
 			{
 				p->GetPlayerUI()->ShowSelectedObjectInfo(damagedCharacter);
 			}
-			bool isSuccess = action->Target->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
+			bool isSuccess = action->Target[0]->OnTakeDefaultDamage.Remove(ExecuteActionHandle);
 			UE_LOG(LogTemp, Warning, TEXT("%d"), isSuccess);
 		}));
 		
-		UGameplayStatics::ApplyDamage(action->Target, damageResult, character->GetController(), character, UDamageType::StaticClass());
+		UGameplayStatics::ApplyDamage(action->Target[0], damageResult, character->GetController(), character, UDamageType::StaticClass());
 		return;
 	}
 
-	FVector dir = character->GetActorLocation() - action->Target->GetActorLocation();
+	FVector dir = character->GetActorLocation() - action->Target[0]->GetActorLocation();
 	dir.Z = 0;
 	FRotator rotation = dir.Rotation();
-	action->Target->SetActorRotation(rotation);
-	action->Target->PlayAnimation(TEXT("Dodge"));
-	action->Target->GetDamageUI()->ShowDamage(action->Target->GetActorLocation(), -1);
+	action->Target[0]->SetActorRotation(rotation);
+	action->Target[0]->PlayAnimation(TEXT("Dodge"));
+	action->Target[0]->GetDamageUI()->ShowDamage(action->Target[0]->GetActorLocation(), -1);
 }
 
 void USprintAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
@@ -385,7 +382,8 @@ void UFireBallAction::ExecuteAction(AMoveCharacterBase* character, UCharacterAct
 	FRotator(0, 0, 0));
 
 	FVector startPosition = character->GetMesh()->GetSocketLocation(TEXT("StaffSocket"));
-	fireBall->Initialize(action, character);
+	AMoveCharacterBase* Target = action->Target.Num() > 0 ? action->Target[0] : nullptr;
+	fireBall->Initialize(action, character, Target);
 	
 	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
@@ -494,7 +492,8 @@ void URangedAttackAction::ExecuteAction(class AMoveCharacterBase* character, cla
 	FRotator(0, 0, 0));
 	
 	FVector startPosition = character->GetMesh()->GetSocketLocation(TEXT("BowSocket"));
-	arrow->Initialize(action, character);
+	AMoveCharacterBase* Target = action->Target.Num() > 0 ? action->Target[0] : nullptr;
+	arrow->Initialize(action, character, Target);
 	
 	if (auto* playable = Cast<APlayableCharacterBase>(character))
 	{
@@ -535,4 +534,68 @@ void URangedAttackAction::ExecuteAction(class AMoveCharacterBase* character, cla
 		});
 	}
 	Super::ExecuteAction(character, action);
+}
+
+void UMagicMissileAction::PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action)
+{
+	Super::PrepareAction(character, action);
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Prepare";
+	character->PlayAnimation(prepareID);
+
+	if (auto* playable = Cast<APlayableCharacterBase>(character))
+	{
+		// 캐릭터 주변으로 범위 표시
+		AAttackRange* decal = character->GetWorld()->SpawnActor<AAttackRange>(
+			AAttackRange::StaticClass(),
+			character->GetActorLocation(),
+			FRotator(0, 0, 0));
+
+		decal->SetDecalRange(action->MaxDistance);
+		playable->SetSplineCondition(false);
+	
+		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+
+		FVector parabolaLocation = character->GetMesh()->GetSocketLocation(TEXT("StaffSocket"));
+
+		AParabolaSpline* parabola = character->GetWorld()->SpawnActor<AParabolaSpline>(
+		AParabolaSpline::StaticClass(),
+		parabolaLocation,
+		FRotator(0,0,0));
+
+		parabola->InitializeParabola(1.0f, 0);
+
+		parabola->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+		
+		// 마우스 커서 교체
+
+		if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+		{
+			p->GetMouseManager()->SetMouseMode(EGameMouseState::MultiTargetAction);
+			p->GetPlayerUI()->ShowSpellInfo(action, playable);
+			p->GetPlayerUI()->ShowCostSpell(playable, ESkillCase::SpellOne);
+
+			if (auto* cursor = Cast<UMultiTargetActionCursor>(p->GetMouseManager()->GetCursor()))
+			{
+				cursor->ShowActionDescription(action, 0);
+			}
+		}
+	}
+}
+
+void UMagicMissileAction::ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action)
+{
+	Super::ExecuteAction(character, action);
+
+	// 캐릭터 애니메이션 재생
+	FString prepareID = action->ActionID + "_Execute";
+	character->PlayAnimation(prepareID);
+
+	// 미사일 발사
+
+	// 발사 뒤 action의 타겟 제거
+	// maxCount 초기화
+	action->Target.Empty();
+	action->CurMaxTargetCount = action->MaxTargetCount;
 }

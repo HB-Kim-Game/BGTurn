@@ -39,15 +39,16 @@ public:
 
 	class UCharacterActionData* GetAction() const;
 	
-	void ShowActionDescription(class UCharacterActionData* action, int percent,const FString& description = TEXT(""));
+	virtual void ShowActionDescription(class UCharacterActionData* action, int percent,const FString& description = TEXT(""));
 
-	void ShowActionBonus(int bonus, const FString& description = TEXT(""));
+	virtual void ShowActionBonus(int bonus, const FString& description = TEXT(""));
+
+	virtual void ShowCursorInfo();
 
 protected:
 	virtual void NativeConstruct() override;;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-private:
+	
 	UPROPERTY()
 	class UCharacterActionData* Action;
 

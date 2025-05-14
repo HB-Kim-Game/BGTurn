@@ -13,6 +13,7 @@ enum class EGameMouseState : uint8
 	ActionHover UMETA(DisplayName = "ActionHover"),
 	Action UMETA(DisplayName = "Action"),
 	Jump UMETA(DisplayName = "Jump"),
+	MultiTargetAction UMETA(DisplayName = "MultiTargetAction"),
 };
 
 UENUM(BlueprintType)
@@ -67,4 +68,11 @@ enum class ESkillCase : uint8
 	Buff UMETA(DisplayName = "Buff"),
 	SpellOne UMETA(DisplayName = "SpellOne"),
 	SpellTwo UMETA(DisplayName = "SpellTwo"),
+};
+
+UENUM(BlueprintType)
+enum class ETargetCase : uint8
+{
+	Single UMETA(DisplayName = "Single"),
+	Multi UMETA(DisplayName = "Multi"),
 };

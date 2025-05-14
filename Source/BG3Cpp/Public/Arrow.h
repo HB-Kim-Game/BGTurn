@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ProjectileBase.h"
 #include "GameFramework/Actor.h"
 #include "Arrow.generated.h"
 
 UCLASS()
-class BG3CPP_API AArrow : public AActor
+class BG3CPP_API AArrow : public AProjectileBase
 {
 	GENERATED_BODY()
 	
@@ -28,21 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* StaticMeshComponent;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UNiagaraSystem* HitSystem;
-	
-	FDelegateHandle ExecuteActionHandle;
 
-	void Initialize(class UCharacterActionData* data, class AMoveCharacterBase* instigator);
-
-private:
-	bool bIsInitialized = false;
-
-	UPROPERTY()
-	class UCharacterActionData* ActionData;
-	UPROPERTY()
-	class AMoveCharacterBase* ArrowInstigator;
-
-	void SpawnHitEffect(FVector location);
+	protected:
+	virtual void TickAction(float DeltaTime) override;
 };

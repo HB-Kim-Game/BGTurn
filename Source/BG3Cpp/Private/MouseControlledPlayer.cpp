@@ -16,6 +16,7 @@
 #include "JumpCursor.h"
 #include "MouseManager.h"
 #include "MoveCursor.h"
+#include "MultiTargetActionCursor.h"
 #include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
@@ -344,6 +345,36 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 				{
 					FVector extent = FVector(150.f, 150.f, 200.f);
 					FVector destination = lastCursorPos;
+					float Distance = selectedPlayableChar->ShowPath(destination, extent);
+					selectedPlayableChar->SetSplineCondition(false);
+					
+					if (auto* multiCursor = Cast<UMultiTargetActionCursor>(castCursor))
+					{
+						if (castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
+						
+						if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
+						{
+							FVector actorBoundsOrigin, ActorBoundsExtent;
+							castChar->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
+							extent += ActorBoundsExtent;
+
+							int tempTargetNum = multiCursor->GetAction()->UpcastNum > 2 ? *castChar->CurHPPtr : 1;
+
+							if (multiCursor->CurTargetNum + tempTargetNum > multiCursor->GetAction()->CurMaxTargetCount) return;
+							if (tempTargetNum == multiCursor->GetAction()->CurMaxTargetCount)
+							{
+								if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
+								{
+									gm->ActionManager->ExecuteAction(multiCursor->GetAction(), selectedPlayableChar);	
+								}
+							}
+							multiCursor->GetAction()->Target.Add(castChar);
+							multiCursor->ShowTargetProgress(tempTargetNum);
+						}
+						return;
+					}
+					
+					castCursor->GetAction()->Target.Empty();
 					
 					if (castCursor->GetAction()->SkillCase == ESkillCase::Buff)
 					{
@@ -363,22 +394,19 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 						castChar->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
 						extent += ActorBoundsExtent;
 						destination = castChar->GetActorLocation();
+						
 						if (auto* playableCharacter = Cast<APlayableCharacterBase>(castChar))
 						{
-							if (playableCharacter != selectedPlayableChar) castCursor->GetAction()->Target = castChar;
+							if (playableCharacter != selectedPlayableChar) castCursor->GetAction()->Target.Add(castChar);
 							else return;
 						}
 						else
 						{
-							castCursor->GetAction()->Target = castChar;
+							castCursor->GetAction()->Target.Add(castChar);
 						}
 					}
-					else
-					{
-						castCursor->GetAction()->Target = nullptr;
-					}
 					
-					float Distance = selectedPlayableChar->ShowPath(destination, extent);
+					Distance = selectedPlayableChar->ShowPath(destination, extent);
 					
 					if (selectedPlayableChar->GetCurrentMOV() + castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
 					if (selectedPlayableChar->GetIsNoPath() && castCursor->GetAction()->MaxDistance < 2.1f) return;

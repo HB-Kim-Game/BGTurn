@@ -8,12 +8,15 @@
 #include "PlayableCharacterBase.h"
 #include "ActionListViewer.h"
 #include "SelectObjectInfoUI.h"
+#include "SpellInfo.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
 void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 {
+	SpellInfo->SetVisibility(ESlateVisibility::Collapsed);
+	ActionListViewer->SetVisibility(ESlateVisibility::Visible);
 	SelectedCharacter = character;
 	ActionListViewer->FetchDatas(SelectedCharacter->GetActions());
 	
@@ -58,6 +61,12 @@ void UPlayerUI::ShowSelectedObjectInfo(AMoveCharacterBase* character)
 	SelectObjectInfo->ShowSelectObjectInfo(character);
 }
 
+void UPlayerUI::ShowSpellInfo(class UCharacterActionData* action, APlayableCharacterBase* character)
+{
+	SpellInfo->SetVisibility(ESlateVisibility::Visible);
+	ActionListViewer->SetVisibility(ESlateVisibility::Collapsed);
+}
+
 void UPlayerUI::ShowCost(APlayableCharacterBase* character, EActionCase actionCase)
 {
 	switch (actionCase)
@@ -86,6 +95,21 @@ void UPlayerUI::ShowUsed(APlayableCharacterBase* character, EActionCase actionCa
 	ActionListViewer->FetchDatas(character->GetActions());
 }
 
+void UPlayerUI::ShowCostSpell(class APlayableCharacterBase* character, ESkillCase skillCase)
+{
+	switch (skillCase)
+	{
+		case ESkillCase::SpellOne:
+			ActionCountUI->CostSpell1(character->GetCurrentSpellCount(ESkillCase::SpellOne));
+			break;
+		case ESkillCase::SpellTwo:
+			ActionCountUI->CostSpell1(character->GetCurrentSpellCount(ESkillCase::SpellTwo));
+			break;
+		default:
+			break;
+	}
+}
+
 void UPlayerUI::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -107,7 +131,6 @@ void UPlayerUI::ShowSelectedCharHP(int32 curHp, int32 maxHp)
 {
 	HpMatDynamic->SetTextureParameterValue("CharacterImage", SelectedCharacter->Status.Portrait);
 	HpMatDynamic->SetScalarParameterValue("Percentage", static_cast<float>(maxHp - curHp) / maxHp);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), static_cast<float>(maxHp - curHp) / maxHp);
 	
 	FString str = FString::FromInt(curHp) + "/" + FString::FromInt(maxHp);
 	

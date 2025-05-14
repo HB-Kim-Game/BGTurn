@@ -26,6 +26,9 @@ public :
 	class UActionListViewer* ActionListViewer;
 
 	UPROPERTY(meta = (BindWidget))
+	class USpellInfo* SpellInfo;
+
+	UPROPERTY(meta = (BindWidget))
 	class UImage* MoveProgress;
 
 	UPROPERTY(meta = (BindWidget))
@@ -61,8 +64,12 @@ public :
 
 	void ShowSelectedObjectInfo(class AMoveCharacterBase* character);
 
+	void ShowSpellInfo(class UCharacterActionData* action, APlayableCharacterBase* character);
+
 	void ShowCost(class APlayableCharacterBase* character, EActionCase actionCase);
 	void ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase);
+
+	void ShowCostSpell(class APlayableCharacterBase* character, ESkillCase skillCase);
 	
 	virtual void NativeConstruct() override;
 

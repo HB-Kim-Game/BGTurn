@@ -43,15 +43,21 @@ class BG3CPP_API UActionCountUI : public UUserWidget
 	class UTexture2D* ActionIconImage;
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* BonusIconImage;
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* SpellIconImage;
 
 	void ShowCharacterActionCount(class APlayableCharacterBase* character);
-	void ShowSpellPanel(bool condition);
+	void ShowSpellPanel(class APlayableCharacterBase* character);
 
 	void CostAction(int currentCount);
 	void CostBonus(int currentCount);
+	void CostSpell1(int currentCount);
+	void CostSpell2(int currentCount);
 	
 	void UseAction(int remainCount);
 	void UseBonus(int remainCount);
+	void UseSpell1(int remainCount);
+	void UseSpell2(int remainCount);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -77,8 +83,10 @@ protected:
 	void InitializeIcons();
 
 	void AddIcon(EActionCase actionCase);
+	void AddIcon(ESkillCase skillCase);
 
 	void CreateIconWidget(EActionCase actionCase);
+	void CreateIconWidget(ESkillCase skillCase);
 
 	void ClearIcons();
 };

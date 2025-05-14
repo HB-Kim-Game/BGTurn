@@ -21,17 +21,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EActionCase ActionCase;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillCase SkillCase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETargetCase TargetCase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxTargetCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int UpcastNum;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CurMaxTargetCount;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MinDistance;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AmountTurn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class AMoveCharacterBase* Target;
+	TArray<class AMoveCharacterBase*> Target;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESkillCase SkillCase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString DisplayName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;

@@ -15,32 +15,13 @@
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionHoverCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionHoverCursor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionTypeDescription.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_ActionTypeDescription.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_JumpCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_JumpCursor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_MoveCursor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Cursor/WBP_MoveCursor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc596.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc596.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/RichTextStyleTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/RichTextStyleTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_Damage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_Damage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_InitiativeUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_InitiativeUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_SelectObjectInfo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_SelectObjectInfo.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCursor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionHoverCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionHoverCursor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/JumpCursor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/Arrow.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/Arrow.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/SelectObjectInfoUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/SelectObjectInfoUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionCursor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionHoverCursor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/ActionHoverCursor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/BG3Struct.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/BattleTurnManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/BattleTurnManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/Arrow.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/Arrow.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/CharacterActionData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/CharacterActionData.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/FireBall.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/FireBall.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,10 +51,14 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/FireBall.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/InitiativeUI.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ListViewerBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MagicMissile.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MouseManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MovableCharacterController.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCursor.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/MultiTargetActionCursor.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/ProjectileBase.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/SelectableObject.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/SpellInfo.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/TurnCharacterList.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/TurnListViewer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Private/TurnPortraitItem.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -98,16 +83,21 @@
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/InitiativeUI.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/JumpCursor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ListViewerBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MagicMissile.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MouseManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MovableCharacterController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCursor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/MultiTargetActionCursor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/ProjectileBase.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/SelectObjectInfoUI.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/SelectableObject.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/SpellInfo.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/TurnCharacterList.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/TurnPortraitItem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/BG3Cpp/Public/UIListViewer.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/ThirdParty/Eigen/Eigen/src/Core/util/Constants.h" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -303,6 +293,9 @@
       <workItem from="1747028929810" duration="10961000" />
       <workItem from="1747116394159" duration="3243000" />
       <workItem from="1747121406112" duration="11578000" />
+      <workItem from="1747181527502" duration="1742000" />
+      <workItem from="1747186523298" duration="377000" />
+      <workItem from="1747194617209" duration="15039000" />
     </task>
     <servers />
   </component>
@@ -315,17 +308,7 @@
     <option name="sortedColumn" value="1" />
     <option name="symbolColumnWidth" value="75" />
     <coverage-tree-state>
-      <expand>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Programs 0% 168089/168089" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-      </expand>
+      <expand />
       <select />
     </coverage-tree-state>
   </component>

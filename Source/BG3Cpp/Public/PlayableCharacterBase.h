@@ -35,6 +35,8 @@ public:
 
 	bool GetIsMoving() const;
 
+	int GetCurrentSpellCount(ESkillCase SkillCase) const;
+
 	bool GetSplineCondition() const;
 
 	void SetSplineCondition(bool condition);
@@ -65,4 +67,7 @@ private:
 
 	void AddSplineMesh();
 	void RemoveSplineMesh();
+
+	int CurrentSpell1Count = 0;
+	int CurrentSpell2Count = 0;
 };

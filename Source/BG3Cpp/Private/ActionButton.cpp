@@ -49,7 +49,7 @@ void UActionButton::OnButtonHovered()
 
 void UActionButton::OnButtonUnhovered()
 {
-	if (Player && *Player->GetMouseManager()->MouseStatePtr != EGameMouseState::Action)
+	if (Player && (*Player->GetMouseManager()->MouseStatePtr != EGameMouseState::Action || *Player->GetMouseManager()->MouseStatePtr != EGameMouseState::MultiTargetAction))
 	{
 		Player->GetMouseManager()->SetMouseMode(lastState);
 	}

@@ -41,7 +41,7 @@ void UActionCountUI::ShowCharacterActionCount(class APlayableCharacterBase* char
 		}
 	}
 	
-	ShowSpellPanel(character->Status.CharClass == EGameCharacterClass::Wizard);
+	ShowSpellPanel(character);
 
 	for (auto* actionIcon : ActionIcons)
 	{
@@ -54,15 +54,45 @@ void UActionCountUI::ShowCharacterActionCount(class APlayableCharacterBase* char
 	}
 }
 
-void UActionCountUI::ShowSpellPanel(bool condition)
+void UActionCountUI::ShowSpellPanel(class APlayableCharacterBase* character)
 {
 	ActionBox->SetVisibility(ESlateVisibility::Hidden);
 	BonusActionBox->SetVisibility(ESlateVisibility::Hidden);
 	
-	if (condition)
+	if (character->Status.DefaultSpellOneCount > 0)
 	{
 		SpellLevel1Box->SetVisibility(ESlateVisibility::Visible);
 		SpellLevel2Box->SetVisibility(ESlateVisibility::Visible);
+		
+		if (Spell1Icons.Num() < character->Status.DefaultSpellOneCount)
+		{
+			for (int i = 0; i < character->Status.DefaultSpellOneCount; i++)
+			{
+				AddIcon(ESkillCase::SpellOne);
+			}
+		}
+		else if (Spell1Icons.Num() > character->Status.DefaultSpellOneCount)
+		{
+			for (int i = Spell1Icons.Num() - 1; i > character->Status.DefaultSpellOneCount; i--)
+			{
+				Spell1Icons[i]->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
+
+		if (Spell2Icons.Num() < character->Status.DefaultSpellTwoCount)
+		{
+			for (int i = 0; i < character->Status.DefaultSpellTwoCount; i++)
+			{
+				AddIcon(ESkillCase::SpellTwo);
+			}
+		}
+		else if (Spell2Icons.Num() > character->Status.DefaultSpellTwoCount)
+		{
+			for (int i = Spell2Icons.Num() - 1; i > character->Status.DefaultSpellTwoCount; i--)
+			{
+				Spell2Icons[i]->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	}
 	else
 	{
@@ -83,6 +113,16 @@ void UActionCountUI::CostBonus(int currentCount)
 	BonusIcons[FMath::Clamp(currentCount-1, 0, BonusIcons.Num()-1)]->PlayCostAnimation();
 }
 
+void UActionCountUI::CostSpell1(int currentCount)
+{
+	Spell1Icons[FMath::Clamp(currentCount-1, 0, Spell1Icons.Num()-1)]->PlayCostAnimation();
+}
+
+void UActionCountUI::CostSpell2(int currentCount)
+{
+	Spell2Icons[FMath::Clamp(currentCount-1, 0, Spell2Icons.Num()-1)]->PlayCostAnimation();
+}
+
 void UActionCountUI::UseAction(int remainCount)
 {
 	ActionIcons[FMath::Clamp(remainCount, 0, ActionIcons.Num()-1)]->PlayUsedAnimation();
@@ -91,6 +131,16 @@ void UActionCountUI::UseAction(int remainCount)
 void UActionCountUI::UseBonus(int remainCount)
 {
 	BonusIcons[FMath::Clamp(remainCount, 0, BonusIcons.Num()-1)]->PlayUsedAnimation();
+}
+
+void UActionCountUI::UseSpell1(int remainCount)
+{
+	Spell1Icons[FMath::Clamp(remainCount, 0, Spell1Icons.Num()-1)]->PlayUsedAnimation();
+}
+
+void UActionCountUI::UseSpell2(int remainCount)
+{
+	Spell2Icons[FMath::Clamp(remainCount, 0, Spell2Icons.Num()-1)]->PlayUsedAnimation();
 }
 
 void UActionCountUI::NativeConstruct()
@@ -110,14 +160,6 @@ void UActionCountUI::InitializeIcons()
 	{
 		if (auto* cast = Cast<UHorizontalBox>(p1))
 		{
-			TArray<UWidget*> icons = cast->GetAllChildren();
-			for (auto icon : icons)
-			{
-				if (auto* castIcon = Cast<UActionCountIcon>(icon))
-				{
-					ActionIcons.Add(castIcon);	
-				}
-			}
 			ActionIconParents.Add(cast);
 		}
 	}
@@ -126,14 +168,6 @@ void UActionCountUI::InitializeIcons()
 	{
 		if (auto* cast = Cast<UHorizontalBox>(p2))
 		{
-			TArray<UWidget*> icons = cast->GetAllChildren();
-			for (auto icon : icons)
-			{
-				if (auto* castIcon = Cast<UActionCountIcon>(icon))
-				{
-					BonusIcons.Add(castIcon);	
-				}
-			}
 			BonusIconParents.Add(cast);
 		}
 	}
@@ -142,14 +176,6 @@ void UActionCountUI::InitializeIcons()
 	{
 		if (auto* cast = Cast<UHorizontalBox>(p3))
 		{
-			TArray<UWidget*> icons = cast->GetAllChildren();
-			for (auto icon : icons)
-			{
-				if (auto* castIcon = Cast<UActionCountIcon>(icon))
-				{
-					Spell1Icons.Add(castIcon);	
-				}
-			}
 			Spell1IconParents.Add(cast);
 		}
 	}
@@ -158,22 +184,24 @@ void UActionCountUI::InitializeIcons()
 	{
 		if (auto* cast = Cast<UHorizontalBox>(p4))
 		{
-			TArray<UWidget*> icons = cast->GetAllChildren();
-			for (auto icon : icons)
-			{
-				if (auto* castIcon = Cast<UActionCountIcon>(icon))
-				{
-					Spell2Icons.Add(castIcon);	
-				}
-			}
 			Spell2IconParents.Add(cast);
 		}
 	}
+
+	ActionIcons.Empty();
+	BonusIcons.Empty();
+	Spell1Icons.Empty();
+	Spell2Icons.Empty();
 }
 
 void UActionCountUI::AddIcon(EActionCase actionCase)
 {
 	CreateIconWidget(actionCase);
+}
+
+void UActionCountUI::AddIcon(ESkillCase skillCase)
+{
+	CreateIconWidget(skillCase);
 }
 
 void UActionCountUI::CreateIconWidget(EActionCase actionCase)
@@ -184,32 +212,56 @@ void UActionCountUI::CreateIconWidget(EActionCase actionCase)
 	{
 		if (ActionIcons.Num() < 5)
 		{
-			for (auto* parent : ActionIconParents)
-			{
-				if (parent->GetChildrenCount() >= 2) continue;
+			int parentNum = ActionIconParents.Num() / 2;
+			ActionIconParents[parentNum]->AddChildToHorizontalBox(item);
+			item->SetIconImage(ActionIconImage);
+			item->PlayNormalAnimation();
 
-				parent->AddChildToHorizontalBox(item);
-				item->SetIconImage(ActionIconImage);
-				item->PlayNormalAnimation();
-
-				ActionIcons.Add(item);
-			}
+			ActionIcons.Add(item);
 		}
 	}
 	else if (actionCase == EActionCase::BonusAction)
 	{
 		if (BonusIcons.Num() < 5)
 		{
-			for (auto* parent : BonusIconParents)
-			{
-				if (parent->GetChildrenCount() >= 2) continue;
+			int parentNum = BonusIconParents.Num() / 2;
+			BonusIconParents[parentNum]->AddChildToHorizontalBox(item);
+			item->SetIconImage(BonusIconImage);
+			item->PlayNormalAnimation();
+			  	
+			BonusIcons.Add(item);
+		}
+	}
+}
 
-				parent->AddChildToHorizontalBox(item);
-				item->SetIconImage(BonusIconImage);
-				item->PlayNormalAnimation();
+void UActionCountUI::CreateIconWidget(ESkillCase skillCase)
+{
+	UActionCountIcon* item = Cast<UActionCountIcon>(CreateWidget(GetWorld(), ActionCountIconClass));
 
-				BonusIcons.Add(item);
-			}
+	if (skillCase == ESkillCase::SpellOne)
+	{
+		if (Spell1Icons.Num() < 5)
+		{
+			int parentNum = Spell1Icons.Num() / 2;
+
+			Spell1IconParents[parentNum]->AddChildToHorizontalBox(item);
+			item->SetIconImage(SpellIconImage);
+			item->PlayNormalAnimation();
+			
+			Spell1Icons.Add(item);
+		}
+	}
+	else if (skillCase == ESkillCase::SpellTwo)
+	{
+		if (Spell2Icons.Num() < 5)
+		{
+			int parentNum = Spell2Icons.Num() / 2;
+
+			Spell2IconParents[parentNum]->AddChildToHorizontalBox(item);
+			item->SetIconImage(SpellIconImage);
+			item->PlayNormalAnimation();
+
+			Spell2Icons.Add(item);
 		}
 	}
 }

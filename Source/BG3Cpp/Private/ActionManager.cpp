@@ -8,11 +8,12 @@
 
 void UActionManager::InitializeAction()
 {
-	ActionMap.Add("Melee", NewObject<UMeleeAction>(this));
-	ActionMap.Add("Sprint", NewObject<USprintAction>(this));
-	ActionMap.Add("Jump", NewObject<UJumpAction>(this));
-	ActionMap.Add("FireBall", NewObject<UFireBallAction>(this));
-	ActionMap.Add("RangedAttack", NewObject<URangedAttackAction>(this));
+	ActionMap.Add(TEXT("Melee"), NewObject<UMeleeAction>(this));
+	ActionMap.Add(TEXT("Sprint"), NewObject<USprintAction>(this));
+	ActionMap.Add(TEXT("Jump"), NewObject<UJumpAction>(this));
+	ActionMap.Add(TEXT("FireBall"), NewObject<UFireBallAction>(this));
+	ActionMap.Add(TEXT("RangedAttack"), NewObject<URangedAttackAction>(this));
+	ActionMap.Add(TEXT("MagicMissile"), NewObject<UMagicMissileAction>(this));
 }
 
 void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterBase* character)

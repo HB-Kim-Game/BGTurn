@@ -72,3 +72,13 @@ public:
 	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
 };
+
+UCLASS()
+class BG3CPP_API UMagicMissileAction : public UActionBase
+{
+	GENERATED_BODY()
+
+public:
+	virtual void PrepareAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
+	virtual void ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action) override;
+};
