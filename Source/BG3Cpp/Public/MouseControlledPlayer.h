@@ -37,6 +37,8 @@ public:
 	void Focus(FVector focusLocation);
 
 	void Select(class ISelectableObject* selectedObject);
+
+	void SetFocusEnemy(class ANonPlayableCharacterBase* character);
 	
 	private:
 	void OnLeftMouseButtonDown();
@@ -144,6 +146,9 @@ public:
 	class APlayableCharacterBase* selectedPlayableChar;
 	UPROPERTY()
 	class AMoveCharacterBase* hoverCharacter;
+
+	UPROPERTY()
+	class ANonPlayableCharacterBase* SelectedEnemyCharacter;
 
 	FVector ForwardDirection;
 	FVector RightDirection;

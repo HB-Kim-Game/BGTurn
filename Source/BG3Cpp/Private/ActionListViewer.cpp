@@ -77,15 +77,55 @@ void UActionListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 
 			if (auto* cast = Cast<UCharacterActionData>(data))
 			{
+				if (!p->GetIsTurn())
+				{
+					SpawnItems[i]->Deselected();
+					continue;
+				}
+				
 				switch (cast->ActionCase)
 				{
 					case EActionCase::DefaultAction:
-						if (p->GetCurrentTurnActionCount() <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
-						else SpawnItems[i]->Selected();
+						if (p->GetCurrentTurnActionCount() <= 0) SpawnItems[i]->Deselected(); 
+						else
+						{
+							SpawnItems[i]->Selected();
+							switch (cast->SkillCase)
+							{
+							case ESkillCase::SpellOne:
+								if (p->GetCurrentSpellCount(ESkillCase::SpellOne) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+								else SpawnItems[i]->Selected();
+								break;
+							case ESkillCase::SpellTwo:
+								if (p->GetCurrentSpellCount(ESkillCase::SpellTwo) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+								else SpawnItems[i]->Selected();
+								break;
+							}	
+						}
 						break;
 					case EActionCase::BonusAction:
-						if (p->GetCurrentBonusActionCount() <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
-						else SpawnItems[i]->Selected();
+						if (p->GetCurrentBonusActionCount() <= 0) SpawnItems[i]->Deselected();
+						else
+						{
+							SpawnItems[i]->Selected();
+							
+							if (cast->ActionID == TEXT("Jump"))
+							{
+								if (p->GetCurrentMOV() < 3.f) SpawnItems[i]->Deselected();
+							}
+							
+							switch (cast->SkillCase)
+							{
+							case ESkillCase::SpellOne:
+								if (p->GetCurrentSpellCount(ESkillCase::SpellOne) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+								else SpawnItems[i]->Selected();
+								break;
+							case ESkillCase::SpellTwo:
+								if (p->GetCurrentSpellCount(ESkillCase::SpellTwo) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+								else SpawnItems[i]->Selected();
+								break;
+							}	
+						}
 						break;
 				}
 			}
@@ -100,15 +140,49 @@ void UActionListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 
 			if (auto* cast = Cast<UCharacterActionData>(data))
 			{
+				if (!p->GetIsTurn())
+				{
+					SpawnItems[i]->Deselected();
+					continue;
+				}
+				
 				switch (cast->ActionCase)
 				{
 				case EActionCase::DefaultAction:
-					if (p->GetCurrentTurnActionCount() <= 0) SpawnItems[i]->Deselected();
-					else SpawnItems[i]->Selected();
+					if (p->GetCurrentTurnActionCount() <= 0) SpawnItems[i]->Deselected(); 
+					else
+					{
+						SpawnItems[i]->Selected();
+						switch (cast->SkillCase)
+						{
+						case ESkillCase::SpellOne:
+							if (p->GetCurrentSpellCount(ESkillCase::SpellOne) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+							else SpawnItems[i]->Selected();
+							break;
+						case ESkillCase::SpellTwo:
+							if (p->GetCurrentSpellCount(ESkillCase::SpellTwo) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+							else SpawnItems[i]->Selected();
+							break;
+						}	
+					}
 					break;
 				case EActionCase::BonusAction:
 					if (p->GetCurrentBonusActionCount() <= 0) SpawnItems[i]->Deselected();
-					else SpawnItems[i]->Selected();
+					else
+					{
+						SpawnItems[i]->Selected();
+						switch (cast->SkillCase)
+						{
+						case ESkillCase::SpellOne:
+							if (p->GetCurrentSpellCount(ESkillCase::SpellOne) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+							else SpawnItems[i]->Selected();
+							break;
+						case ESkillCase::SpellTwo:
+							if (p->GetCurrentSpellCount(ESkillCase::SpellTwo) <= 0 || !p->GetIsTurn()) SpawnItems[i]->Deselected();
+							else SpawnItems[i]->Selected();
+							break;
+						}	
+					}
 					break;
 				}
 			}

@@ -47,6 +47,14 @@ void UPlayerUI::SetSelectedCharacter(APlayableCharacterBase* character)
 	{
 		ShowUsed(SelectedCharacter, EActionCase::BonusAction);
 	}
+	if (SelectedCharacter->GetCurrentSpellCount(ESkillCase::SpellOne) != SelectedCharacter->Status.DefaultSpellOneCount)
+	{
+		ShowUsedSpell(SelectedCharacter, ESkillCase::SpellOne);
+	}
+	if (SelectedCharacter->GetCurrentSpellCount(ESkillCase::SpellTwo) != SelectedCharacter->Status.DefaultSpellTwoCount)
+	{
+		ShowUsedSpell(SelectedCharacter, ESkillCase::SpellTwo);
+	}
 }
 
 void UPlayerUI::ShowMoveProgress(float lastProgress, float resultProgress)
@@ -103,10 +111,25 @@ void UPlayerUI::ShowCostSpell(class APlayableCharacterBase* character, ESkillCas
 			ActionCountUI->CostSpell1(character->GetCurrentSpellCount(ESkillCase::SpellOne));
 			break;
 		case ESkillCase::SpellTwo:
-			ActionCountUI->CostSpell1(character->GetCurrentSpellCount(ESkillCase::SpellTwo));
+			ActionCountUI->CostSpell2(character->GetCurrentSpellCount(ESkillCase::SpellTwo));
 			break;
 		default:
 			break;
+	}
+}
+
+void UPlayerUI::ShowUsedSpell(class APlayableCharacterBase* character, ESkillCase skillCase)
+{
+	switch (skillCase)
+	{
+	case ESkillCase::SpellOne:
+		ActionCountUI->UseSpell1(character->GetCurrentSpellCount(ESkillCase::SpellOne));
+		break;
+	case ESkillCase::SpellTwo:
+		ActionCountUI->UseSpell2(character->GetCurrentSpellCount(ESkillCase::SpellTwo));
+		break;
+	default:
+		break;
 	}
 }
 

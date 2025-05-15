@@ -137,20 +137,22 @@ void AMoveCharacterBase::Initialize()
 	charController = Cast<AMovableCharacterController>(GetController());
 	charController->OnAIMoveCompleted.AddUObject(this, &AMoveCharacterBase::OnMoveCompleted);
 	
-	OnCharacterPrepareAction.AddLambda([this]()
+	OnCharacterPrepareAction.Add(FOnCharacterPrepareAction::FDelegate::CreateLambda([this](UCharacterActionData* data)
 	{
 		this-> bIsPrepareAction = true;
-	});
-	OnCharacterPrepareBonusAction.AddLambda([this](){ this-> bIsPrepareAction = true;});
-	OnCharacterAction.Add(FSimpleDelegate::CreateLambda([this]()
+	}));
+	OnCharacterPrepareBonusAction.Add(FOnCharacterPrepareBonusAction::FDelegate::CreateLambda([this](UCharacterActionData* data){ this-> bIsPrepareAction = true;}));
+	OnCharacterAction.Add(FOnCharacterAction::FDelegate::CreateLambda([this](UCharacterActionData* data)
 	{
 		bIsPrepareAction = false;
 		this->CurTurnActionCount -= 1;
+		CostSpellCount(data->SkillCase);
 	}));
-	OnCharacterBonusAction.Add(FSimpleDelegate::CreateLambda([this]()
+	OnCharacterBonusAction.Add(FOnCharacterBonusAction::FDelegate::CreateLambda([this](UCharacterActionData* data)
 	{
 		bIsPrepareAction = false;
 		this->CurTurnBonusActionCount -= 1;
+		CostSpellCount(data->SkillCase);
 	}));
 	OnDead.Add(FSimpleDelegate::CreateLambda([this]()
 	{
@@ -163,6 +165,8 @@ void AMoveCharacterBase::Initialize()
 	Status = *(DataTable->FindRow<FObjectStatus>(TableName, FString("")));
 	CurrentMOV = Status.MOV;
 	MaxMOV = Status.MOV;
+	CurSpell1Count = Status.DefaultSpellOneCount;
+	CurSpell2Count = Status.DefaultSpellTwoCount;
 
 	DetailStatus->Initialize(Status);
 
@@ -315,6 +319,19 @@ int AMoveCharacterBase::GetCurrentBonusActionCount() const
 	return CurTurnBonusActionCount;  
 }
 
+int AMoveCharacterBase::GetCurrentSpellCount(ESkillCase skillCase) const
+{
+	switch (skillCase)
+	{
+		case ESkillCase::SpellOne:
+			return CurSpell1Count;
+		case ESkillCase::SpellTwo:
+			return CurSpell2Count;
+		default:
+			return 0;
+	}
+}
+
 int AMoveCharacterBase::GetMaxTurnActionCount() const
 {
 	return MaxTurnActionCount;
@@ -343,6 +360,11 @@ UDamageUI* AMoveCharacterBase::GetDamageUI() const
 float AMoveCharacterBase::GetMaxMov() const
 {
 	return MaxMOV;
+}
+
+float AMoveCharacterBase::GetCurrentMov() const
+{
+	return CurrentMOV;
 }
 
 bool AMoveCharacterBase::GetIsNoPath() const
@@ -382,8 +404,24 @@ void AMoveCharacterBase::SetOutline(bool condition)
 
 void AMoveCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnMontageEnded"));
 	bIsMovable = true;
 	GetMesh()->PlayAnimation(IdleAnimation, true);
+}
+
+void AMoveCharacterBase::CostSpellCount(ESkillCase skillCase)
+{
+	switch (skillCase)
+	{
+	case ESkillCase::SpellOne :
+		CurSpell1Count -= 1;
+		break;
+	case ESkillCase::SpellTwo :
+		CurSpell2Count -= 1;
+		break;
+	default:
+		break;
+	}
 }
 
 // Called every frame

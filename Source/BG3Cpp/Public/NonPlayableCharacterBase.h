@@ -15,6 +15,9 @@ class BG3CPP_API ANonPlayableCharacterBase : public AMoveCharacterBase
 	GENERATED_BODY()
 
 public:
+
+	ANonPlayableCharacterBase();
+	
 	virtual void Selected() override;
 	virtual void Deselected() override;
 
@@ -23,6 +26,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void Initialize() override;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* WeaponMesh;
+
 	UPROPERTY()
 	class ABG3GameMode* Mode;
 
@@ -30,4 +38,9 @@ protected:
 	TArray<class AMoveCharacterBase*> EnemyCharacters;
 
 	FDelegateHandle MoveDelegateHandle;
+	
+	UPROPERTY()
+	TArray<class UCharacterActionData*> Actions;
+
+	virtual void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted) override;
 };

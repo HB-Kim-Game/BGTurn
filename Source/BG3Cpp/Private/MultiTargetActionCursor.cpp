@@ -12,8 +12,12 @@
 void UMultiTargetActionCursor::ShowActionDescription(UCharacterActionData* action, int percent,
                                                      const FString& description)
 {
-	Super::ShowActionDescription(action, percent, description);
+	if (action->ActionID == TEXT("MagicMissile"))
+	{
+		percent = 100.f;
+	}
 	
+	Super::ShowActionDescription(action, percent, description);
 }
 
 void UMultiTargetActionCursor::ShowCursorInfo()

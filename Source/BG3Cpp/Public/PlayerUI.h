@@ -70,6 +70,7 @@ public :
 	void ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase);
 
 	void ShowCostSpell(class APlayableCharacterBase* character, ESkillCase skillCase);
+	void ShowUsedSpell(class APlayableCharacterBase* character, ESkillCase skillCase);
 	
 	virtual void NativeConstruct() override;
 

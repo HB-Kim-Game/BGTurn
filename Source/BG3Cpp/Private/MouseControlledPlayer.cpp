@@ -15,8 +15,10 @@
 #include "InputMappingContext.h"
 #include "JumpCursor.h"
 #include "MouseManager.h"
+#include "MovableCharacterController.h"
 #include "MoveCursor.h"
 #include "MultiTargetActionCursor.h"
+#include "NonPlayableCharacterBase.h"
 #include "ParabolaSpline.h"
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
@@ -81,22 +83,38 @@ void AMouseControlledPlayer::BeginPlay()
 		{
 			cast->OnInitialized.AddLambda([cast, this]()
 			{
-				cast->OnCharacterPrepareAction.AddLambda([this, cast]()
+				cast->OnCharacterPrepareAction.Add(FOnCharacterPrepareAction::FDelegate::CreateLambda([this, cast](const UCharacterActionData* data)
 				{
+					if (data->SkillCase == ESkillCase::SpellOne || data->SkillCase == ESkillCase::SpellTwo)
+					{
+						this->PlayerUI->ShowCostSpell(cast, data->SkillCase);	
+					}
 					this->PlayerUI->ShowCost(cast, EActionCase::DefaultAction);
-				});
-				cast->OnCharacterPrepareBonusAction.AddLambda([this, cast]()
+				}));
+				cast->OnCharacterPrepareBonusAction.Add(FOnCharacterPrepareBonusAction::FDelegate::CreateLambda([this, cast](const UCharacterActionData* data)
 				{
+					if (data->SkillCase == ESkillCase::SpellOne || data->SkillCase == ESkillCase::SpellTwo)
+					{
+						this->PlayerUI->ShowCostSpell(cast, data->SkillCase);	
+					}
 					this->PlayerUI->ShowCost(cast, EActionCase::BonusAction);
-				});
-				cast->OnCharacterAction.Add(FSimpleDelegate::CreateLambda([this, cast]()
+				}));
+				cast->OnCharacterAction.Add(FOnCharacterAction::FDelegate::CreateLambda([this, cast](const UCharacterActionData* data)
 				{
+					if (data->SkillCase == ESkillCase::SpellOne || data->SkillCase == ESkillCase::SpellTwo)
+					{
+						this->PlayerUI->ShowUsedSpell(cast, data->SkillCase);	
+					}
 					this->PlayerUI->ShowUsed(cast, EActionCase::DefaultAction);
 					this->PlayerUI->ActionListViewer->MoveCursor(0);
 					this->MouseManager->SetMouseMode(EGameMouseState::Move);
 				}));
-				cast->OnCharacterBonusAction.Add(FSimpleDelegate::CreateLambda([this, cast]()
+				cast->OnCharacterBonusAction.Add(FOnCharacterAction::FDelegate::CreateLambda([this, cast](const UCharacterActionData* data)
 				{
+					if (data->SkillCase == ESkillCase::SpellOne || data->SkillCase == ESkillCase::SpellTwo)
+					{
+						this->PlayerUI->ShowUsedSpell(cast, data->SkillCase);	
+					}
 					this->PlayerUI->ShowUsed(cast, EActionCase::BonusAction);
 					this->PlayerUI->ActionListViewer->MoveCursor(0);
 					this->MouseManager->SetMouseMode(EGameMouseState::Move);
@@ -107,6 +125,13 @@ void AMouseControlledPlayer::BeginPlay()
 					this->GetPlayerUI()->ShowSelectedObjectInfo(instigator);
 					if (cast->GetIsTurn()) this->GetPlayerUI()->SetSelectedCharacter(cast);
 				}));
+				if (auto* controller = Cast<AMovableCharacterController>(cast->GetController()))
+				{
+					controller->OnAIMoveCompleted.Add(FSimpleDelegate::CreateLambda([this, cast]()
+					{
+						if (cast->GetIsTurn()) this->GetPlayerUI()->SetSelectedCharacter(cast);
+					}));
+				}
 			});
 
 			cast->GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &AMouseControlledPlayer::OnMontageEnded);
@@ -144,7 +169,14 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 	}
 	else
 	{
-		if (FVector::Distance(GetActorLocation(), FocusPoint) <= 5.f) bIsFocus = false;
+		if (FVector::Distance(GetActorLocation(), FocusPoint) <= 5.f && nullptr == SelectedEnemyCharacter) bIsFocus = false;
+
+		if (nullptr != SelectedEnemyCharacter)
+		{
+			FocusPoint.X = SelectedEnemyCharacter->GetActorLocation().X;
+			FocusPoint.Y = SelectedEnemyCharacter->GetActorLocation().Y;
+			FocusPoint.Z = GetActorLocation().Z;
+		}
 		SetActorLocation(FMath::Lerp(GetActorLocation(), FocusPoint, DeltaTime * 5.f));
 	}
 	
@@ -230,6 +262,11 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 			}
 		}
 	}
+}
+
+void AMouseControlledPlayer::SetFocusEnemy(class ANonPlayableCharacterBase* character)
+{
+	SelectedEnemyCharacter = character;
 }
 
 UMouseManager* AMouseControlledPlayer::GetMouseManager() const
@@ -350,10 +387,9 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 					
 					if (auto* multiCursor = Cast<UMultiTargetActionCursor>(castCursor))
 					{
-						if (castCursor->GetAction()->MaxDistance < Distance / 100.f) return;
-						
 						if (auto* castChar = Cast<AMoveCharacterBase>(hit.GetActor()))
 						{
+							if (multiCursor->GetAction()->MaxDistance < FVector::Distance(selectedPlayableChar->GetActorLocation(), castChar->GetActorLocation()) / 100.f) return;
 							FVector actorBoundsOrigin, ActorBoundsExtent;
 							castChar->GetActorBounds(true, actorBoundsOrigin, ActorBoundsExtent);
 							extent += ActorBoundsExtent;
@@ -361,15 +397,17 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 							int tempTargetNum = multiCursor->GetAction()->UpcastNum > 2 ? *castChar->CurHPPtr : 1;
 
 							if (multiCursor->CurTargetNum + tempTargetNum > multiCursor->GetAction()->CurMaxTargetCount) return;
-							if (tempTargetNum == multiCursor->GetAction()->CurMaxTargetCount)
+
+							multiCursor->GetAction()->Target.Add(castChar);
+							multiCursor->ShowTargetProgress(tempTargetNum);
+							
+							if (multiCursor->CurTargetNum == multiCursor->GetAction()->CurMaxTargetCount)
 							{
 								if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 								{
 									gm->ActionManager->ExecuteAction(multiCursor->GetAction(), selectedPlayableChar);	
 								}
 							}
-							multiCursor->GetAction()->Target.Add(castChar);
-							multiCursor->ShowTargetProgress(tempTargetNum);
 						}
 						return;
 					}

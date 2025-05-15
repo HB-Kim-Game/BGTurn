@@ -101,6 +101,15 @@ void UActionCountUI::ShowSpellPanel(class APlayableCharacterBase* character)
 	}
 	ActionBox->SetVisibility(ESlateVisibility::Visible);
 	BonusActionBox->SetVisibility(ESlateVisibility::Visible);
+
+	for (auto* spell1Icon : Spell1Icons)
+	{
+		spell1Icon->PlayNormalAnimation();
+	}
+	for (auto* spell2Icon : Spell2Icons)
+	{
+		spell2Icon->PlayNormalAnimation();
+	}
 }
 
 void UActionCountUI::CostAction(int currentCount)
@@ -125,22 +134,34 @@ void UActionCountUI::CostSpell2(int currentCount)
 
 void UActionCountUI::UseAction(int remainCount)
 {
-	ActionIcons[FMath::Clamp(remainCount, 0, ActionIcons.Num()-1)]->PlayUsedAnimation();
+	for (int i = ActionIcons.Num() - 1; i >= remainCount; i--)
+	{
+		ActionIcons[i]->PlayUsedAnimation();
+	}
 }
 
 void UActionCountUI::UseBonus(int remainCount)
 {
-	BonusIcons[FMath::Clamp(remainCount, 0, BonusIcons.Num()-1)]->PlayUsedAnimation();
+	for (int i = BonusIcons.Num() - 1; i >= remainCount; i--)
+	{
+		BonusIcons[i]->PlayUsedAnimation();
+	}
 }
 
 void UActionCountUI::UseSpell1(int remainCount)
 {
-	Spell1Icons[FMath::Clamp(remainCount, 0, Spell1Icons.Num()-1)]->PlayUsedAnimation();
+	for (int i = Spell1Icons.Num() - 1; i >= remainCount; i--)
+	{
+		Spell1Icons[i]->PlayUsedAnimation();
+	}
 }
 
 void UActionCountUI::UseSpell2(int remainCount)
 {
-	Spell2Icons[FMath::Clamp(remainCount, 0, Spell2Icons.Num()-1)]->PlayUsedAnimation();
+	for (int i = Spell2Icons.Num() - 1; i >= remainCount; i--)
+	{
+		Spell2Icons[i]->PlayUsedAnimation();
+	}
 }
 
 void UActionCountUI::NativeConstruct()

@@ -14,6 +14,7 @@
 #include "DamageUI.h"
 #include "FireBall.h"
 #include "JumpCursor.h"
+#include "MagicMissile.h"
 #include "MouseControlledPlayer.h"
 #include "MouseManager.h"
 #include "MoveCharacterBase.h"
@@ -220,6 +221,8 @@ void USprintAction::ExecuteAction(AMoveCharacterBase* character, UCharacterActio
 
 void UJumpAction::PrepareAction(AMoveCharacterBase* character, UCharacterActionData* action)
 {
+	if (character->GetCurrentMov() < 3.0f) return;
+	
 	Super::PrepareAction(character, action);
 	
 	// 캐릭터 애니메이션 재생
@@ -556,17 +559,6 @@ void UMagicMissileAction::PrepareAction(class AMoveCharacterBase* character, cla
 		playable->SetSplineCondition(false);
 	
 		decal->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
-
-		FVector parabolaLocation = character->GetMesh()->GetSocketLocation(TEXT("StaffSocket"));
-
-		AParabolaSpline* parabola = character->GetWorld()->SpawnActor<AParabolaSpline>(
-		AParabolaSpline::StaticClass(),
-		parabolaLocation,
-		FRotator(0,0,0));
-
-		parabola->InitializeParabola(1.0f, 0);
-
-		parabola->AttachToActor(character, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
 		
 		// 마우스 커서 교체
 
@@ -574,7 +566,6 @@ void UMagicMissileAction::PrepareAction(class AMoveCharacterBase* character, cla
 		{
 			p->GetMouseManager()->SetMouseMode(EGameMouseState::MultiTargetAction);
 			p->GetPlayerUI()->ShowSpellInfo(action, playable);
-			p->GetPlayerUI()->ShowCostSpell(playable, ESkillCase::SpellOne);
 
 			if (auto* cursor = Cast<UMultiTargetActionCursor>(p->GetMouseManager()->GetCursor()))
 			{
@@ -586,13 +577,46 @@ void UMagicMissileAction::PrepareAction(class AMoveCharacterBase* character, cla
 
 void UMagicMissileAction::ExecuteAction(class AMoveCharacterBase* character, class UCharacterActionData* action)
 {
+	if (auto* p = Cast<AMouseControlledPlayer>(character->GetWorld()->GetFirstPlayerController()->GetPawn()))
+	{
+		if (auto* cast = Cast<UMultiTargetActionCursor>(p->GetMouseManager()->GetCursor()))
+		{
+			cast->CurTargetNum = 0;
+		}
+		if (auto* playable = Cast<APlayableCharacterBase>(character))
+		{
+			playable->SetSplineCondition(true);
+			p->GetPlayerUI()->SetSelectedCharacter(playable);
+		}
+	}
+	
 	Super::ExecuteAction(character, action);
 
 	// 캐릭터 애니메이션 재생
 	FString prepareID = action->ActionID + "_Execute";
 	character->PlayAnimation(prepareID);
 
+	int missilIndex = 0;
+
 	// 미사일 발사
+	for (auto* target : action->Target)
+	{
+		// 화살 이동
+		UCustomTimer::SetTimer(character->GetWorld(), 0.5f * missilIndex, [](float alpha)
+		{
+		},
+		[character, action, target]()
+		{
+			AMagicMissile* missile = character->GetWorld()->SpawnActor<AMagicMissile>(
+			AMagicMissile::StaticClass(),
+			character->GetMesh()->GetSocketLocation(TEXT("StaffSocket")),
+			FRotator(0, 0, 0));
+	
+			missile->Initialize(action, character, target);
+		});
+
+		missilIndex++;
+	}
 
 	// 발사 뒤 action의 타겟 제거
 	// maxCount 초기화

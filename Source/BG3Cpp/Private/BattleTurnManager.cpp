@@ -101,6 +101,12 @@ void UBattleTurnManager::StartBattle()
 					Player->GetPlayerUI()->TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
 					Player->GetPlayerUI()->DefaultButton->SetVisibility(ESlateVisibility::Visible);
 					np->ThinkAction();
+					Player->SetFocusEnemy(np);
+				});
+
+				np->OnCharacterTurnEnd.AddLambda([this]()
+				{
+					Player->SetFocusEnemy(nullptr);
 				});
 
 				FCharacterTurnData npData = FCharacterTurnData();

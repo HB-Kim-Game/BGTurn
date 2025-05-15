@@ -92,9 +92,6 @@ void APlayableCharacterBase::Initialize()
 
 		Actions.Add(data);
 	}
-
-	CurrentSpell1Count = Status.DefaultSpellOneCount;
-	CurrentSpell2Count = Status.DefaultSpellTwoCount;
 }
 
 float APlayableCharacterBase::GetCurrentMOV() const
@@ -105,19 +102,6 @@ float APlayableCharacterBase::GetCurrentMOV() const
 bool APlayableCharacterBase::GetIsMoving() const
 {
 	return bIsMoving;
-}
-
-int APlayableCharacterBase::GetCurrentSpellCount(ESkillCase SkillCase) const
-{
-	switch (SkillCase)
-	{
-		case ESkillCase::SpellOne:
-			return CurrentSpell1Count;
-		case ESkillCase::SpellTwo:
-			return CurrentSpell2Count;
-		default:
-			return 0;
-	}
 }
 
 bool APlayableCharacterBase::GetSplineCondition() const

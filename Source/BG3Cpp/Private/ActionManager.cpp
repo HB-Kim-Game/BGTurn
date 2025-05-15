@@ -29,10 +29,10 @@ void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterB
 			switch (action->ActionCase)
 			{
 			case EActionCase::DefaultAction:
-				character->OnCharacterPrepareAction.Broadcast();
+				character->OnCharacterPrepareAction.Broadcast(action);
 				break;
 			case EActionCase::BonusAction:
-				character->OnCharacterPrepareBonusAction.Broadcast();
+				character->OnCharacterPrepareBonusAction.Broadcast(action);
 				break;
 			}
 
@@ -51,10 +51,10 @@ void UActionManager::ExecuteAction(UCharacterActionData* action, AMoveCharacterB
 			switch (action->ActionCase)
 			{
 			case EActionCase::DefaultAction:
-				character->OnCharacterAction.Broadcast();
+				character->OnCharacterAction.Broadcast(action);
 				break;
 			case EActionCase::BonusAction:
-				character->OnCharacterBonusAction.Broadcast();
+				character->OnCharacterBonusAction.Broadcast(action);
 				break;
 			}
 		}

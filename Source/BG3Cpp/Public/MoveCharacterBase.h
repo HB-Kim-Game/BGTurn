@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "SelectableObject.h"
 #include "BG3Struct.h"
+#include "BG3Enums.h"
+#include "CharacterActionData.h"
 #include "GameFramework/Character.h"
 #include "MoveCharacterBase.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnCharacterAction);
-DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareAction);
-DECLARE_MULTICAST_DELEGATE(FOnCharacterBonusAction);
-DECLARE_MULTICAST_DELEGATE(FOnCharacterPrepareBonusAction);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterAction, UCharacterActionData* /*Action*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterPrepareAction, UCharacterActionData* /*Action*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterBonusAction, UCharacterActionData* /*Action*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterPrepareBonusAction, UCharacterActionData* /*Action*/);
 DECLARE_MULTICAST_DELEGATE(FOnTurnReceive);
 DECLARE_MULTICAST_DELEGATE(FOnTurnEnd);
 DECLARE_MULTICAST_DELEGATE(FOnInitialized);
@@ -71,6 +73,8 @@ public:
 	int GetCurrentTurnActionCount() const;
 	int GetCurrentBonusActionCount() const;
 
+	int GetCurrentSpellCount(ESkillCase skillCase) const;
+
 	int GetMaxTurnActionCount() const;
 	int GetMaxBonusActionCount() const;
 
@@ -81,6 +85,8 @@ public:
 	class UDamageUI* GetDamageUI() const;
 
 	float GetMaxMov() const;
+
+	float GetCurrentMov() const;
 
 	bool GetIsNoPath() const;
 
@@ -176,8 +182,13 @@ protected:
 	int MaxTurnActionCount = 1;
 	int MaxTurnBonusActionCount = 1;
 
+	int CurSpell1Count = 0;
+	int CurSpell2Count = 0;
+
 	UFUNCTION()
 	virtual void OnMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
+
+	void CostSpellCount(ESkillCase skillCase);
 
 	FDelegateHandle ExecuteActionHandle;
 };
