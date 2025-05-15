@@ -42,6 +42,9 @@ public :
 
 	UPROPERTY(meta = (BindWidget))
 	class UActionCountUI* ActionCountUI;
+
+	UPROPERTY(meta = (BindWidget))
+	class UEnemyActionInfo* EnemyActionInfo;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* HpMaterial;
@@ -66,6 +69,9 @@ public :
 
 	void ShowSpellInfo(class UCharacterActionData* action, APlayableCharacterBase* character);
 
+	void ShowEnemyInfo(class AMoveCharacterBase* character, class UCharacterActionData* action);
+	void CloseEnemyInfo();
+	
 	void ShowCost(class APlayableCharacterBase* character, EActionCase actionCase);
 	void ShowUsed(class APlayableCharacterBase* character, EActionCase actionCase);
 

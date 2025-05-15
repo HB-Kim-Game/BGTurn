@@ -12,9 +12,17 @@ void UTurnListViewer::OnDataFetched()
 {
 	Super::OnDataFetched();
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), FetchedDatas.Num());
+	CachedList.Empty();
+	
+	for (auto* data : FetchedDatas)
+	{
+		if (auto* cast = Cast<UTurnCharacterList>(data))
+		{
+			CachedList.Add(cast);
+		}
+	}
 
-	MoveCursor(0);
+	MoveCursor(0, true);
 }
 
 void UTurnListViewer::InitializeItem()
@@ -50,7 +58,6 @@ void UTurnListViewer::InitializeItem()
 
 			if (auto* cast = Cast<UTurnCharacterList>(FetchedDatas[FMath::Clamp(characterListIndex, 0, FetchedDatas.Num()- 1)]))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("characterListIndex : %d"), characterListIndex);
 				SpawnItems[i]->FetchData(cast->Characters[tempIndex].Character);
 				tempIndex++;
 
@@ -91,6 +98,11 @@ void UTurnListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 		}
 		
 		if (bIsRefresh) return;
+
+		if (auto* cast = Cast<UTurnCharacterList>(FetchedDatas[GetCursor()]))
+		{
+			SelectedTurnList = cast;
+		}
 		
 		for (auto* selectedItem : GetSelectedItems())
 		{
@@ -101,6 +113,67 @@ void UTurnListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 		}
 	}
 	//Super::MoveCursor(Gap);
+}
+
+void UTurnListViewer::RefreshOnDataFetched()
+{
+	Super::RefreshOnDataFetched();
+
+	TArray<FCharacterTurnData> fetchedCharacters;
+	
+	for (auto* data : FetchedDatas)
+	{
+		if (auto* charList = Cast<UTurnCharacterList>(data))
+		{
+			for (auto& character : charList->Characters)
+			{
+				fetchedCharacters.Add(character);	
+			}
+		}
+	}
+
+	for (auto* item : CastedSpawnItems)
+	{
+		if (!fetchedCharacters.ContainsByPredicate([item](FCharacterTurnData data)
+		{
+			return data.Character == item->GetFetchedCharacter();
+		}))
+		{
+			SpawnItems.Remove(item);
+			CastedSpawnItems.Remove(item);
+			item->RemoveFromParent();
+		}
+	}
+
+	TArray<UTurnCharacterList*> fetchedDataCast;
+	
+	for (auto* data : FetchedDatas)
+	{
+		if (auto* cast = Cast<UTurnCharacterList>(data))
+		{
+			fetchedDataCast.Add(cast);
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *SelectedTurnList->Characters[0].Character->GetName());
+
+	int32 newCursor = GetCursorByTurnListPtr(SelectedTurnList, fetchedDataCast);
+	if (newCursor >= 0)
+	{
+		Cursor = newCursor;
+	}
+	else
+	{
+		int32 temp = GetCursorByTurnListPtr(SelectedTurnList, CachedList);
+		temp++;
+		
+		while (newCursor >= 0)
+		{
+			newCursor = GetCursorByTurnListPtr(CachedList[UBGUtil::ClampCursor(temp, CachedList.Num())], fetchedDataCast);	
+		}
+
+		Cursor = newCursor;
+	}
 }
 
 TArray<UTurnPortraitItem*> UTurnListViewer::GetSelectedItems()
@@ -122,4 +195,14 @@ TArray<UTurnPortraitItem*> UTurnListViewer::GetSelectedItems()
 	}
 
 	return SelectedItems;
+}
+
+int32 UTurnListViewer::GetCursorByTurnListPtr(class UTurnCharacterList* target, TArray<UTurnCharacterList*> list)
+{
+	for (int32 i = 0; i < list.Num(); i++)
+	{
+		if (list[i] == target) return i;
+	}
+
+	return -1;
 }

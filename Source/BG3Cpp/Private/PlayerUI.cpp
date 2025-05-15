@@ -7,6 +7,7 @@
 #include "CharacterStatus.h"
 #include "PlayableCharacterBase.h"
 #include "ActionListViewer.h"
+#include "EnemyActionInfo.h"
 #include "SelectObjectInfoUI.h"
 #include "SpellInfo.h"
 #include "Components/Button.h"
@@ -73,6 +74,17 @@ void UPlayerUI::ShowSpellInfo(class UCharacterActionData* action, APlayableChara
 {
 	SpellInfo->SetVisibility(ESlateVisibility::Visible);
 	ActionListViewer->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UPlayerUI::ShowEnemyInfo(class AMoveCharacterBase* character, class UCharacterActionData* action)
+{
+	EnemyActionInfo->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	EnemyActionInfo->ShowEnemyInfo(character, action);
+}
+
+void UPlayerUI::CloseEnemyInfo()
+{
+	EnemyActionInfo->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPlayerUI::ShowCost(APlayableCharacterBase* character, EActionCase actionCase)

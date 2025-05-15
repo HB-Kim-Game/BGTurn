@@ -46,7 +46,6 @@ protected:
 
 	UPROPERTY()
 	TArray<UObject*> FetchedDatas;
-
-private:
+	
 	int32 Cursor = 0;
 };

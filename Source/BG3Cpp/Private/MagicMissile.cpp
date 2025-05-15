@@ -5,6 +5,7 @@
 
 #include "BGUtil.h"
 #include "CharacterActionData.h"
+#include "CharacterStatus.h"
 #include "DamageUI.h"
 #include "DiceChecker.h"
 #include "MouseControlledPlayer.h"
@@ -70,6 +71,12 @@ void AMagicMissile::TickAction(float DeltaTime)
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(this);
 	params.AddIgnoredActor(AttackInstigator);
+
+	if (*Target->CurHPPtr <= 0)
+	{
+		SpawnHitEffect(GetActorLocation());
+		return;
+	}
 	
 	if (GetWorld()->SweepSingleByChannel(hit, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_WorldDynamic, FCollisionShape::MakeSphere(26.f), params))
 	{

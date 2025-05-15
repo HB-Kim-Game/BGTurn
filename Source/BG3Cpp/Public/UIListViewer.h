@@ -23,12 +23,15 @@ public:
 	{
 		if (SpawnItems.Num() > 0)
 		{
+			RefreshOnDataFetched();
 			// 새로 패치된 리스트 정보만 다시 뿌려줌.
 			return;
 		}
 
 		InitializeItem();
 	}
+
+	virtual void RefreshOnDataFetched() {};
 
 protected:
 	UPROPERTY(meta = (BindWidget))

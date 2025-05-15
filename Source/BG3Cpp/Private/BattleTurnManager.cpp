@@ -92,12 +92,30 @@ void UBattleTurnManager::StartBattle()
 			{
 				this->TurnList->MoveCursor(0, true);
 			}));
+
+			cast->OnDead.Add(FSimpleDelegate::CreateLambda([this, cast]()
+			{
+				for (auto* list : TurnCharacterList)
+				{
+					int32 index = list->Characters.IndexOfByPredicate([cast](const FCharacterTurnData& data)
+						{
+							return data.Character == cast;
+						});
+
+					if (index != INDEX_NONE)
+					{
+						list->Characters.RemoveAt(index);
+						
+						if (list->Characters.Num() <= 0) TurnCharacterList.Remove(list);
+					}
+				}
+				TurnList->FetchDatas(TurnCharacterList);
+			}));
 			
 			if (auto* np = Cast<ANonPlayableCharacterBase>(cast))
 			{
 				np->OnCharacterTurnReceive.AddLambda([np, this]()
 				{
-					// 턴 받을 시, AI가 행동 시작하도록 구현해야함.
 					Player->GetPlayerUI()->TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
 					Player->GetPlayerUI()->DefaultButton->SetVisibility(ESlateVisibility::Visible);
 					np->ThinkAction();
@@ -106,8 +124,19 @@ void UBattleTurnManager::StartBattle()
 
 				np->OnCharacterTurnEnd.AddLambda([this]()
 				{
+					Player->GetPlayerUI()->CloseEnemyInfo();
 					Player->SetFocusEnemy(nullptr);
 				});
+
+				np->OnCharacterAction.Add(FOnCharacterAction::FDelegate::CreateLambda([this, np](UCharacterActionData* action)
+				{
+					Player->GetPlayerUI()->ShowEnemyInfo(np, action);
+				}));
+
+				np->OnCharacterBonusAction.Add(FOnCharacterBonusAction::FDelegate::CreateLambda([this, np](UCharacterActionData* action)
+				{
+					Player->GetPlayerUI()->ShowEnemyInfo(np, action);
+				}));
 
 				FCharacterTurnData npData = FCharacterTurnData();
 				npData.Character = np;
@@ -151,6 +180,7 @@ void UBattleTurnManager::StartBattle()
 	}
 
 	TurnList->FetchDatas(SortCharacters());
+	TurnList->MoveCursor(0);
 }
 
 void UBattleTurnManager::SetOutlineAllBattleCharacters(bool condition)

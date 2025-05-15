@@ -24,11 +24,21 @@ public:
 
 	virtual void MoveCursor(int32 Gap, bool bIsRefresh = false) override;
 
+	virtual void RefreshOnDataFetched() override;
+
 	TArray<class UTurnPortraitItem*> GetSelectedItems();
+
+	int32 GetCursorByTurnListPtr(class UTurnCharacterList* target, TArray<class UTurnCharacterList*> list);
 
 	UPROPERTY()
 	TArray<class UTurnPortraitItem*> SelectedItems;
 
 	UPROPERTY()
 	TArray<class UTurnPortraitItem*> CastedSpawnItems;
+
+	UPROPERTY()
+	class UTurnCharacterList* SelectedTurnList = nullptr;
+
+	UPROPERTY()
+	TArray<class UTurnCharacterList*> CachedList;
 };

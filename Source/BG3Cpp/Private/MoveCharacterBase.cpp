@@ -120,8 +120,8 @@ float AMoveCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent con
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Dead: %d"), CurHP);
+		if (GetIsTurn()) TurnEnd();
 		OnDead.Broadcast();
-		TurnEnd();
 	}
 	
 	return damage;
