@@ -10,19 +10,27 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/HorizontalBox.h"
 
+void UTurnListViewer::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	OnRefreshList.AddLambda([this]()
+	{
+		CachedList.Empty();
+	
+		for (auto* data : FetchedDatas)
+		{
+			if (auto* cast = Cast<UTurnCharacterList>(data))
+			{
+				CachedList.Add(cast);
+			}
+		}	
+	});
+}
+
 void UTurnListViewer::OnDataFetched()
 {
 	Super::OnDataFetched();
-
-	CachedList.Empty();
-	
-	for (auto* data : FetchedDatas)
-	{
-		if (auto* cast = Cast<UTurnCharacterList>(data))
-		{
-			CachedList.Add(cast);
-		}
-	}
 
 	MoveCursor(0, true);
 }
@@ -156,18 +164,18 @@ void UTurnListViewer::RefreshOnDataFetched()
 		}
 	}
 
+	CastedSpawnItems.FindByPredicate([](const UTurnPortraitItem* item)
+	{
+		
+	});
+
 	for (auto* item : CastedSpawnItems)
 	{
-		if (!fetchedCharacters.ContainsByPredicate([item](FCharacterTurnData data)
-		{
-			return data.Character == item->GetFetchedCharacter();
-		}))
-		{
-			SpawnItems.Remove(item);
-			CastedSpawnItems.Remove(item);
-			item->RemoveFromParent();
-		}
 	}
+
+	//SpawnItems.Remove(item);
+	//CastedSpawnItems.Remove(item);
+	//item->RemoveFromParent();
 
 	TArray<UTurnCharacterList*> fetchedDataCast;
 	
@@ -197,6 +205,8 @@ void UTurnListViewer::RefreshOnDataFetched()
 
 		Cursor = newCursor;
 	}
+
+	OnRefreshList.Broadcast();
 }
 
 void UTurnListViewer::SetSelectedItems()

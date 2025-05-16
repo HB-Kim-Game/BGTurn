@@ -42,6 +42,8 @@ void UActionManager::PrepareAction(UCharacterActionData* action, AMoveCharacterB
 
 void UActionManager::ExecuteAction(UCharacterActionData* action, AMoveCharacterBase* character)
 {
+	if (nullptr == action) return;
+	if (!IsValid(action)) return;
 	if (auto* actionBase = ActionMap.Find(action->ActionID))
 	{
 		if (*actionBase)

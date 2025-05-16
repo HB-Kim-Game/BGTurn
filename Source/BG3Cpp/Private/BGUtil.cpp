@@ -10,15 +10,8 @@ int32 UBGUtil::CalculateBonus(uint8 charStat)
 
 int32 UBGUtil::ClampCursor(int32 value, int32 max, int min)
 {
-	if (value >= max)
-	{
-		while (value >= max) value -= max;
-	}
-
-	if (value < min)
-	{
-		while (value < min) value += max;
-	}
+	while (value >= max) value -= max;
+	while (value < min) value += max;
 
 	return value;
 }

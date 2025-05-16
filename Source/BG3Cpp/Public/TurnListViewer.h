@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UIListViewer.h"
 #include "TurnListViewer.generated.h"
+DECLARE_MULTICAST_DELEGATE(FONRefreshList);
 
 /**
  * 
@@ -17,6 +18,8 @@ class BG3CPP_API UTurnListViewer : public UUIListViewer
 public:
 
 	int32 CharacterCount = 0;
+
+	virtual void NativeConstruct() override;
 	
 	virtual void OnDataFetched() override;
 	
@@ -43,4 +46,6 @@ public:
 	TArray<class UTurnCharacterList*> CachedList;
 
 	FDelegateHandle TurnHandle;
+
+	FONRefreshList OnRefreshList;
 };

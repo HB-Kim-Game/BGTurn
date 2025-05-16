@@ -96,20 +96,36 @@ void UBattleTurnManager::StartBattle()
 
 			cast->OnDead.Add(FSimpleDelegate::CreateLambda([this, cast]()
 			{
-				for (auto* list : TurnCharacterList)
+				auto* charList = TurnCharacterList.FindByPredicate([cast](const UTurnCharacterList* l)
 				{
-					int32 index = list->Characters.IndexOfByPredicate([cast](const FCharacterTurnData& data)
-						{
-							return data.Character == cast;
-						});
-
-					if (index != INDEX_NONE)
+					return l->Characters.ContainsByPredicate([cast](const FCharacterTurnData& data)
 					{
-						list->Characters.RemoveAt(index);
+						return cast == data.Character;
+					});
+				});
+				
+				if (*charList)
+				{
+					int32 index = (*charList)->Characters.IndexOfByPredicate([cast](const FCharacterTurnData& data)
+					{
+						return data.Character == cast;
+					});
+					
+					(*charList)->Characters.RemoveAt(index);
 						
-						if (list->Characters.Num() <= 0) TurnCharacterList.Remove(list);
-					}
+					if ((*charList)->Characters.Num() <= 0) TurnCharacterList.Remove(*charList);
 				}
+
+				int32 charindex = Characters.IndexOfByPredicate([cast](const FCharacterTurnData& data)
+				{
+					return data.Character == cast;
+				});
+
+				if (charindex != INDEX_NONE)
+				{
+					Characters.RemoveAt(charindex);
+				}
+				
 				TurnList->FetchDatas(TurnCharacterList);
 			}));
 			
