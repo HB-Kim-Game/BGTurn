@@ -73,6 +73,7 @@ void UPlayerUI::ShowSelectedObjectInfo(AMoveCharacterBase* character)
 void UPlayerUI::ShowSpellInfo(class UCharacterActionData* action, APlayableCharacterBase* character)
 {
 	SpellInfo->SetVisibility(ESlateVisibility::Visible);
+	SpellInfo->SetUpSpellInfo(action, character);
 	ActionListViewer->SetVisibility(ESlateVisibility::Collapsed);
 }
 

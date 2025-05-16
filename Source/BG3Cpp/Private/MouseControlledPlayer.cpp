@@ -23,6 +23,7 @@
 #include "PlayableCharacterBase.h"
 #include "PlayerUI.h"
 #include "SelectableObject.h"
+#include "SpellInfo.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -396,17 +397,18 @@ void AMouseControlledPlayer::OnLeftMouseButtonDown()
 							extent += ActorBoundsExtent;
 
 							int tempTargetNum = multiCursor->GetAction()->UpcastNum > 2 ? *castChar->CurHPPtr : 1;
-
+							
 							if (multiCursor->CurTargetNum + tempTargetNum > multiCursor->GetAction()->CurMaxTargetCount) return;
-
 							multiCursor->GetAction()->Target.Add(castChar);
 							multiCursor->ShowTargetProgress(tempTargetNum);
+							GetPlayerUI()->SpellInfo->ShowTargetProgress(tempTargetNum);
 							
-							if (multiCursor->CurTargetNum == multiCursor->GetAction()->CurMaxTargetCount)
+							if (multiCursor->CurTargetNum >= multiCursor->GetAction()->CurMaxTargetCount)
 							{
 								if (auto* gm = Cast<ABG3GameMode>(GetWorld()->GetAuthGameMode()))
 								{
-									gm->ActionManager->ExecuteAction(multiCursor->GetAction(), selectedPlayableChar);	
+									gm->ActionManager->ExecuteAction(multiCursor->GetAction(), selectedPlayableChar);
+									GetPlayerUI()->SpellInfo->SetUpSpellInfo(nullptr, nullptr);
 								}
 							}
 						}

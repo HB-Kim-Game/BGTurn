@@ -14,18 +14,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/BarbarianActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/BarbarianActionTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/TPS/Blueprints/BP_TPSPlayer.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Golem/Skeleton_Golem_Anim_2H_Melee_Attack_Chop_Montage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Golem/Skeleton_Golem_Anim_2H_Melee_Attack_Chop_Montage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/M_TargetProgress_Inst2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/M_TargetProgress_Inst2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_SpellInfoUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_SpellInfoUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MagicMissile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MagicMissile.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MultiTargetActionCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MultiTargetActionCursor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/SpellInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/SpellInfo.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/TurnListViewer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/TurnListViewer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/SpellInfo.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/SpellInfo.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -307,7 +309,7 @@
       <workItem from="1747276933946" duration="24349000" />
       <workItem from="1747316225555" duration="11338000" />
       <workItem from="1747327895039" duration="209000" />
-      <workItem from="1747353162060" duration="7371000" />
+      <workItem from="1747353162060" duration="14249000" />
     </task>
     <servers />
   </component>

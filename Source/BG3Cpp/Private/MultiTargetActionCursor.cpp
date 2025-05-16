@@ -189,7 +189,7 @@ void UMultiTargetActionCursor::ShowTargetProgress(int addNum)
 {
 	if (!Action) return;
 
-	if (CurTargetNum + addNum > Action->MaxTargetCount)
+	if (CurTargetNum + addNum > Action->CurMaxTargetCount)
 	{
 		FString text = "<CursorDesc>" + FString::Printf(TEXT("초과했습니다!"))+ "</>";
 		Description->SetText(FText::FromString(text));

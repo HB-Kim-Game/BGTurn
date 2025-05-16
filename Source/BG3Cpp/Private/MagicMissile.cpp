@@ -72,12 +72,19 @@ void AMagicMissile::TickAction(float DeltaTime)
 	params.AddIgnoredActor(this);
 	params.AddIgnoredActor(AttackInstigator);
 
+	
+	if (Target == AttackInstigator)
+	{
+		SpawnHitEffect(GetActorLocation());
+		return;
+	}
+
 	if (*Target->CurHPPtr <= 0)
 	{
 		SpawnHitEffect(GetActorLocation());
 		return;
 	}
-	
+
 	if (GetWorld()->SweepSingleByChannel(hit, GetActorLocation(), GetActorLocation(), FQuat::Identity, ECC_WorldDynamic, FCollisionShape::MakeSphere(26.f), params))
 	{
 		if (auto* cast = Cast<AMoveCharacterBase>(hit.GetActor()))

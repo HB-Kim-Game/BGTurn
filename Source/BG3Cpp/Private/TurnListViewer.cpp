@@ -98,6 +98,12 @@ void UTurnListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 				}
 			}
 		}
+
+		for (int i = 0; i < SelectedItems.Num(); i++)
+		{
+			if (!SelectedItems[i]) continue;
+			SelectedItems[i]->Selected();
+		}
 		
 		if (bIsRefresh) return;
 
@@ -173,8 +179,6 @@ void UTurnListViewer::RefreshOnDataFetched()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *SelectedTurnList->Characters[0].Character->GetName());
-
 	int32 newCursor = GetCursorByTurnListPtr(SelectedTurnList, fetchedDataCast);
 	if (newCursor >= 0)
 	{
@@ -187,7 +191,8 @@ void UTurnListViewer::RefreshOnDataFetched()
 		
 		while (newCursor >= 0)
 		{
-			newCursor = GetCursorByTurnListPtr(CachedList[UBGUtil::ClampCursor(temp, CachedList.Num())], fetchedDataCast);	
+			newCursor = GetCursorByTurnListPtr(CachedList[UBGUtil::ClampCursor(temp, CachedList.Num())], fetchedDataCast);
+			temp++;
 		}
 
 		Cursor = newCursor;

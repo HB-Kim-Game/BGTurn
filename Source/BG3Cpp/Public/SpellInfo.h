@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BG3Enums.h"
 #include "Blueprint/UserWidget.h"
 #include "SpellInfo.generated.h"
 
@@ -14,6 +15,13 @@ class BG3CPP_API USpellInfo : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void SetUpSpellInfo(class UCharacterActionData* action, class APlayableCharacterBase* character);
+
+	void ShowTargetProgress(int addNum);
+
+	int CurTargetNum = 0;
+	
 protected:
 	UPROPERTY(meta = (BindWidget))
 	class UImage* IconImage;
@@ -28,4 +36,29 @@ protected:
 	class UTextBlock* ProjectileNum;
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ProjectileName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* TargetMaterial;
+	
+	UPROPERTY()
+	UMaterialInstanceDynamic* TargetMatDynamic;
+	
+	UPROPERTY()
+	class UCharacterActionData* ActionData;
+
+	UPROPERTY()
+	class APlayableCharacterBase* Character;
+
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void SpellOneClick();
+
+	UFUNCTION()
+	void SpellTwoClick();
+	
+	UFUNCTION()
+	void CheckButtonClick();
+
+	ESkillCase DefaultSkillCase = ESkillCase::SpellOne;
 };

@@ -622,4 +622,5 @@ void UMagicMissileAction::ExecuteAction(class AMoveCharacterBase* character, cla
 	// maxCount 초기화
 	action->Target.Empty();
 	action->CurMaxTargetCount = action->MaxTargetCount;
+	action->SkillCase = ESkillCase::SpellOne;
 }

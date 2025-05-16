@@ -388,6 +388,7 @@ void AMoveCharacterBase::TurnEnd()
 {
 	bIsTurn = false;
 	bIsMovable = false;
+	GetMesh()->PlayAnimation(IdleAnimation,true);
 	OnCharacterTurnEnd.Broadcast();
 }
 
