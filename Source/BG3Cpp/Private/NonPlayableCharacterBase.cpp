@@ -68,7 +68,7 @@ void ANonPlayableCharacterBase::ThinkAction()
 				if (action->SkillCase == ESkillCase::Buff) continue;
 				
 				FVector center = e->GetActorLocation();
-				float radius = action->MaxDistance * 100.f;
+				float radius = action->MaxDistance * 100.f + GetCapsuleComponent()->GetScaledCapsuleRadius();
 				TArray<FVector> points;
 				for (int i = 0; i < 12; i++)
 				{
@@ -88,6 +88,13 @@ void ANonPlayableCharacterBase::ThinkAction()
 
 						if (p && p->IsValid() && !p->IsPartial())
 						{
+							//DrawDebugSphere(GetWorld(), projected, GetCapsuleComponent()->GetScaledCapsuleRadius(), 20, FColor::Yellow, false, 3.f, 0, 1);
+							FHitResult hit;
+							if (GetWorld()->SweepSingleByChannel(hit, projected, projected, FQuat::Identity, ECC_EngineTraceChannel1, FCollisionShape::MakeSphere(GetCapsuleComponent()->GetScaledCapsuleRadius())))
+							{
+								if (hit.GetActor() != e) continue;
+							}
+							
 							if (p->GetPathLength() < bestDistance)
 							{
 								if (action->TargetCase == ETargetCase::Single)

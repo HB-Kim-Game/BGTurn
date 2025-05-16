@@ -375,7 +375,8 @@ bool AMoveCharacterBase::GetIsNoPath() const
 void AMoveCharacterBase::TurnReceive()
 {
 	bIsTurn = true;
-	CurrentMOV = MaxMOV;
+	CurrentMOV = Status.MOV;
+	MaxMOV = Status.MOV;
 	CurTurnActionCount = MaxTurnActionCount;
 	CurTurnBonusActionCount = MaxTurnBonusActionCount;
 	bIsMovable = true;

@@ -26,7 +26,7 @@ public:
 
 	virtual void RefreshOnDataFetched() override;
 
-	TArray<class UTurnPortraitItem*> GetSelectedItems();
+	void SetSelectedItems();
 
 	int32 GetCursorByTurnListPtr(class UTurnCharacterList* target, TArray<class UTurnCharacterList*> list);
 
@@ -41,4 +41,6 @@ public:
 
 	UPROPERTY()
 	TArray<class UTurnCharacterList*> CachedList;
+
+	FDelegateHandle TurnHandle;
 };

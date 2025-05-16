@@ -14,32 +14,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57aee466-15f7-4d79-ade5-48906afcf0d3" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BG3CPP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_NonPlayableCharacterBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Blueprints/BP_NonPlayableCharacterBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/BarbarianActionTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/BarbarianActionTable.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/DataTable/GameCharacterDataTable.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Maps/GameMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/Necromancer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/Necromancer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/Necromancer_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/Necromancer_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/Model/Necromancer/skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc995.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/Icons/fc995.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BG3/UI/WBP_PlayerUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCountUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionCountUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionListViewer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionListViewer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/ActionManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/TPS/Blueprints/BP_TPSPlayer.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/BattleTurnManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MagicMissile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MagicMissile.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MouseControlledPlayer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MoveCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/MultiTargetActionCursor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/MultiTargetActionCursor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/NonPlayableCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayableCharacterBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/PlayerUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MagicMissile.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MagicMissile.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MouseControlledPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/MoveCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/NonPlayableCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayableCharacterBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayerUI.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/PlayerUI.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Private/TurnListViewer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Private/TurnListViewer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/BG3Cpp/Public/TurnListViewer.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,13 +166,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/AutomationTool/AutomationTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -203,13 +184,8 @@
       <option name="WORKING_DIRECTORY" value="" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
-      <option name="ENV_FILE_PATHS" value="" />
-      <option name="REDIRECT_INPUT_PATH" value="" />
-      <option name="PTY_MODE" value="Auto" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="AUTO_ATTACH_CHILDREN" value="0" />
-      <option name="MIXED_MODE_DEBUG" value="0" />
       <option name="PROJECT_PATH" value="$PROJECT_DIR$/../../UnrealEngine/UE_5.5/Engine/Source/Programs/UnrealBuildTool/UnrealBuildTool.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
@@ -235,13 +211,6 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile">
-        <settings />
-      </deployment>
-      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
-      <method v="2" />
-    </configuration>
     <configuration name="EpicGames.Perforce.Fixture/Dockerfile (1)" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
@@ -260,6 +229,13 @@
           <option name="contextFolderPath" value="C:\Projects\BG3CPP" />
           <option name="sourceFilePath" value="../../UnrealEngine/UE_5.5/Engine/Source/Programs/Shared/EpicGames.Perforce.Fixture/Dockerfile" />
         </settings>
+      </deployment>
+      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
       </deployment>
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
@@ -331,6 +307,7 @@
       <workItem from="1747276933946" duration="24349000" />
       <workItem from="1747316225555" duration="11338000" />
       <workItem from="1747327895039" duration="209000" />
+      <workItem from="1747353162060" duration="7371000" />
     </task>
     <servers />
   </component>

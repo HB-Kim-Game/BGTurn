@@ -2,7 +2,9 @@
 #include "TurnListViewer.h"
 
 #include "BGUtil.h"
+#include "CharacterStatus.h"
 #include "MoveCharacterBase.h"
+#include "NonPlayableCharacterBase.h"
 #include "TurnCharacterList.h"
 #include "TurnPortraitItem.h"
 #include "Components/HorizontalBoxSlot.h"
@@ -103,13 +105,29 @@ void UTurnListViewer::MoveCursor(int32 Gap, bool bIsRefresh)
 		{
 			SelectedTurnList = cast;
 		}
-		
-		for (auto* selectedItem : GetSelectedItems())
+
+		SetSelectedItems();
+		for (int i = 0; i < SelectedItems.Num(); i++)
 		{
-			if (!selectedItem) continue;
-			selectedItem->Selected();
-			if (selectedItem->GetFetchedCharacter()->GetIsTurn()) continue;
-			selectedItem->GetFetchedCharacter()->TurnReceive();
+			if (!SelectedItems[i]) continue;
+			SelectedItems[i]->Selected();
+			if (SelectedItems[i]->GetFetchedCharacter()->GetIsTurn()) continue;
+
+			if (Cast<ANonPlayableCharacterBase>(SelectedItems[i]->GetFetchedCharacter()))
+			{
+				if (i > 0)
+				{
+					auto* prevItem = SelectedItems[i - 1]; 
+					auto* item = SelectedItems[i];
+					TurnHandle = prevItem->GetFetchedCharacter()->OnCharacterTurnEnd.Add(FSimpleDelegate::CreateLambda([this, item, prevItem]()
+					{
+						item->GetFetchedCharacter()->TurnReceive();
+						bool bIsSuccess = prevItem->GetFetchedCharacter()->OnCharacterTurnEnd.Remove(TurnHandle);
+					}));
+					continue;
+				}
+			}
+			SelectedItems[i]->GetFetchedCharacter()->TurnReceive();
 		}
 	}
 	//Super::MoveCursor(Gap);
@@ -176,7 +194,7 @@ void UTurnListViewer::RefreshOnDataFetched()
 	}
 }
 
-TArray<UTurnPortraitItem*> UTurnListViewer::GetSelectedItems()
+void UTurnListViewer::SetSelectedItems()
 {
 	SelectedItems.Empty();
 	
@@ -189,12 +207,12 @@ TArray<UTurnPortraitItem*> UTurnListViewer::GetSelectedItems()
 				return i->GetFetchedCharacter() == character.Character;
 			}))
 			{
+				FString name = (*selected)->GetFetchedCharacter()->GetStatus()->GetName();
+				UE_LOG(LogTemp, Warning, TEXT("Selected : %s"), *name);
 				SelectedItems.Add(*selected);
 			}
 		}
 	}
-
-	return SelectedItems;
 }
 
 int32 UTurnListViewer::GetCursorByTurnListPtr(class UTurnCharacterList* target, TArray<UTurnCharacterList*> list)

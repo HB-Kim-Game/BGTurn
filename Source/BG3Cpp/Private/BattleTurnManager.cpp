@@ -8,6 +8,7 @@
 #include "AttackRange.h"
 #include "BGUtil.h"
 #include "CharacterStatus.h"
+#include "CustomTimer.h"
 #include "DiceChecker.h"
 #include "MouseControlledPlayer.h"
 #include "MoveCharacterBase.h"
@@ -61,9 +62,9 @@ void UBattleTurnManager::StartBattle()
 		{
 			cast->OnCharacterTurnEnd.AddLambda([this, cast]()
 			{
-				if (this->TurnList->GetSelectedItems().Num() > 1)
+				if (this->TurnList->SelectedItems.Num() > 1)
 				{
-					for (auto* item : this->TurnList->GetSelectedItems())
+					for (auto* item : this->TurnList->SelectedItems)
 					{
 						if(item->GetFetchedCharacter() == cast) continue;
 						if(item->GetFetchedCharacter()->GetIsTurn())
@@ -81,9 +82,9 @@ void UBattleTurnManager::StartBattle()
 
 			cast->OnCharacterTurnReceive.AddLambda([this]()
 			{
-				auto* item = Cast<ISelectableObject>(this->TurnList->GetSelectedItems()[0]->GetFetchedCharacter());
+				auto* item = Cast<ISelectableObject>(this->TurnList->SelectedItems[0]->GetFetchedCharacter());
 				Player->Select(item);
-				auto* moveC = this->TurnList->GetSelectedItems()[0]->GetFetchedCharacter();
+				auto* moveC = this->TurnList->SelectedItems[0]->GetFetchedCharacter();
 				Player->Focus(FVector(moveC->GetActorLocation().X, moveC->GetActorLocation().Y, Player->GetActorLocation().Z));	
 			});
 
@@ -114,20 +115,14 @@ void UBattleTurnManager::StartBattle()
 			
 			if (auto* np = Cast<ANonPlayableCharacterBase>(cast))
 			{
-				np->OnCharacterTurnReceive.AddLambda([np, this]()
+				np->OnCharacterTurnReceive.Add(FSimpleDelegate::CreateLambda([np, this]()
 				{
 					Player->GetPlayerUI()->TurnEndButton->SetVisibility(ESlateVisibility::Hidden);
 					Player->GetPlayerUI()->DefaultButton->SetVisibility(ESlateVisibility::Visible);
 					np->ThinkAction();
 					Player->SetFocusEnemy(np);
-				});
-
-				np->OnCharacterTurnEnd.AddLambda([this]()
-				{
-					Player->GetPlayerUI()->CloseEnemyInfo();
-					Player->SetFocusEnemy(nullptr);
-				});
-
+				}));
+				
 				np->OnCharacterAction.Add(FOnCharacterAction::FDelegate::CreateLambda([this, np](UCharacterActionData* action)
 				{
 					Player->GetPlayerUI()->ShowEnemyInfo(np, action);
@@ -169,6 +164,12 @@ void UBattleTurnManager::StartBattle()
 							parabola->Destroy();
 						}
 					}
+				});
+
+				p->OnCharacterTurnReceive.AddLambda([this]()
+				{
+					Player->GetPlayerUI()->CloseEnemyInfo();
+					Player->SetFocusEnemy(nullptr);
 				});
 			}
 

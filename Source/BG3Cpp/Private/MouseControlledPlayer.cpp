@@ -266,6 +266,7 @@ void AMouseControlledPlayer::Tick(float DeltaTime)
 
 void AMouseControlledPlayer::SetFocusEnemy(class ANonPlayableCharacterBase* character)
 {
+	SelectedEnemyCharacter = nullptr;
 	SelectedEnemyCharacter = character;
 }
 
