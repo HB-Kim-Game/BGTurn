@@ -32,4 +32,6 @@ protected:
 	void OnFinished();
 
 	virtual void NativeConstruct() override;
+
+	bool isPlaying = false;
 };

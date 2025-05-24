@@ -164,19 +164,25 @@ void UTurnListViewer::RefreshOnDataFetched()
 		}
 	}
 
-	CastedSpawnItems.FindByPredicate([](const UTurnPortraitItem* item)
+	auto* findItem = CastedSpawnItems.FindByPredicate([fetchedCharacters](const UTurnPortraitItem* i)
 	{
-		
+		return !fetchedCharacters.ContainsByPredicate([i](const FCharacterTurnData& d)
+		{
+			return d.Character == i->GetFetchedCharacter();
+		});
 	});
 
-	for (auto* item : CastedSpawnItems)
+	if (*findItem)
 	{
+		int32 itemIndex = SpawnItems.IndexOfByPredicate([findItem](const UViewerItemBase* i)
+		{
+			return i == (*findItem);
+		});
+		SpawnItems[itemIndex]->RemoveFromParent();
+		SpawnItems.RemoveAt(itemIndex);
+		CastedSpawnItems.RemoveAt(itemIndex);
 	}
-
-	//SpawnItems.Remove(item);
-	//CastedSpawnItems.Remove(item);
-	//item->RemoveFromParent();
-
+	
 	TArray<UTurnCharacterList*> fetchedDataCast;
 	
 	for (auto* data : FetchedDatas)

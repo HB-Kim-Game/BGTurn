@@ -112,8 +112,19 @@ void UBattleTurnManager::StartBattle()
 					});
 					
 					(*charList)->Characters.RemoveAt(index);
-						
-					if ((*charList)->Characters.Num() <= 0) TurnCharacterList.Remove(*charList);
+					
+					if ((*charList)->Characters.Num() <= 0)
+					{
+						int32 charListindex = TurnCharacterList.IndexOfByPredicate([charList](const UTurnCharacterList* l)
+						{
+							return l == (*charList);
+						});
+
+						if (charListindex != INDEX_NONE)
+						{
+							TurnCharacterList.RemoveAt(charListindex);	
+						}
+					}
 				}
 
 				int32 charindex = Characters.IndexOfByPredicate([cast](const FCharacterTurnData& data)
